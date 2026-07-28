@@ -1,46 +1,30 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-
-import { ensureUploadsDir } from "@/lib/store";
+import { readFile } from "@/lib/store";
 
 /**
  * Sert les photos envoyées depuis l'espace bénévoles. Elles vivent hors du
- * dépôt (dossier de données), d'où cette route plutôt qu'un fichier statique.
- * Le nom demandé est réduit à son `basename` : aucune traversée de dossier
- * (`../`) n'est possible.
+ * dépôt (dossier de données ou base), d'où cette route plutôt qu'un fichier
+ * statique. Un seul segment est accepté et il ne peut contenir de séparateur :
+ * aucune traversée de dossier n'est possible.
  */
-
-const TYPES: Record<string, string> = {
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".png": "image/png",
-  ".webp": "image/webp",
-  ".avif": "image/avif",
-};
-
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ path: string[] }> },
 ) {
   const { path: segments } = await params;
-  const name = path.basename(segments.at(-1) ?? "");
-  const extension = path.extname(name).toLowerCase();
-  const type = TYPES[extension];
+  const name = segments.at(0) ?? "";
 
-  if (!name || !type || segments.length !== 1) {
+  if (segments.length !== 1 || !/^[a-z0-9-]+\.[a-z0-9]+$/i.test(name)) {
     return new Response("Introuvable", { status: 404 });
   }
 
-  try {
-    const file = await readFile(path.join(await ensureUploadsDir(), name));
-    return new Response(new Uint8Array(file), {
-      headers: {
-        "Content-Type": type,
-        // Le nom de fichier est unique : le cache peut être immuable.
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-    });
-  } catch {
-    return new Response("Introuvable", { status: 404 });
-  }
+  const file = await readFile(name);
+  if (!file) return new Response("Introuvable", { status: 404 });
+
+  return new Response(new Uint8Array(file.bytes), {
+    headers: {
+      "Content-Type": file.mime,
+      // Le nom de fichier est unique : le cache peut être immuable.
+      "Cache-Control": "public, max-age=31536000, immutable",
+    },
+  });
 }

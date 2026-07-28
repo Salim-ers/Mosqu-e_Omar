@@ -42,7 +42,10 @@ export type Field = {
 };
 
 export type ResourceDef = {
-  key: Exclude<CollectionName, "medias" | "utilisateurs">;
+  key: Exclude<
+    CollectionName,
+    "medias" | "messages" | "journal" | "utilisateurs"
+  >;
   /** Libellé de la rubrique — « Actualités ». */
   label: string;
   /** Un élément — « une actualité ». */

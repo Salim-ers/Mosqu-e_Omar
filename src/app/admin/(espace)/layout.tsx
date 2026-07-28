@@ -6,7 +6,7 @@ import { SubmitButton } from "@/components/admin/FormButtons";
 import { RESOURCES } from "@/lib/admin/resources";
 import { requireUser } from "@/lib/auth";
 import { logoSrc } from "@/lib/media";
-import { readCollection } from "@/lib/store";
+import { readCollection, storageLabel } from "@/lib/store";
 
 import { logout } from "../actions";
 
@@ -29,6 +29,12 @@ export default async function EspaceLayout({
   const countOf = (key: string) =>
     counts.find((entry) => entry.key === key)?.total ?? 0;
 
+  const [messages, stockage] = await Promise.all([
+    readCollection("messages"),
+    storageLabel(),
+  ]);
+  const nonLus = messages.filter((message) => !message.read).length;
+
   const groups: NavGroup[] = [
     {
       title: "Vue d’ensemble",
@@ -45,6 +51,12 @@ export default async function EspaceLayout({
     {
       title: "Le site",
       items: [
+        {
+          href: "/admin/messages",
+          label: "Messages",
+          hint: nonLus > 0 ? `${nonLus} nouveau${nonLus > 1 ? "x" : ""}` : undefined,
+        },
+        { href: "/admin/journal", label: "Journal d’activité" },
         { href: "/admin/medias", label: "Photothèque" },
         { href: "/admin/reglages", label: "Réglages du site" },
         ...(user.role === "admin"
@@ -77,6 +89,10 @@ export default async function EspaceLayout({
         </div>
 
         <AdminNav groups={groups} user={{ name: user.name, role: user.role }} />
+
+        <p className="px-5 pb-4 text-[0.7rem] leading-relaxed text-ivory/30 lg:px-8">
+          Contenus enregistrés — {stockage}
+        </p>
 
         <div className="flex flex-wrap items-center gap-4 px-5 pb-8 lg:px-8">
           <Link

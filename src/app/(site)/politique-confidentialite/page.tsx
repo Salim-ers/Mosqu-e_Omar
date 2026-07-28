@@ -4,6 +4,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { site } from "@/config/site";
+import { getSettings } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Politique de confidentialité",
@@ -12,7 +13,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default function PolitiqueConfidentialitePage() {
+export const revalidate = 3600;
+
+export default async function PolitiqueConfidentialitePage() {
+  const settings = await getSettings();
+
   return (
     <>
       <PageHeader
@@ -31,16 +36,30 @@ export default function PolitiqueConfidentialitePage() {
             <div className="wp-prose max-w-3xl">
               <h2>Une approche sobre des données</h2>
               <p>
-                Ce site est un site d’information : il ne comporte ni compte
-                utilisateur, ni formulaire de collecte de données, ni outil de
-                mesure d’audience publicitaire, et ne dépose pas de cookies de
-                suivi de sa propre initiative.
+                Ce site est un site d’information : il ne comporte aucun compte
+                visiteur, aucun outil de mesure d’audience publicitaire, et ne
+                dépose pas de cookies de suivi. Le seul cookie utilisé est
+                celui de la session des bénévoles de l’association qui mettent
+                le site à jour ; il n’est déposé qu’après leur connexion à
+                l’espace d’administration.
               </p>
 
-              <h2>Données que vous nous transmettez</h2>
+              <h2>Le formulaire de contact</h2>
+              <p>
+                Le formulaire de la page Contact recueille votre nom, votre
+                adresse email, éventuellement votre téléphone, et votre
+                message. Ces informations servent uniquement à vous répondre.
+                Elles sont enregistrées sur le site lui-même, consultables par
+                les seuls bénévoles habilités de l’association, et supprimées
+                une fois votre demande traitée. Elles ne sont ni cédées, ni
+                vendues, ni utilisées pour vous adresser des envois non
+                sollicités.
+              </p>
+
+              <h2>Données que vous nous transmettez autrement</h2>
               <p>
                 Lorsque vous contactez la mosquée par téléphone (
-                {site.contact.phone}) ou par email ({site.contact.email}), les
+                {settings.phone}) ou par email ({settings.email}), les
                 informations transmises ne sont utilisées que pour répondre à
                 votre demande (renseignements, inscriptions, reçus fiscaux).
                 Elles ne sont ni cédées, ni vendues.
@@ -83,7 +102,7 @@ export default function PolitiqueConfidentialitePage() {
                 (RGPD) et à la loi Informatique et Libertés, vous disposez d’un
                 droit d’accès, de rectification et d’effacement des données
                 vous concernant. Pour l’exercer, écrivez à :{" "}
-                {site.contact.email}. Vous pouvez également saisir la CNIL
+                {settings.email}. Vous pouvez également saisir la CNIL
                 (cnil.fr) si vous estimez que vos droits ne sont pas respectés.
               </p>
 

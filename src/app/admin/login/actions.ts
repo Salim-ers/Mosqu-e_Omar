@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 
+import { logActivity } from "@/lib/admin/journal";
 import {
   authenticate,
   createUser,
@@ -59,6 +60,13 @@ export async function login(formData: FormData): Promise<void> {
 
   attempts.delete(email);
   await startSession(user.id);
+  await logActivity({
+    userId: user.id,
+    userName: user.name,
+    action: "connexion",
+    scope: "Espace bénévoles",
+    label: "à l’espace bénévoles",
+  });
   redirect("/admin");
 }
 
@@ -86,5 +94,12 @@ export async function createFirstAccount(formData: FormData): Promise<void> {
 
   const user = await createUser({ email, name, password, role: "admin" });
   await startSession(user.id);
+  await logActivity({
+    userId: user.id,
+    userName: user.name,
+    action: "compte",
+    scope: "Comptes bénévoles",
+    label: "création du compte responsable",
+  });
   redirect("/admin");
 }

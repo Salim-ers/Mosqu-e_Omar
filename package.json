@@ -7,13 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "media:download": "node scripts/download-media.mjs"
+    "media:download": "node scripts/download-media.mjs",
+    "db:verifier": "node scripts/verifier-base.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "gsap": "^3.15.0",
     "lucide-react": "^1.27.0",
     "next": "16.2.12",
+    "pg": "^8.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sanitize-html": "^2.17.6"
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.16.1",

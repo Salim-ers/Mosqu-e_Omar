@@ -5,11 +5,13 @@ import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { PHOTOS, src, type Photo } from "@/lib/media";
+import { getAlbums, HERITAGE_PHOTOS, type PublicImage } from "@/lib/content";
 
 /**
- * 06 — GALERIE (aperçu). Composition éditoriale asymétrique de photographies
- * réelles ; la visite complète (avec lightbox) se poursuit sur /galerie.
+ * 06 — GALERIE (aperçu). Composition éditoriale asymétrique en quatre
+ * photographies : les plus récentes publiées par les bénévoles passent devant,
+ * complétées au besoin par les photographies d'origine du site. La visite
+ * complète (avec lightbox) se poursuit sur /galerie.
  */
 
 function Tile({
@@ -17,7 +19,7 @@ function Tile({
   className,
   sizes,
 }: {
-  photo: Photo;
+  photo: PublicImage;
   className?: string;
   sizes: string;
 }) {
@@ -28,7 +30,7 @@ function Tile({
       className={`group relative block overflow-hidden bg-sand ${className ?? ""}`}
     >
       <Image
-        src={src(photo)}
+        src={photo.url}
         alt={photo.alt}
         fill
         sizes={sizes}
@@ -42,7 +44,16 @@ function Tile({
   );
 }
 
-export function GalleryPreviewSection({ number = "06" }: { number?: string }) {
+export async function GalleryPreviewSection({
+  number = "06",
+}: {
+  number?: string;
+}) {
+  const albums = await getAlbums();
+  const recentes = albums.flatMap((album) => album.photos);
+  // Quatre visuels : d'abord les albums, puis le fonds d'origine en appoint.
+  const [a, b, c, d] = [...recentes, ...HERITAGE_PHOTOS].slice(0, 4);
+
   return (
     <section
       aria-labelledby="galerie-titre"
@@ -71,28 +82,28 @@ export function GalleryPreviewSection({ number = "06" }: { number?: string }) {
         <div className="mt-14 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-12 lg:grid-rows-[18rem_18rem]">
           <Reveal className="col-span-2 lg:col-span-6 lg:row-span-2">
             <Tile
-              photo={PHOTOS.facade}
+              photo={a}
               className="aspect-[4/3] h-full w-full lg:aspect-auto"
               sizes="(min-width: 1024px) 46vw, 92vw"
             />
           </Reveal>
           <Reveal delay={0.08} className="lg:col-span-3">
             <Tile
-              photo={PHOTOS.galerie4}
+              photo={b}
               className="aspect-square h-full w-full lg:aspect-auto"
               sizes="(min-width: 1024px) 22vw, 46vw"
             />
           </Reveal>
           <Reveal delay={0.12} className="lg:col-span-3 lg:row-span-2">
             <Tile
-              photo={PHOTOS.galerie2}
+              photo={c}
               className="aspect-square h-full w-full lg:aspect-auto"
               sizes="(min-width: 1024px) 22vw, 46vw"
             />
           </Reveal>
           <Reveal delay={0.16} className="lg:col-span-3">
             <Tile
-              photo={PHOTOS.galerie6}
+              photo={d}
               className="aspect-square h-full w-full lg:aspect-auto"
               sizes="(min-width: 1024px) 22vw, 46vw"
             />

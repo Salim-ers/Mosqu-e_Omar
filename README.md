@@ -37,7 +37,8 @@ site fonctionne sans `.env`. Variables disponibles :
 | `NEXT_PUBLIC_DONATION_URL` / `NEXT_PUBLIC_MONTHLY_DONATION_URL` | Pages de don existantes |
 | `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL` | Carte (chargée après clic uniquement) |
 | `NEXT_PUBLIC_USE_LOCAL_MEDIA` | `true` pour servir les photos depuis `/public/media` |
-| `DATA_DIR` | Dossier des contenus édités depuis `/admin` (défaut : `.data`) |
+| `DATABASE_URL` | Base Postgres (Supabase, Neon…). **Dès qu’elle est renseignée, tout est stocké en base** |
+| `DATA_DIR` | Dossier des contenus si aucune base n’est configurée (défaut : `.data`) |
 | `AUTH_SECRET` | Secret de signature des sessions (généré automatiquement sinon) |
 
 ## 3. Développement
@@ -91,6 +92,8 @@ rôles :
 | **Photos & albums** | photos d’événements regroupées par album | `/galerie` |
 | **Inscriptions** | statuts ouvertes / prochainement / closes | `/inscriptions` |
 | **Réglages du site** | Jumu‘a, bandeau d’information, coordonnées, liens de don, réseaux | tout le site |
+| **Messages** | les messages reçus via le formulaire de contact | boîte de réception de l’admin |
+| **Journal d’activité** | qui a modifié quoi, et quand | tableau de bord + `/admin/journal` |
 
 Chaque contenu a une case **« Visible sur le site »** (brouillon si décochée).
 Les contenus datés (annonces, janaza, événements) **disparaissent tout seuls** à
@@ -127,28 +130,50 @@ l’image** — c’est ce que lisent les personnes non voyantes.
 
 ### Où sont stockés les contenus
 
-Dans un dossier hors du dépôt Git — `.data/` par défaut, ou le chemin indiqué
-par `DATA_DIR` :
+Deux modes, choisis automatiquement selon l’environnement :
 
-```
-.data/
-├── annonces.json  actualites.json  janaza.json  evenements.json
-├── activites.json services.json    albums.json  inscriptions.json
-├── medias.json    utilisateurs.json  reglages.json
-├── .auth-secret          (généré au premier démarrage)
-└── uploads/              (photos envoyées depuis l’admin)
-```
+| | Quand | Où |
+| --- | --- | --- |
+| **Base de données** | dès que `DATABASE_URL` est renseignée | tables `site_records`, `site_documents`, `site_files` |
+| **Fichiers** | sinon | dossier `.data/` (ou `DATA_DIR`) |
 
-Écriture atomique (fichier temporaire + renommage) et file d’attente par
+Le mode actif est affiché en bas de la colonne de gauche dans `/admin`
+(« Contenus enregistrés — base de données » / « — fichiers »).
+
+**En base**, les tables sont créées toutes seules au premier démarrage : aucun
+SQL à exécuter à la main. Les photos sont stockées dans la table `site_files`
+plutôt que dans un service séparé — elles sont déjà réduites par le navigateur
+avant l’envoi, et cela fait une dépendance de moins à administrer.
+
+**En fichiers**, un JSON par collection, les photos dans `.data/uploads/`.
+Écriture atomique (fichier temporaire puis renommage) et file d’attente par
 collection : deux bénévoles qui enregistrent en même temps ne peuvent pas se
-faire perdre leurs modifications.
+faire perdre leurs modifications. Ce mode suppose un **disque persistant** —
+parfait en développement, sur un VPS ou dans un conteneur avec volume ; à
+proscrire sur un hébergement serverless.
 
-> ⚠️ **Hébergement** — ce stockage suppose un **disque persistant** : VPS,
-> hébergeur Node, ou conteneur avec un volume monté sur `DATA_DIR`. Sur un
-> hébergement « serverless » à disque éphémère (Vercel sans volume), les
-> contenus saisis seraient perdus au redéploiement. Toute l’application ne
-> parle qu’à l’API de `src/lib/store/` : brancher un driver base de données
-> (Postgres, SQLite…) ne demande que de réécrire ce module.
+Toute l’application ne parle qu’à l’API de `src/lib/store/` : changer
+d’hébergement ne demande aucune modification ailleurs dans le code.
+
+### Suivre ce qui se passe
+
+Trois choses remontent d’elles-mêmes dans l’espace bénévoles :
+
+- **Messages** — le formulaire de contact du site dépose les messages ici,
+  pas dans une boîte mail personnelle. Le nombre de messages en attente
+  s’affiche dans la colonne de gauche, et un rappel reste sur le tableau de
+  bord tant qu’ils ne sont pas traités.
+- **Journal d’activité** — qui a créé, modifié, publié, retiré ou supprimé
+  quoi, et quand. Les huit dernières actions sont sur le tableau de bord, les
+  150 dernières sur `/admin/journal`. Répond à la question qui se pose
+  toujours dans une équipe (« qui a modifié ça ? ») et permet de repérer tout
+  de suite une publication faite par erreur.
+- **Brouillons** — chaque rubrique indique combien de contenus ne sont pas
+  encore en ligne.
+
+Le journal est borné : au-delà de 150 lignes, les plus anciennes s’effacent.
+Il ne grossit jamais indéfiniment.
+
 
 ### Sécurité
 
@@ -161,6 +186,78 @@ faire perdre leurs modifications.
 - `/admin` est en `noindex` et n’est jamais rendu statiquement ;
 - toutes les écritures passent par des actions serveur qui **revérifient la
   session** ; les envois d’images vérifient type et poids côté serveur.
+
+---
+
+---
+
+## 🗄️ Supabase (recommandé avec Vercel)
+
+Sur Vercel, le disque est éphémère : sans base de données, les contenus saisis
+par les bénévoles seraient perdus au redéploiement. Supabase fournit le
+Postgres qu’il faut, gratuitement pour un site d’association.
+
+### 1. Créer le projet
+
+1. Sur [supabase.com](https://supabase.com) → **New project**.
+2. Nom : `mosquee-omar`. Région : **Europe (Frankfurt ou Paris)** — au plus
+   près des visiteurs.
+3. Notez le mot de passe de la base : il n’est affiché qu’une fois.
+
+Aucune table à créer : le site s’en charge au premier démarrage.
+
+### 2. Récupérer l’adresse de connexion
+
+Dans le projet Supabase → **Connect** (en haut) → onglet **Connection string**
+→ **Transaction pooler** (port `6543`).
+
+> ⚠️ Prenez bien le **pooler**, pas la connexion directe : Vercel ouvre une
+> connexion par requête, et une base Postgres n’en accepte qu’un nombre
+> limité simultanément. Le pooler est fait pour ça.
+
+Remplacez `[YOUR-PASSWORD]` par le mot de passe noté à l’étape 1 :
+
+```
+postgresql://postgres.abcdefgh:MOT-DE-PASSE@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
+```
+
+### 3. Vérifier avant de déployer
+
+```bash
+npm run db:verifier -- "postgresql://…"
+```
+
+Le script se connecte, crée les tables, écrit puis relit un contenu et une
+photo, et nettoie derrière lui. Il dit en clair ce qui ne va pas le cas
+échéant.
+
+### 4. Renseigner les variables sur Vercel
+
+**Settings → Environment Variables** :
+
+| Variable | Valeur |
+| --- | --- |
+| `DATABASE_URL` | l’adresse du pooler, mot de passe compris |
+| `AUTH_SECRET` | une longue chaîne aléatoire (`openssl rand -hex 32`) |
+| `NEXT_PUBLIC_SITE_URL` | `https://mosqueeomarcreil.fr` |
+
+Puis redéployez.
+
+### 5. Créer le compte responsable
+
+Ouvrez **`/admin`** : aucun compte n’existant encore, le formulaire propose de
+**créer le compte responsable**. Renseignez nom, email et mot de passe — ce
+compte crée ensuite ceux des autres bénévoles.
+
+> Ce compte se crée depuis le site, jamais depuis l’interface Supabase : le
+> mot de passe est haché par scrypt avant d’atteindre la base et n’existe en
+> clair nulle part. Il n’y a rien à saisir côté Supabase.
+
+### Sauvegardes
+
+Supabase sauvegarde quotidiennement (**Database → Backups**). Pour une copie
+locale, `pg_dump` sur l’adresse de connexion directe suffit.
+
 
 ---
 
@@ -240,11 +337,11 @@ repli**, affiché tant que la rubrique correspondante est vide dans l’admin :
 
 Reste côté code :
 
-- **Photos livrées avec le site** : `public/media` (dont la photographie de
-  façade affichée en page d’accueil) ;
-- **Photos du WordPress** : `npm run media:download` rapatrie les
-  photographies et le logo (tente d’abord les originaux pleine résolution,
-  sinon les variantes vérifiées) ;
+- **Photos livrées avec le site** : `public/media` — la photographie de
+  façade, le zellige de fond et les photographies rapatriées du WordPress.
+  Elles sont servies par le site lui-même : plus aucune dépendance
+  d’affichage au WordPress. Pour rapatrier une photo mise à jour côté
+  WordPress, relancez `npm run media:download` ;
 - **Textes des pages légales** : `src/app/(site)/mentions-legales` et
   `src/app/(site)/politique-confidentialite`.
 

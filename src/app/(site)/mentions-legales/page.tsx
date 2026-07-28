@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { Reveal } from "@/components/motion/Reveal";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { fullAddress, site } from "@/config/site";
+import { site } from "@/config/site";
+import { getSettings } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Mentions légales",
@@ -17,7 +18,12 @@ export const metadata: Metadata = {
  * (président de l'association) et les coordonnées exactes de l'hébergeur
  * avant la mise en ligne.
  */
-export default function MentionsLegalesPage() {
+export const revalidate = 3600;
+
+export default async function MentionsLegalesPage() {
+  const settings = await getSettings();
+  const adresse = `${settings.address.street}, ${settings.address.postalCode} ${settings.address.city}`;
+
   return (
     <>
       <PageHeader eyebrow="Informations légales" title="Mentions légales" />
@@ -33,10 +39,10 @@ export default function MentionsLegalesPage() {
                 1<sup>er</sup> juillet 1901.
               </p>
               <ul>
-                <li>Siège : {fullAddress()}</li>
+                <li>Siège : {adresse}</li>
                 <li>SIRET : {site.association.siret}</li>
-                <li>Téléphone : {site.contact.phone}</li>
-                <li>Email : {site.contact.email}</li>
+                <li>Téléphone : {settings.phone}</li>
+                <li>Email : {settings.email}</li>
               </ul>
               <p>
                 Directeur de la publication : le président de l’association{" "}
@@ -79,7 +85,7 @@ export default function MentionsLegalesPage() {
               <h2>Nous signaler un problème</h2>
               <p>
                 Pour toute question relative au site ou pour signaler une
-                erreur : {site.contact.email}.
+                erreur : {settings.email}.
               </p>
             </div>
           </Reveal>

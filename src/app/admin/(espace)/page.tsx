@@ -7,10 +7,11 @@ import {
   Notice,
   Panel,
 } from "@/components/admin/ui";
+import { ACTION_LABELS, readJournal } from "@/lib/admin/journal";
 import { RESOURCES } from "@/lib/admin/resources";
 import { requireUser } from "@/lib/auth";
 import { getEvents, getJanaza } from "@/lib/content";
-import { formatDate } from "@/lib/dates";
+import { formatDate, formatJanazaDate } from "@/lib/dates";
 import { readCollection } from "@/lib/store";
 
 import { importExistingContent } from "../actions";
@@ -38,7 +39,13 @@ export default async function AdminDashboard({
     }),
   );
 
-  const [janaza, events] = await Promise.all([getJanaza(), getEvents()]);
+  const [janaza, events, messages, journal] = await Promise.all([
+    getJanaza(),
+    getEvents(),
+    readCollection("messages"),
+    readJournal(8),
+  ]);
+  const nonLus = messages.filter((message) => !message.read).length;
   const isEmpty = stats.every((stat) => stat.total === 0);
 
   return (
@@ -58,6 +65,19 @@ export default async function AdminDashboard({
           </>
         }
       />
+
+      {nonLus > 0 ? (
+        <Notice tone="info">
+          <strong>
+            {nonLus} message{nonLus > 1 ? "s" : ""}
+          </strong>{" "}
+          en attente de réponse —{" "}
+          <Link href="/admin/messages" className="link-editorial">
+            ouvrir la boîte de réception
+          </Link>
+          .
+        </Notice>
+      ) : null}
 
       {erreur === "reserve" ? (
         <Notice tone="error">
@@ -107,6 +127,40 @@ export default async function AdminDashboard({
           ))}
         </ul>
       </section>
+
+      <Panel
+        title="Dernières modifications"
+        description="Qui a fait quoi sur le site, et quand."
+      >
+        {journal.length === 0 ? (
+          <p className="text-[0.9rem] text-charcoal/55">
+            Aucune modification pour le moment.
+          </p>
+        ) : (
+          <>
+            <ul className="space-y-2.5">
+              {journal.map((ligne) => (
+                <li key={ligne.id} className="text-[0.9rem] text-charcoal/75">
+                  <span className="font-medium text-charcoal">
+                    {ligne.userName}
+                  </span>{" "}
+                  {ACTION_LABELS[ligne.action]}{" "}
+                  <span className="text-charcoal">{ligne.label}</span>
+                  <span className="text-charcoal/40">
+                    {" "}
+                    · {formatJanazaDate(ligne.at)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-5">
+              <Link href="/admin/journal" className="link-editorial text-[0.8rem] tracking-[0.14em] text-charcoal/60 uppercase">
+                Tout le journal →
+              </Link>
+            </p>
+          </>
+        )}
+      </Panel>
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Panel title="Prochaines janaza">

@@ -169,6 +169,48 @@ export type Reglages = {
   updatedAt: string;
 };
 
+/* ---------------------------------------------------------- messages --- */
+
+/** Message reçu via le formulaire de contact du site. */
+export type MessageRecord = {
+  id: string;
+  createdAt: string;
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  body: string;
+  /** Passe à vrai dès qu'un bénévole a ouvert le message. */
+  read: boolean;
+};
+
+/* ----------------------------------------------------------- journal --- */
+
+export type JournalAction =
+  | "creation"
+  | "modification"
+  | "suppression"
+  | "publication"
+  | "depublication"
+  | "reglages"
+  | "compte"
+  | "import"
+  | "connexion"
+  | "message";
+
+/** Une ligne du journal : qui a fait quoi, sur quoi, et quand. */
+export type JournalRecord = {
+  id: string;
+  at: string;
+  userId: string;
+  userName: string;
+  action: JournalAction;
+  /** Rubrique concernée, en toutes lettres. */
+  scope: string;
+  /** Élément concerné, en toutes lettres. */
+  label: string;
+};
+
 /* --------------------------------------------------------- comptes --- */
 
 export type UserRole = "admin" | "editeur";
@@ -197,6 +239,8 @@ export type Collections = {
   albums: AlbumRecord;
   inscriptions: InscriptionRecord;
   medias: MediaRecord;
+  messages: MessageRecord;
+  journal: JournalRecord;
   utilisateurs: UserRecord;
 };
 

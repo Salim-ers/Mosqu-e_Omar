@@ -1,14 +1,13 @@
 import "server-only";
 
 import { randomBytes } from "node:crypto";
-import { unlink, writeFile } from "node:fs/promises";
-import path from "node:path";
 
 import {
+  deleteFile,
   deleteRecord,
-  ensureUploadsDir,
   newId,
   readCollection,
+  saveFile,
   upsertRecord,
 } from "@/lib/store";
 import type { MediaRecord } from "@/lib/store/types";
@@ -17,10 +16,10 @@ import type { MediaRecord } from "@/lib/store/types";
  * ============================================================================
  * MÉDIATHÈQUE
  * ----------------------------------------------------------------------------
- * Les photos envoyées depuis l'admin sont écrites dans `.data/uploads` (hors
- * du dépôt) et servies par la route `/uploads/[...]`. Le nom de fichier est
- * régénéré aléatoirement : le nom d'origine, qui peut contenir n'importe quoi,
- * n'atteint jamais le système de fichiers.
+ * Les photos envoyées depuis l'admin sont confiées au stockage actif (dossier
+ * de données ou base) et servies par la route `/uploads/[...]`. Le nom de
+ * fichier est régénéré aléatoirement : le nom d'origine, qui peut contenir
+ * n'importe quoi, n'atteint jamais le système de fichiers.
  * ============================================================================
  */
 
@@ -57,10 +56,9 @@ export async function saveUpload(
     };
   }
 
-  const dir = await ensureUploadsDir();
   const name = `${Date.now().toString(36)}-${randomBytes(6).toString("hex")}.${extension}`;
   const bytes = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(dir, name), bytes);
+  await saveFile(name, file.type, bytes);
 
   const media: MediaRecord = {
     id: newId(),
@@ -87,14 +85,12 @@ export async function removeMedia(id: string): Promise<void> {
   if (!media) return;
   await deleteRecord("medias", id);
 
-  const name = path.basename(media.url);
-  // Garde-fou : on ne supprime que dans le dossier d'uploads.
-  if (media.url !== `/uploads/${name}`) return;
-  try {
-    await unlink(path.join(await ensureUploadsDir(), name));
-  } catch {
-    /* fichier déjà absent — rien à faire */
-  }
+  // Garde-fou : on ne supprime que ce qui vient bien de la médiathèque.
+  const name = media.url.startsWith("/uploads/")
+    ? media.url.slice("/uploads/".length)
+    : null;
+  if (!name || name.includes("/")) return;
+  await deleteFile(name);
 }
 
 function positiveInt(value: number | undefined, fallback: number): number {

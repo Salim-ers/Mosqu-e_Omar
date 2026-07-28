@@ -23,7 +23,13 @@
  */
 
 const WP = process.env.WORDPRESS_BASE_URL ?? "https://mosqueeomarcreil.fr";
-const USE_LOCAL = process.env.NEXT_PUBLIC_USE_LOCAL_MEDIA === "true";
+/**
+ * Les photographies ont été rapatriées dans public/media : elles sont servies
+ * par le site lui-même. Mettre NEXT_PUBLIC_USE_LOCAL_MEDIA=false pour repasser
+ * aux fichiers du WordPress (utile si une photo y est mise à jour et qu'on
+ * n'a pas encore relancé npm run media:download).
+ */
+const USE_LOCAL = process.env.NEXT_PUBLIC_USE_LOCAL_MEDIA !== "false";
 
 export type Photo = {
   key: string;
