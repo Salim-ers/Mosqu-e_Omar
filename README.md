@@ -4,8 +4,9 @@ Nouveau site de la mosquée Omar Ibn al Khattab (Creil, Oise), portée par
 l’association **ACCMPR** depuis 2013.
 
 Stack : **Next.js (App Router) · TypeScript strict · Tailwind CSS v4 · GSAP ·
-next/image · next/font** — WordPress conservé en **CMS headless**, horaires de
-prière via **MAWAQIT** (source officielle, jamais recalculée).
+next/image · next/font** — **espace bénévoles intégré** (`/admin`) pour la mise
+à jour des contenus, WordPress conservé en **CMS headless** de transition,
+horaires de prière via **MAWAQIT** (source officielle, jamais recalculée).
 
 ---
 
@@ -36,6 +37,8 @@ site fonctionne sans `.env`. Variables disponibles :
 | `NEXT_PUBLIC_DONATION_URL` / `NEXT_PUBLIC_MONTHLY_DONATION_URL` | Pages de don existantes |
 | `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL` | Carte (chargée après clic uniquement) |
 | `NEXT_PUBLIC_USE_LOCAL_MEDIA` | `true` pour servir les photos depuis `/public/media` |
+| `DATA_DIR` | Dossier des contenus édités depuis `/admin` (défaut : `.data`) |
+| `AUTH_SECRET` | Secret de signature des sessions (généré automatiquement sinon) |
 
 ## 3. Développement
 
@@ -56,10 +59,116 @@ Le build **réussit même si le WordPress est injoignable** : chaque requête CM
 a un timeout de 8 s et un contenu de secours (annonces locales, message
 d’indisponibilité élégant sur `/actualites`).
 
+---
+
+## 🔑 Espace bénévoles (`/admin`)
+
+Les bénévoles de l’association mettent le site à jour eux-mêmes, sans toucher
+au code : **https://mosqueeomarcreil.fr/admin**.
+
+### Premier accès
+
+Au tout premier chargement de `/admin`, aucune page de connexion classique ne
+s’affiche : le formulaire propose de **créer le compte responsable**. Ce compte
+crée ensuite ceux des autres bénévoles (rubrique « Comptes bénévoles »). Deux
+rôles :
+
+| Rôle | Peut faire |
+| --- | --- |
+| **Responsable** (`admin`) | tout, y compris les réglages du site et la gestion des comptes |
+| **Éditeur** (`editeur`) | tous les contenus (annonces, actualités, janaza, événements, photos…) |
+
+### Ce qui est modifiable
+
+| Rubrique | Contenu | Où ça s’affiche |
+| --- | --- | --- |
+| **Annonces** | messages courts datés | accueil + `/actualites` |
+| **Actualités** | articles complets (photo, texte mis en forme) | `/actualites` et `/actualites/<adresse>` |
+| **Janaza** | prières funéraires | bloc d’accueil + `/janaza` |
+| **Événements** | Aïd, iftars, conférences, collectes | `/evenements` |
+| **Activités** | cours de Coran, arabe, soutien scolaire… | accueil + `/activites` |
+| **Services** | espace femmes, ablutions, accès PMR… | accueil |
+| **Photos & albums** | photos d’événements regroupées par album | `/galerie` |
+| **Inscriptions** | statuts ouvertes / prochainement / closes | `/inscriptions` |
+| **Réglages du site** | Jumu‘a, bandeau d’information, coordonnées, liens de don, réseaux | tout le site |
+
+Chaque contenu a une case **« Visible sur le site »** (brouillon si décochée).
+Les contenus datés (annonces, janaza, événements) **disparaissent tout seuls** à
+échéance : aucune information périmée ne peut rester affichée.
+
+### Reprendre les contenus existants
+
+Les activités, services, inscriptions et annonces livrés avec le code
+s’importent en un clic depuis le tableau de bord (**« Importer les contenus
+existants »**). Tant qu’une rubrique n’a pas été reprise en main, le site
+continue d’afficher les contenus d’origine : rien ne peut disparaître par
+inadvertance.
+
+### Écriture des articles
+
+Les articles se rédigent en texte courant, avec quelques conventions :
+
+```
+## Titre de section          ### Sous-titre
+- élément de liste           > citation
+**gras**   *italique*   [texte du lien](https://…)
+```
+
+Le texte saisi est intégralement échappé avant d’être converti en HTML : aucune
+balise ne peut être injectée depuis l’admin.
+
+### Photos
+
+Les photos sont **réduites dans le navigateur** (1800 px de côté, JPEG) avant
+l’envoi : un bénévole peut choisir une photo prise au téléphone sans se
+préoccuper de son poids. Elles sont écrites dans le dossier de données et
+servies par la route `/uploads/<fichier>`. Pensez à remplir la **description de
+l’image** — c’est ce que lisent les personnes non voyantes.
+
+### Où sont stockés les contenus
+
+Dans un dossier hors du dépôt Git — `.data/` par défaut, ou le chemin indiqué
+par `DATA_DIR` :
+
+```
+.data/
+├── annonces.json  actualites.json  janaza.json  evenements.json
+├── activites.json services.json    albums.json  inscriptions.json
+├── medias.json    utilisateurs.json  reglages.json
+├── .auth-secret          (généré au premier démarrage)
+└── uploads/              (photos envoyées depuis l’admin)
+```
+
+Écriture atomique (fichier temporaire + renommage) et file d’attente par
+collection : deux bénévoles qui enregistrent en même temps ne peuvent pas se
+faire perdre leurs modifications.
+
+> ⚠️ **Hébergement** — ce stockage suppose un **disque persistant** : VPS,
+> hébergeur Node, ou conteneur avec un volume monté sur `DATA_DIR`. Sur un
+> hébergement « serverless » à disque éphémère (Vercel sans volume), les
+> contenus saisis seraient perdus au redéploiement. Toute l’application ne
+> parle qu’à l’API de `src/lib/store/` : brancher un driver base de données
+> (Postgres, SQLite…) ne demande que de réécrire ce module.
+
+### Sécurité
+
+- mots de passe dérivés par **scrypt** (sel aléatoire par compte), jamais
+  stockés ni journalisés en clair ;
+- session dans un **cookie signé HMAC-SHA256**, `httpOnly` + `sameSite=lax`,
+  7 jours ; secret dans `AUTH_SECRET`, sinon généré une fois dans `.data` ;
+- message d’échec identique que l’adresse existe ou non, et **temporisation
+  d’une minute** au-delà de six tentatives ;
+- `/admin` est en `noindex` et n’est jamais rendu statiquement ;
+- toutes les écritures passent par des actions serveur qui **revérifient la
+  session** ; les envois d’images vérifient type et poids côté serveur.
+
+---
+
 ## 5. WordPress headless (contenus)
 
-Le WordPress existant reste l’outil de publication de l’association ; le
-nouveau site le consomme via l’API REST (`/wp-json/wp/v2`), avec
+Le WordPress reste consommé en lecture le temps de la transition : les
+articles publiés depuis `/admin` sont prioritaires, ceux du WordPress
+complètent la liste. Le site le consomme via l’API REST (`/wp-json/wp/v2`), avec
 revalidation ISR d’une heure et HTML strictement assaini
 (`src/lib/sanitize.ts` — aucun script tiers injecté).
 
@@ -118,15 +227,26 @@ domaine principal.
 
 ## 10. Maintenance courante
 
-- **Annonces** : ajouter/dater dans `src/content/announcements.ts` (ou via la
-  catégorie WordPress `annonces`). Une annonce expirée disparaît seule.
-- **Inscriptions** : statuts `OPEN / COMING_SOON / CLOSED` dans
-  `src/config/registrations.ts`.
-- **Services** : liste dans `src/content/services.ts`.
-- **Activités** : contenus dans `src/content/activities.ts`.
-- **Photos** : `npm run media:download` rapatrie les photographies et le logo
-  (tente d’abord les originaux pleine résolution, sinon les variantes
-  vérifiées).
+**Tout le courant se fait depuis `/admin`** (voir la section « Espace
+bénévoles »). Les fichiers ci-dessous ne servent plus que de **contenu de
+repli**, affiché tant que la rubrique correspondante est vide dans l’admin :
+
+- `src/content/announcements.ts` — annonces d’origine ;
+- `src/content/activities.ts` — activités d’origine ;
+- `src/content/services.ts` — services d’origine ;
+- `src/config/registrations.ts` — statuts d’inscription d’origine ;
+- `src/config/site.ts` — coordonnées, adresse, liens de don, Jumu‘a : valeurs
+  de repli des « Réglages du site ».
+
+Reste côté code :
+
+- **Photos livrées avec le site** : `public/media` (dont la photographie de
+  façade affichée en page d’accueil) ;
+- **Photos du WordPress** : `npm run media:download` rapatrie les
+  photographies et le logo (tente d’abord les originaux pleine résolution,
+  sinon les variantes vérifiées) ;
+- **Textes des pages légales** : `src/app/(site)/mentions-legales` et
+  `src/app/(site)/politique-confidentialite`.
 
 ---
 
@@ -139,10 +259,10 @@ Ces points sont **volontairement centralisés** et marqués `TODO` dans le code 
    utilise « Lamartine » partout via `src/config/site.ts` : **confirmer
    l’orthographe officielle** et corriger à un seul endroit si besoin.
 2. **Jumu‘a** — 13 h 15 est l’horaire annoncé sur MAWAQIT ; vérifier s’il
-   varie selon la saison (`src/config/site.ts → mawaqit.jumua`).
-3. **Statuts d’inscription** — ajuster à chaque rentrée
-   (`src/config/registrations.ts`).
-4. **Services** — faire relire la liste (`src/content/services.ts`).
+   varie selon la saison (réglable dans `/admin` → Réglages du site).
+3. **Statuts d’inscription** — ajuster à chaque rentrée depuis
+   `/admin` → Inscriptions.
+4. **Services** — faire relire la liste depuis `/admin` → Services.
 5. **Textes alternatifs des photos** — les descriptions (`src/lib/media.ts`)
    sont factuelles mais générales ; les préciser après visionnage.
 6. **Réseaux sociaux** — aucun compte officiel n’a été trouvé lors de

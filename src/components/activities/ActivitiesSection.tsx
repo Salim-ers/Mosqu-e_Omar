@@ -4,15 +4,18 @@ import { Reveal } from "@/components/motion/Reveal";
 import { ArchImage } from "@/components/ui/ArchImage";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { ACTIVITIES } from "@/content/activities";
-import { PHOTOS } from "@/lib/media";
+import { getActivities } from "@/lib/content";
+import { PHOTOS, src } from "@/lib/media";
 
 /**
  * 05 — ACTIVITÉS. Traitement éditorial en sommaire : rangées typographiques
  * sous filets, index en Cormorant italique — délibérément à l'opposé des
- * petites cartes SaaS génériques.
+ * petites cartes SaaS génériques. Les activités se gèrent depuis /admin.
  */
-export function ActivitiesSection({ number = "05" }: { number?: string }) {
+export async function ActivitiesSection({ number = "05" }: { number?: string }) {
+  const activities = await getActivities();
+  if (activities.length === 0) return null;
+
   return (
     <section
       aria-labelledby="activites-titre"
@@ -38,7 +41,8 @@ export function ActivitiesSection({ number = "05" }: { number?: string }) {
               </Reveal>
               <Reveal delay={0.12} className="mt-12 hidden lg:block">
                 <ArchImage
-                  photo={PHOTOS.galerie5}
+                  src={src(PHOTOS.galerie5)}
+                  alt={PHOTOS.galerie5.alt}
                   className="aspect-[3/4] w-64"
                   sizes="18rem"
                 />
@@ -48,7 +52,7 @@ export function ActivitiesSection({ number = "05" }: { number?: string }) {
 
           <div className="lg:col-span-8">
             <ol className="border-t hairline">
-              {ACTIVITIES.map((activity, index) => (
+              {activities.map((activity, index) => (
                 <li key={activity.slug} className="border-b hairline">
                   <Reveal delay={index * 0.04}>
                     <Link
@@ -57,7 +61,7 @@ export function ActivitiesSection({ number = "05" }: { number?: string }) {
                     >
                       <span
                         aria-hidden
-                        className="font-display text-xl italic text-beige transition-colors duration-300 group-hover:text-amber sm:col-span-1"
+                        className="font-display text-xl italic text-charcoal/30 transition-colors duration-300 group-hover:text-charcoal sm:col-span-1"
                       >
                         {String(index + 1).padStart(2, "0")}
                       </span>

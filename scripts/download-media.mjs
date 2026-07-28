@@ -20,7 +20,7 @@ const OUT = path.join(process.cwd(), "public", "media");
 
 /** [nom de fichier local, candidats par ordre de préférence] */
 const TARGETS = [
-  ["facade.jpeg", ["2026/02/IMG_1068.jpeg"]],
+  ["interieur.jpeg", ["2026/02/IMG_1068.jpeg"]],
   ["chantier.jpeg", ["2026/02/IMG_1069.jpeg", "2026/02/IMG_1069-1024x663.jpeg"]],
   ["galerie-1.jpeg", ["2026/03/IMG_2690.jpeg", "2026/03/IMG_2690-1024x768.jpeg"]],
   ["galerie-2.jpeg", ["2026/03/IMG_2689.jpeg", "2026/03/IMG_2689-768x1024.jpeg"]],

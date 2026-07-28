@@ -5,7 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { MobileMenu } from "@/components/layout/MobileMenu";
+import {
+  MobileMenu,
+  type MenuContact,
+} from "@/components/layout/MobileMenu";
 import { site } from "@/config/site";
 import { logoSrc } from "@/lib/media";
 import { cn } from "@/lib/utils";
@@ -15,7 +18,16 @@ const OVERLAY_ROUTES = new Set(["/", "/projet"]);
 
 const PRIMARY_LINKS = site.navigation.main.filter((l) => l.href !== "/");
 
-export function Header() {
+/** Bandeau d'information réglé depuis l'espace bénévoles. */
+export type HeaderBanner = { text: string; href: string } | null;
+
+export function Header({
+  banner = null,
+  contact,
+}: {
+  banner?: HeaderBanner;
+  contact: MenuContact;
+}) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -43,12 +55,34 @@ export function Header() {
     <>
       <header
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,color,box-shadow] duration-500 motion-reduce:transition-none",
+          // Le bandeau de navigation est toujours sombre : transparent sur les
+          // pages qui ouvrent sur une photographie, encre pleine partout ailleurs.
+          "on-dark fixed inset-x-0 top-0 z-50 text-ivory transition-[background-color,border-color,box-shadow] duration-500 motion-reduce:transition-none",
           overlay
-            ? "on-dark border-b border-transparent bg-transparent text-ivory"
-            : "border-b hairline bg-ivory/92 text-charcoal backdrop-blur-md",
+            ? "border-b border-transparent bg-transparent"
+            : "border-b border-ivory/10 bg-ink/95 shadow-[0_1px_0_0_rgba(248,245,239,0.06)] backdrop-blur-md",
         )}
       >
+        {banner ? (
+          <div className="border-b border-ivory/10 bg-ink">
+            <div className="mx-auto flex w-full max-w-[100rem] items-center justify-center gap-3 px-5 py-2.5 text-center sm:px-8 lg:px-12">
+              <span aria-hidden className="h-1.5 w-1.5 shrink-0 rotate-45 bg-amber" />
+              {banner.href ? (
+                <Link
+                  href={banner.href}
+                  className="link-editorial text-[0.72rem] font-semibold tracking-[0.14em] text-ivory/85 uppercase hover:text-ivory"
+                >
+                  {banner.text}
+                </Link>
+              ) : (
+                <span className="text-[0.72rem] font-semibold tracking-[0.14em] text-ivory/85 uppercase">
+                  {banner.text}
+                </span>
+              )}
+            </div>
+          </div>
+        ) : null}
+
         <div className="mx-auto flex h-[4.5rem] w-full max-w-[100rem] items-center justify-between gap-6 px-5 sm:px-8 lg:h-20 lg:px-12">
           <Link
             href="/"
@@ -60,21 +94,13 @@ export function Header() {
               alt=""
               width={44}
               height={44}
-              className={cn(
-                "h-10 w-10 shrink-0 rounded-full object-cover lg:h-11 lg:w-11",
-                overlay && "ring-1 ring-ivory/30",
-              )}
+              className="h-10 w-10 shrink-0 rounded-full object-cover ring-1 ring-ivory/25 lg:h-11 lg:w-11"
             />
             <span className="hidden min-w-0 flex-col leading-tight sm:flex">
               <span className="font-display text-[1.15rem] font-medium tracking-wide">
                 Mosquée Omar Ibn al Khattab
               </span>
-              <span
-                className={cn(
-                  "text-[0.62rem] font-semibold uppercase tracking-[0.32em]",
-                  overlay ? "text-ivory/60" : "text-taupe",
-                )}
-              >
+              <span className="text-[0.62rem] font-semibold tracking-[0.32em] text-ivory/55 uppercase">
                 Creil — Oise
               </span>
             </span>
@@ -87,13 +113,10 @@ export function Header() {
                   <Link
                     href={link.href}
                     className={cn(
-                      "link-editorial text-[0.72rem] font-semibold uppercase tracking-[0.18em]",
-                      pathname === link.href &&
-                        (overlay ? "text-ivory" : "text-charcoal"),
-                      pathname !== link.href &&
-                        (overlay
-                          ? "text-ivory/75 hover:text-ivory"
-                          : "text-charcoal/65 hover:text-charcoal"),
+                      "link-editorial text-[0.72rem] font-semibold tracking-[0.18em] uppercase",
+                      pathname === link.href
+                        ? "text-ivory"
+                        : "text-ivory/70 hover:text-ivory",
                     )}
                     aria-current={pathname === link.href ? "page" : undefined}
                   >
@@ -108,10 +131,10 @@ export function Header() {
             <Link
               href="/dons"
               className={cn(
-                "hidden rounded-[2px] border px-5 py-2.5 text-[0.68rem] font-semibold uppercase tracking-[0.2em] transition-colors duration-300 sm:inline-flex motion-reduce:transition-none",
+                "hidden rounded-[2px] border px-5 py-2.5 text-[0.68rem] font-semibold tracking-[0.2em] uppercase transition-colors duration-300 motion-reduce:transition-none sm:inline-flex",
                 overlay
-                  ? "border-ivory/40 text-ivory hover:bg-ivory hover:text-charcoal"
-                  : "border-charcoal bg-charcoal text-ivory hover:bg-ink",
+                  ? "border-ivory/40 text-ivory hover:bg-ivory hover:text-ink"
+                  : "border-ivory bg-ivory text-ink hover:bg-transparent hover:text-ivory",
               )}
             >
               Faire un don
@@ -122,10 +145,7 @@ export function Header() {
               aria-haspopup="dialog"
               aria-expanded={menuOpen}
               aria-controls="menu-mobile"
-              className={cn(
-                "inline-flex h-11 w-11 flex-col items-center justify-center gap-[7px] rounded-[2px] xl:hidden",
-                overlay ? "text-ivory" : "text-charcoal",
-              )}
+              className="inline-flex h-11 w-11 flex-col items-center justify-center gap-[7px] rounded-[2px] text-ivory xl:hidden"
             >
               <span className="sr-only">Ouvrir le menu</span>
               <span aria-hidden className="h-px w-6 bg-current" />
@@ -135,7 +155,7 @@ export function Header() {
         </div>
       </header>
 
-      <MobileMenu open={menuOpen} onClose={closeMenu} />
+      <MobileMenu open={menuOpen} onClose={closeMenu} contact={contact} />
     </>
   );
 }

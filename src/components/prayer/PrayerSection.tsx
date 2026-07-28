@@ -4,12 +4,15 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { site } from "@/config/site";
+import { getSettings } from "@/lib/content";
 
 /**
  * 02 — HORAIRES DE PRIÈRE. Placée immédiatement sous le hero : c'est
  * l'information la plus recherchée. Jumu‘a mise en évidence.
  */
-export function PrayerSection({ number = "02" }: { number?: string }) {
+export async function PrayerSection({ number = "02" }: { number?: string }) {
+  const { jumua } = await getSettings();
+
   return (
     <section
       id="horaires"
@@ -42,9 +45,9 @@ export function PrayerSection({ number = "02" }: { number?: string }) {
                   Vendredi — Jumu‘a
                 </p>
                 <div className="mt-4 flex flex-wrap items-baseline gap-x-5 gap-y-2">
-                  {site.mawaqit.jumua ? (
+                  {jumua ? (
                     <p className="font-display text-6xl leading-none font-medium text-charcoal">
-                      {site.mawaqit.jumua}
+                      {jumua}
                     </p>
                   ) : null}
                   <p className="max-w-[16rem] text-[0.85rem] leading-relaxed text-charcoal/60">

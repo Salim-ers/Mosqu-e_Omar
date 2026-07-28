@@ -2,11 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
-import { fullAddress, site } from "@/config/site";
+import { site } from "@/config/site";
+import { getSettings } from "@/lib/content";
 import { LOGO, logoSrc } from "@/lib/media";
 
-export function Footer() {
+export async function Footer() {
   const year = new Date().getFullYear();
+  const settings = await getSettings();
 
   return (
     <footer className="on-dark relative overflow-hidden bg-ink text-ivory">
@@ -101,18 +103,21 @@ export function Footer() {
               Nous trouver
             </p>
             <address className="mt-5 space-y-3 text-[0.9rem] not-italic text-ivory/75">
-              <p>{fullAddress()}</p>
               <p>
-                <a href={site.contact.phoneHref} className="link-editorial">
-                  {site.contact.phone}
+                {settings.address.street}, {settings.address.postalCode}{" "}
+                {settings.address.city}
+              </p>
+              <p>
+                <a href={settings.phoneHref} className="link-editorial">
+                  {settings.phone}
                 </a>
               </p>
               <p>
                 <a
-                  href={`mailto:${site.contact.email}`}
+                  href={`mailto:${settings.email}`}
                   className="link-editorial break-all"
                 >
-                  {site.contact.email}
+                  {settings.email}
                 </a>
               </p>
             </address>
@@ -127,9 +132,9 @@ export function Footer() {
                 {site.association.acronym} — {site.association.description}
               </p>
               <p>SIRET {site.association.siret}</p>
-              {site.socials.length > 0 ? (
+              {settings.socials.length > 0 ? (
                 <ul className="space-y-2 pt-1">
-                  {site.socials.map((s) => (
+                  {settings.socials.map((s) => (
                     <li key={s.href}>
                       <a
                         href={s.href}

@@ -4,7 +4,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { site } from "@/config/site";
-import { PHOTOS } from "@/lib/media";
+import { PHOTOS, src } from "@/lib/media";
 
 /**
  * 07 — L'ASSOCIATION ACCMPR. Respiration sombre au milieu de la page :
@@ -57,7 +57,8 @@ export function AssociationSection({ number = "07" }: { number?: string }) {
             </Reveal>
             <Reveal delay={0.18} className="mt-14 hidden lg:block">
               <ArchImage
-                photo={PHOTOS.galerie3}
+                src={src(PHOTOS.galerie3)}
+                alt={PHOTOS.galerie3.alt}
                 className="aspect-[3/4] w-60"
                 sizes="15rem"
               />

@@ -3,8 +3,15 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 
-import { fullAddress, site } from "@/config/site";
+import { site } from "@/config/site";
 import { cn } from "@/lib/utils";
+
+/** Coordonnées effectives, transmises par le bandeau (réglables dans /admin). */
+export type MenuContact = {
+  phone: string;
+  phoneHref: string;
+  address: string;
+};
 
 /**
  * Menu plein écran : charbon profond, grands liens en Cormorant, apparition
@@ -14,9 +21,11 @@ import { cn } from "@/lib/utils";
 export function MobileMenu({
   open,
   onClose,
+  contact,
 }: {
   open: boolean;
   onClose: () => void;
+  contact: MenuContact;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -112,10 +121,10 @@ export function MobileMenu({
         <p className="font-arabic text-lg text-ivory/70" lang="ar" dir="rtl">
           {site.arabicName}
         </p>
-        <p className="mt-2">{fullAddress()}</p>
+        <p className="mt-2">{contact.address}</p>
         <p className="mt-1">
-          <a href={site.contact.phoneHref} className="link-editorial">
-            {site.contact.phone}
+          <a href={contact.phoneHref} className="link-editorial">
+            {contact.phone}
           </a>
           {" · "}
           <a

@@ -52,10 +52,10 @@ export async function AnnouncementsSection({
                     {formatDate(a.publishedAt)}
                   </time>
                   {a.isPinned ? (
-                    <p className="mt-2 inline-flex items-center gap-2 text-[0.62rem] font-semibold tracking-[0.24em] text-olive uppercase">
+                    <p className="mt-3 inline-flex items-center gap-2 rounded-[2px] bg-ink px-2.5 py-1.5 text-[0.6rem] font-semibold tracking-[0.24em] text-ivory uppercase">
                       <span
                         aria-hidden
-                        className="h-1.5 w-1.5 rotate-45 bg-olive"
+                        className="h-1.5 w-1.5 rotate-45 bg-amber"
                       />
                       À la une
                     </p>

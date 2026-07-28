@@ -3,14 +3,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
-import { src, type Photo } from "@/lib/media";
-
 /**
  * Galerie complète : grille éditoriale (colonnes maçonnées en CSS) + lightbox
  * accessible — Échap pour fermer, flèches pour naviguer, focus capturé,
- * défilement de page verrouillé.
+ * défilement de page verrouillé. Les photos viennent indifféremment du code
+ * ou des albums publiés depuis l'espace bénévoles.
  */
-export function GalleryGrid({ photos }: { photos: Photo[] }) {
+export type GalleryPhoto = {
+  url: string;
+  alt: string;
+  width: number;
+  height: number;
+};
+
+export function GalleryGrid({ photos }: { photos: GalleryPhoto[] }) {
   const [index, setIndex] = useState<number | null>(null);
 
   const close = useCallback(() => setIndex(null), []);
@@ -28,7 +34,7 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
     <>
       <ul className="columns-2 gap-4 sm:gap-5 lg:columns-3 [&>li]:mb-4 sm:[&>li]:mb-5">
         {photos.map((photo, i) => (
-          <li key={photo.key} className="break-inside-avoid">
+          <li key={`${photo.url}-${i}`} className="break-inside-avoid">
             <button
               type="button"
               onClick={() => setIndex(i)}
@@ -36,7 +42,7 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
               aria-label={`Agrandir la photographie ${i + 1} sur ${photos.length}`}
             >
               <Image
-                src={src(photo)}
+                src={photo.url}
                 alt={photo.alt}
                 width={photo.width}
                 height={photo.height}
@@ -74,7 +80,7 @@ function Lightbox({
   onPrev,
   onNext,
 }: {
-  photo: Photo;
+  photo: GalleryPhoto;
   index: number;
   total: number;
   onClose: () => void;
@@ -139,7 +145,7 @@ function Lightbox({
       >
         <div className="relative h-full max-h-[72svh] w-full">
           <Image
-            src={src(photo)}
+            src={photo.url}
             alt={photo.alt}
             fill
             sizes="92vw"

@@ -3,6 +3,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { site } from "@/config/site";
+import { getSettings } from "@/lib/content";
 
 /**
  * 09 — SOUTENIR LA MOSQUÉE. Sobre et digne : on explique d'abord à quoi
@@ -25,20 +26,25 @@ const PURPOSES = [
   },
 ];
 
-export function DonationSection({ number = "09" }: { number?: string }) {
+export async function DonationSection({ number = "09" }: { number?: string }) {
+  const settings = await getSettings();
+
   return (
     <section
       aria-labelledby="don-titre"
-      className="border-y hairline bg-cream py-24 lg:py-36"
+      className="on-dark relative overflow-hidden bg-ink py-24 text-ivory lg:py-36"
     >
-      <Container>
+      <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+      <Container className="relative">
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-6">
             <Reveal>
-              <Eyebrow number={number}>Soutenir la mosquée</Eyebrow>
+              <Eyebrow number={number} onDark>
+                Soutenir la mosquée
+              </Eyebrow>
               <h2
                 id="don-titre"
-                className="mt-6 font-display text-[2.6rem] leading-[1.04] font-medium tracking-[-0.01em] text-charcoal sm:text-5xl lg:text-6xl"
+                className="mt-6 font-display text-[2.6rem] leading-[1.04] font-medium tracking-[-0.01em] text-ivory sm:text-5xl lg:text-6xl"
               >
                 Votre don fait vivre
                 <br />
@@ -46,7 +52,7 @@ export function DonationSection({ number = "09" }: { number?: string }) {
               </h2>
             </Reveal>
             <Reveal delay={0.1}>
-              <p className="mt-7 max-w-xl text-[0.98rem] leading-[1.85] text-charcoal/75">
+              <p className="mt-7 max-w-xl text-[0.98rem] leading-[1.85] text-ivory/75">
                 La mosquée Omar a été construite grâce aux dons des fidèles.
                 Aujourd’hui encore, elle ne vit que par eux : chaque
                 contribution, ponctuelle ou mensuelle, l’aide à accomplir sa
@@ -55,18 +61,20 @@ export function DonationSection({ number = "09" }: { number?: string }) {
             </Reveal>
             <Reveal delay={0.16}>
               <div className="mt-9 flex flex-wrap gap-4">
-                <ButtonLink href="/dons">Faire un don</ButtonLink>
+                <ButtonLink href="/dons" variant="inverse">
+                  Faire un don
+                </ButtonLink>
                 <ButtonLink
-                  href={site.donation.monthlyUrl}
+                  href={settings.monthlyDonationUrl}
                   external
-                  variant="outline"
+                  variant="onDark"
                 >
                   Soutenir chaque mois
                 </ButtonLink>
               </div>
             </Reveal>
             <Reveal delay={0.2}>
-              <p className="mt-7 max-w-xl text-[0.82rem] leading-relaxed text-taupe">
+              <p className="mt-7 max-w-xl text-[0.82rem] leading-relaxed text-ivory/45">
                 Don déductible de vos impôts à hauteur de{" "}
                 {site.donation.taxDeductionPercent} % (association loi 1901 —
                 un reçu fiscal peut être demandé à l’association). Vous pouvez
@@ -77,9 +85,9 @@ export function DonationSection({ number = "09" }: { number?: string }) {
           </div>
 
           <div className="lg:col-span-6 lg:pt-4">
-            <ul className="border-t border-charcoal/15">
+            <ul className="border-t border-ivory/12">
               {PURPOSES.map((purpose, index) => (
-                <li key={purpose.label} className="border-b border-charcoal/15">
+                <li key={purpose.label} className="border-b border-ivory/12">
                   <Reveal delay={index * 0.06}>
                     <div className="grid gap-2 py-8 sm:grid-cols-12 sm:gap-6">
                       <span
@@ -89,10 +97,10 @@ export function DonationSection({ number = "09" }: { number?: string }) {
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       <div className="sm:col-span-10">
-                        <h3 className="font-display text-2xl font-medium text-charcoal sm:text-3xl">
+                        <h3 className="font-display text-2xl font-medium text-ivory sm:text-3xl">
                           {purpose.label}
                         </h3>
-                        <p className="mt-2 max-w-md text-[0.9rem] leading-[1.75] text-charcoal/65">
+                        <p className="mt-2 max-w-md text-[0.9rem] leading-[1.75] text-ivory/60">
                           {purpose.note}
                         </p>
                       </div>

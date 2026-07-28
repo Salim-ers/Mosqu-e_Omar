@@ -122,6 +122,7 @@ export const site = {
     secondary: [
       { label: "Événements", href: "/evenements" },
       { label: "Inscriptions", href: "/inscriptions" },
+      { label: "Prières funéraires", href: "/janaza" },
       { label: "Faire un don", href: "/dons" },
     ],
     legal: [

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { LOCAL_ANNOUNCEMENTS } from "@/content/announcements";
+import { readCollection } from "@/lib/store";
 import { getPosts } from "@/lib/wordpress/queries";
 
 /**
@@ -56,16 +57,56 @@ export function sortAnnouncements(list: Announcement[]): Announcement[] {
   });
 }
 
-/** Annonces actives, CMS + locales, dédupliquées par id. */
+/**
+ * Toutes les annonces connues (actives ou non), dédupliquées par id.
+ * Ordre de priorité : espace bénévoles → WordPress → annonces livrées avec
+ * le code.
+ */
+export async function getAllAnnouncements(): Promise<Announcement[]> {
+  const [fromAdmin, fromCms] = await Promise.all([
+    getAdminAnnouncements(),
+    getCmsAnnouncements(),
+  ]);
+  const merged = new Map<string, Announcement>();
+  for (const a of [...fromAdmin, ...fromCms, ...LOCAL_ANNOUNCEMENTS]) {
+    if (!merged.has(a.id)) merged.set(a.id, a);
+  }
+  return sortAnnouncements([...merged.values()]);
+}
+
+/** Annonces actives uniquement — ce que voit la page d'accueil. */
 export async function getActiveAnnouncements(
   now: Date = new Date(),
 ): Promise<Announcement[]> {
-  const fromCms = await getCmsAnnouncements();
-  const merged = new Map<string, Announcement>();
-  for (const a of [...fromCms, ...LOCAL_ANNOUNCEMENTS]) {
-    if (!merged.has(a.id)) merged.set(a.id, a);
-  }
-  return sortAnnouncements([...merged.values()].filter((a) => isActive(a, now)));
+  return (await getAllAnnouncements()).filter((a) => isActive(a, now));
+}
+
+/**
+ * L'admin saisit des jours (2026-02-15) ; une annonce doit rester visible
+ * toute la journée de sa date de fin, d'où la normalisation ci-dessous.
+ */
+const DAY_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+const dayStart = (value: string) =>
+  DAY_ONLY.test(value) ? `${value}T00:00:00` : value;
+const dayEnd = (value: string) =>
+  DAY_ONLY.test(value) ? `${value}T23:59:59` : value;
+
+/** Annonces saisies par les bénévoles depuis /admin. */
+async function getAdminAnnouncements(): Promise<Announcement[]> {
+  const records = await readCollection("annonces");
+  return records
+    .filter((record) => record.published)
+    .map((record) => ({
+      id: record.id,
+      title: record.title,
+      body: record.body || undefined,
+      href: record.href || undefined,
+      hrefLabel: record.hrefLabel || undefined,
+      publishedAt: dayStart(record.publishedAt),
+      startsAt: record.startsAt ? dayStart(record.startsAt) : undefined,
+      endsAt: record.endsAt ? dayEnd(record.endsAt) : undefined,
+      isPinned: record.isPinned,
+    }));
 }
 
 async function getCmsAnnouncements(): Promise<Announcement[]> {

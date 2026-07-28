@@ -57,15 +57,39 @@ function photo(
   };
 }
 
+/**
+ * Photographie livrée avec le site (dossier `public/media`). Servie depuis le
+ * nouveau site quelle que soit la valeur de NEXT_PUBLIC_USE_LOCAL_MEDIA : elle
+ * ne dépend d'aucun WordPress.
+ */
+function shippedPhoto(
+  key: string,
+  file: string,
+  width: number,
+  height: number,
+  alt: string,
+): Photo {
+  const url = `/media/${file}`;
+  return { key, remote: url, original: url, local: url, width, height, alt };
+}
+
 export const PHOTOS = {
-  /** Photographie principale de la mosquée — pleine résolution confirmée. */
-  facade: photo(
-    "facade",
+  /** Photographie principale : la façade de la nouvelle mosquée, de nuit. */
+  facade: shippedPhoto(
+    "facade-nuit",
+    "facade-nuit.jpg",
+    1672,
+    941,
+    "La façade de la nouvelle mosquée Omar Ibn al Khattab à Creil, éclairée à la tombée de la nuit",
+  ),
+  /** Salle de prière — photographie publiée par la mosquée. */
+  interieur: photo(
+    "interieur",
     "2026/02/IMG_1068.jpeg",
     null,
     1600,
     1200,
-    "La nouvelle mosquée Omar Ibn al Khattab à Creil",
+    "La salle de prière de la mosquée Omar Ibn al Khattab à Creil",
   ),
   chantier: photo(
     "chantier",
@@ -157,6 +181,7 @@ export function logoSrc(): string {
 
 export const GALLERY: Photo[] = [
   PHOTOS.facade,
+  PHOTOS.interieur,
   PHOTOS.galerie2,
   PHOTOS.galerie1,
   PHOTOS.galerie5,

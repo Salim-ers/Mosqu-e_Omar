@@ -4,12 +4,15 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { site } from "@/config/site";
+import { getSettings } from "@/lib/content";
 
 /**
  * 10 — NOUS TROUVER. Adresse, contact et itinéraire ; la carte n'est chargée
  * qu'à la demande.
  */
-export function LocationSection({ number = "10" }: { number?: string }) {
+export async function LocationSection({ number = "10" }: { number?: string }) {
+  const settings = await getSettings();
+
   return (
     <section
       aria-labelledby="localisation-titre"
@@ -50,10 +53,10 @@ export function LocationSection({ number = "10" }: { number?: string }) {
                   </dt>
                   <dd className="sm:col-span-8">
                     <a
-                      href={site.contact.phoneHref}
+                      href={settings.phoneHref}
                       className="link-editorial font-display text-2xl font-medium text-charcoal"
                     >
-                      {site.contact.phone}
+                      {settings.phone}
                     </a>
                   </dd>
                 </div>
@@ -63,10 +66,10 @@ export function LocationSection({ number = "10" }: { number?: string }) {
                   </dt>
                   <dd className="sm:col-span-8">
                     <a
-                      href={`mailto:${site.contact.email}`}
+                      href={`mailto:${settings.email}`}
                       className="link-editorial text-lg break-all text-charcoal"
                     >
-                      {site.contact.email}
+                      {settings.email}
                     </a>
                   </dd>
                 </div>

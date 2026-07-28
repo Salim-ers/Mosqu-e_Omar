@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
-import { JsonLd } from "@/components/seo/JsonLd";
 import { site } from "@/config/site";
 import { cormorant, manrope, naskh } from "@/lib/fonts";
 import { PHOTOS } from "@/lib/media";
-import { mosqueJsonLd, organizationJsonLd } from "@/lib/seo";
 
 import "./globals.css";
+
+/**
+ * Racine du document. Le site public (bandeau, pied de page, données
+ * structurées) vit dans le groupe `(site)` ; l'espace bénévoles `/admin`
+ * a sa propre mise en page — d'où cette racine volontairement nue.
+ */
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -54,18 +56,7 @@ export default function RootLayout({
       lang="fr"
       className={`${manrope.variable} ${cormorant.variable} ${naskh.variable}`}
     >
-      <body>
-        <a
-          href="#contenu"
-          className="sr-only z-[130] rounded-[2px] bg-charcoal px-5 py-3 text-sm text-ivory focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
-        >
-          Aller au contenu
-        </a>
-        <Header />
-        <main id="contenu">{children}</main>
-        <Footer />
-        <JsonLd data={[mosqueJsonLd(), organizationJsonLd()]} />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
