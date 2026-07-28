@@ -43,7 +43,7 @@ export async function AnnouncementsSection({
         <div className="mt-10 space-y-0">
           {announcements.slice(0, 3).map((a, index) => (
             <Reveal key={a.id} delay={index * 0.06}>
-              <article className="grid gap-4 border-t hairline py-8 first:border-t-0 sm:grid-cols-12 sm:gap-8">
+              <article className="zellige-hover grid gap-4 border-t hairline py-8 first:border-t-0 sm:grid-cols-12 sm:gap-8">
                 <div className="sm:col-span-3">
                   <time
                     dateTime={a.publishedAt}

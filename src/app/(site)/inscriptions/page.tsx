@@ -42,7 +42,7 @@ export default async function InscriptionsPage() {
             {entries.map((entry, index) => {
               const status = REGISTRATION_LABELS[entry.status];
               return (
-                <li key={entry.label} className="border-b hairline">
+                <li key={entry.label} className="zellige-hover border-b hairline">
                   <Reveal delay={index * 0.05}>
                     <div className="grid gap-3 py-9 sm:grid-cols-12 sm:items-baseline sm:gap-8">
                       <span

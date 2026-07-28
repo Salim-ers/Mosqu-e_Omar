@@ -105,7 +105,7 @@ export default async function EvenementsPage() {
 
           <ul className="mt-10 border-t hairline">
             {RECURRING.map((event, index) => (
-              <li key={event.label} className="border-b hairline">
+              <li key={event.label} className="zellige-hover border-b hairline">
                 <Reveal delay={index * 0.05}>
                   <div className="grid gap-3 py-9 sm:grid-cols-12 sm:items-baseline sm:gap-8 lg:py-11">
                     <span
@@ -153,7 +153,7 @@ export default async function EvenementsPage() {
               {past.slice(0, 8).map((event) => (
                 <li
                   key={event.id}
-                  className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b hairline py-5"
+                  className="zellige-hover flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b hairline py-5"
                 >
                   <span className="font-display text-xl font-medium text-charcoal/70">
                     {event.title}
@@ -257,7 +257,7 @@ function EventCard({
   }
 
   return (
-    <article className="grid items-start gap-8 border-t hairline pt-10 sm:grid-cols-12">
+    <article className="zellige-hover grid items-start gap-8 border-t hairline pt-10 sm:grid-cols-12">
       {body}
       {picture}
     </article>

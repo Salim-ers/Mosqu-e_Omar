@@ -46,7 +46,7 @@ export async function JanazaSection() {
 
         <ul className="mt-8 border-t border-ivory/12">
           {janaza.slice(0, 3).map((entry, index) => (
-            <li key={entry.id} className="border-b border-ivory/12">
+            <li key={entry.id} className="zellige-hover-dark border-b border-ivory/12">
               <Reveal delay={index * 0.06}>
                 <div className="grid gap-3 py-7 sm:grid-cols-12 sm:gap-8">
                   <p className="text-[0.72rem] font-semibold tracking-[0.2em] text-ivory/50 uppercase sm:col-span-4">

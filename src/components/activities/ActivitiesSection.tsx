@@ -53,7 +53,7 @@ export async function ActivitiesSection({ number = "05" }: { number?: string }) 
           <div className="lg:col-span-8">
             <ol className="border-t hairline">
               {activities.map((activity, index) => (
-                <li key={activity.slug} className="border-b hairline">
+                <li key={activity.slug} className="zellige-hover border-b hairline">
                   <Reveal delay={index * 0.04}>
                     <Link
                       href={`/activites/${activity.slug}`}

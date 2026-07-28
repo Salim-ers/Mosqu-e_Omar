@@ -51,7 +51,7 @@ export function GalleryGrid({ photos }: { photos: GalleryPhoto[] }) {
               />
               <span
                 aria-hidden
-                className="absolute inset-0 bg-ink/0 transition-colors duration-500 group-hover:bg-ink/10 motion-reduce:transition-none"
+                className="absolute inset-0 bg-zellige/0 transition-colors duration-500 group-hover:bg-zellige/25 motion-reduce:transition-none"
               />
             </button>
           </li>

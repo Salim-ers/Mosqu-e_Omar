@@ -82,7 +82,7 @@ export default async function ActualitesPage() {
               const active = isActive(a);
               return (
                 <Reveal key={a.id} delay={index * 0.05}>
-                  <article className="grid gap-3 border-b hairline py-8 sm:grid-cols-12 sm:gap-8">
+                  <article className="zellige-hover grid gap-3 border-b hairline py-8 sm:grid-cols-12 sm:gap-8">
                     <div className="sm:col-span-3">
                       <time
                         dateTime={a.publishedAt}
@@ -153,7 +153,7 @@ export default async function ActualitesPage() {
             <div className="mt-10 grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
               {posts.map((post, index) => (
                 <Reveal key={post.slug} delay={(index % 3) * 0.06}>
-                  <article className="group flex h-full flex-col">
+                  <article className="zellige-hover group flex h-full flex-col">
                     <Link
                       href={`/actualites/${post.slug}`}
                       className="flex h-full flex-col"

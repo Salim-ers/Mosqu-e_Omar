@@ -79,7 +79,7 @@ export default function AProposPage() {
                 </h2>
                 <ul className="mt-7 border-t hairline">
                   {MISSIONS.map((mission, index) => (
-                    <li key={mission.label} className="border-b hairline">
+                    <li key={mission.label} className="zellige-hover border-b hairline">
                       <div className="grid gap-2 py-6 sm:grid-cols-12 sm:items-baseline sm:gap-6">
                         <span
                           aria-hidden

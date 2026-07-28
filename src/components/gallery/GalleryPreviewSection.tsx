@@ -34,6 +34,10 @@ function Tile({
         sizes={sizes}
         className="object-cover transition-transform duration-[1.4s] [transition-timing-function:var(--ease-out-soft)] group-hover:scale-[1.04] motion-reduce:transition-none"
       />
+      <span
+        aria-hidden
+        className="absolute inset-0 bg-zellige/0 transition-colors duration-500 group-hover:bg-zellige/25 motion-reduce:transition-none"
+      />
     </Link>
   );
 }

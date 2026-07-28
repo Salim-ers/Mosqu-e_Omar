@@ -17,6 +17,8 @@
   --color-ink: #0d0d0c;
   --color-olive: #46503c;
   --color-amber: #a2702d;
+  /* Bleu de la mosaïque — sert aussi de couleur de survol dans tout le site. */
+  --color-zellige: #12275a;
 
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
@@ -113,6 +115,72 @@ p {
   background-image: url("/media/zellige.svg");
   background-size: 280px 280px;
   opacity: 0.08;
+}
+
+/* ------------------------------------------------------- survol des cases ---
+   Au survol d'une rangée ou d'une vignette, un fond bleu de mosaïque se
+   déploie derrière le contenu. Il est peint par un pseudo-élément débordant
+   légèrement sur les côtés : la mise en page n'est jamais touchée, les filets
+   ne bougent pas d'un pixel. Respecte `prefers-reduced-motion`.
+--------------------------------------------------------------------------- */
+
+@utility zellige-hover {
+  position: relative;
+  /* Indispensable : sans contexte d'empilement propre, le pseudo-élément en
+     z-index négatif passerait sous le fond de la section. */
+  isolation: isolate;
+}
+.zellige-hover::after {
+  content: "";
+  position: absolute;
+  inset: 0 -1.25rem;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--color-zellige) 8%, transparent);
+  opacity: 0;
+  transform: scaleY(0.82);
+  transition:
+    opacity 0.45s var(--ease-out-soft),
+    transform 0.45s var(--ease-out-soft);
+}
+.zellige-hover:hover::after,
+.zellige-hover:focus-within::after {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+/* Même geste sur les blocs d'encre, où le bleu ne ressortirait pas. */
+@utility zellige-hover-dark {
+  position: relative;
+  isolation: isolate;
+}
+.zellige-hover-dark::after {
+  content: "";
+  position: absolute;
+  inset: 0 -1.25rem;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--color-zellige) 55%, transparent);
+  opacity: 0;
+  transform: scaleY(0.82);
+  transition:
+    opacity 0.45s var(--ease-out-soft),
+    transform 0.45s var(--ease-out-soft);
+}
+.zellige-hover-dark:hover::after,
+.zellige-hover-dark:focus-within::after {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zellige-hover::after,
+  .zellige-hover-dark::after {
+    transition: none;
+    transform: none;
+  }
 }
 
 /* Lien éditorial — soulignement animé au survol. */

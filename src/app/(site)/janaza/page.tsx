@@ -54,7 +54,7 @@ export default async function JanazaPage() {
           ) : (
             <ul className="border-t hairline">
               {janaza.map((entry, index) => (
-                <li key={entry.id} className="border-b hairline">
+                <li key={entry.id} className="zellige-hover border-b hairline">
                   <Reveal delay={index * 0.05}>
                     <div className="grid gap-4 py-9 sm:grid-cols-12 sm:gap-8">
                       <p className="text-[0.74rem] font-semibold tracking-[0.2em] text-taupe uppercase sm:col-span-4">

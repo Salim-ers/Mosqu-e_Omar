@@ -33,7 +33,7 @@ export async function ServicesSection({ number = "08" }: { number?: string }) {
         <dl className="mt-14 grid gap-x-12 gap-y-0 border-t hairline sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, index) => (
             <Reveal key={service.label} delay={(index % 3) * 0.05}>
-              <div className="flex h-full flex-col gap-2 border-b hairline py-7 pr-4">
+              <div className="zellige-hover flex h-full flex-col gap-2 border-b hairline py-7 pr-4">
                 <dt className="flex items-center gap-3 font-display text-[1.45rem] leading-tight font-medium text-charcoal">
                   <span
                     aria-hidden
