@@ -13,7 +13,19 @@
  */
 
 import { randomUUID } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
 import pg from "pg";
+
+// Le script se lance hors de Next : on lit .env.local nous-mêmes.
+for (const fichier of [".env.local", ".env"]) {
+  if (!existsSync(fichier)) continue;
+  for (const ligne of readFileSync(fichier, "utf8").split("\n")) {
+    const m = ligne.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*)\s*$/);
+    if (m && !process.env[m[1]]) {
+      process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
+    }
+  }
+}
 
 const url = process.argv[2] ?? process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
 
