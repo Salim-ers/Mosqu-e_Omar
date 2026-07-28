@@ -1,0 +1,169 @@
+import Image from "next/image";
+import Link from "next/link";
+
+import { Container } from "@/components/ui/Container";
+import { fullAddress, site } from "@/config/site";
+import { LOGO, logoSrc } from "@/lib/media";
+
+export function Footer() {
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="on-dark relative overflow-hidden bg-ink text-ivory">
+      <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+
+      <Container className="relative">
+        {/* Bandeau supérieur — identité */}
+        <div className="flex flex-col gap-10 border-b border-ivory/10 py-16 lg:flex-row lg:items-end lg:justify-between lg:py-20">
+          <div className="max-w-2xl">
+            <p
+              className="font-arabic text-2xl leading-relaxed text-ivory/70"
+              lang="ar"
+              dir="rtl"
+            >
+              {site.arabicName}
+            </p>
+            <p className="mt-4 font-display text-4xl leading-[1.05] font-medium sm:text-5xl">
+              Mosquée Omar
+              <br />
+              Ibn al Khattab
+            </p>
+            <p className="mt-4 text-[0.68rem] font-semibold tracking-[0.32em] text-ivory/50 uppercase">
+              Creil — Oise · {site.association.acronym} · Depuis{" "}
+              {site.association.foundedYear}
+            </p>
+          </div>
+          <div className="flex items-center gap-5">
+            <Image
+              src={logoSrc()}
+              alt={LOGO.alt}
+              width={64}
+              height={64}
+              className="h-16 w-16 rounded-full object-cover ring-1 ring-ivory/20"
+            />
+            <p className="max-w-[16rem] text-[0.85rem] leading-relaxed text-ivory/60">
+              Un lieu de foi, de transmission et de fraternité, porté par
+              l’association {site.association.acronym}.
+            </p>
+          </div>
+        </div>
+
+        {/* Colonnes */}
+        <div className="grid gap-12 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:py-16">
+          <nav aria-label="Pied de page — la mosquée">
+            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/40 uppercase">
+              La mosquée
+            </p>
+            <ul className="mt-5 space-y-3 text-[0.9rem]">
+              {site.navigation.main.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="link-editorial text-ivory/75 hover:text-ivory"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-label="Pied de page — participer">
+            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/40 uppercase">
+              Participer
+            </p>
+            <ul className="mt-5 space-y-3 text-[0.9rem]">
+              {site.navigation.secondary.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="link-editorial text-ivory/75 hover:text-ivory"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <a
+                  href={site.mawaqit.pageUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-editorial text-ivory/75 hover:text-ivory"
+                >
+                  Horaires sur MAWAQIT ↗
+                </a>
+              </li>
+            </ul>
+          </nav>
+
+          <div>
+            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/40 uppercase">
+              Nous trouver
+            </p>
+            <address className="mt-5 space-y-3 text-[0.9rem] not-italic text-ivory/75">
+              <p>{fullAddress()}</p>
+              <p>
+                <a href={site.contact.phoneHref} className="link-editorial">
+                  {site.contact.phone}
+                </a>
+              </p>
+              <p>
+                <a
+                  href={`mailto:${site.contact.email}`}
+                  className="link-editorial break-all"
+                >
+                  {site.contact.email}
+                </a>
+              </p>
+            </address>
+          </div>
+
+          <div>
+            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/40 uppercase">
+              L’association
+            </p>
+            <div className="mt-5 space-y-3 text-[0.9rem] text-ivory/60">
+              <p>
+                {site.association.acronym} — {site.association.description}
+              </p>
+              <p>SIRET {site.association.siret}</p>
+              {site.socials.length > 0 ? (
+                <ul className="space-y-2 pt-1">
+                  {site.socials.map((s) => (
+                    <li key={s.href}>
+                      <a
+                        href={s.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="link-editorial text-ivory/75"
+                      >
+                        {s.label} ↗
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          </div>
+        </div>
+
+        {/* Bas de page */}
+        <div className="flex flex-col gap-4 border-t border-ivory/10 py-8 text-[0.75rem] text-ivory/45 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {year} {site.longName} — {site.association.acronym}. Tous droits
+            réservés.
+          </p>
+          <ul className="flex flex-wrap gap-x-6 gap-y-2">
+            {site.navigation.legal.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="link-editorial">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Container>
+    </footer>
+  );
+}

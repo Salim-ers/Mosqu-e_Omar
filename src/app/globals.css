@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   DESIGN SYSTEM — Mosquée Omar Ibn al Khattab, Creil
+   Direction : Modern Middle Eastern Luxury × Islamic contemporary × éditorial.
+   Palette imposée par le brief. Accents olive/ambre issus du logo, en
+   micro-doses uniquement.
+============================================================================ */
+
+@theme inline {
+  --color-ivory: #f8f5ef;
+  --color-cream: #fffcf8;
+  --color-sand: #e7ded2;
+  --color-beige: #d5c7b7;
+  --color-taupe: #9a8d7e;
+  --color-charcoal: #181816;
+  --color-ink: #0d0d0c;
+  --color-olive: #46503c;
+  --color-amber: #a2702d;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
+  --font-arabic: var(--font-naskh), serif;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --shadow-soft: 0 1px 2px rgba(13, 13, 12, 0.04),
+    0 12px 40px -12px rgba(13, 13, 12, 0.1);
+  --shadow-lift: 0 2px 4px rgba(13, 13, 12, 0.05),
+    0 24px 64px -20px rgba(13, 13, 12, 0.18);
+}
+
+/* ---------------------------------------------------------------- base --- */
+
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  @apply bg-ivory font-sans text-charcoal antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Grain photographique très léger, global, non interactif. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  pointer-events: none;
+  opacity: 0.032;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--color-sand);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-charcoal);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+.on-dark :focus-visible,
+.on-dark:focus-visible {
+  outline-color: var(--color-ivory);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+
+.font-arabic {
+  font-family: var(--font-arabic);
+}
+
+/* ----------------------------------------------------------- utilities --- */
+
+@utility hairline {
+  border-color: color-mix(in srgb, var(--color-charcoal) 12%, transparent);
+}
+
+/* Trame « khatam » — étoile à huit branches, filigrane architectural. */
+@utility pattern-khatam {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='112' viewBox='0 0 112 112'%3E%3Cg fill='none' stroke='%23181816' stroke-opacity='0.05' stroke-width='1'%3E%3Crect x='28' y='28' width='56' height='56'/%3E%3Crect x='28' y='28' width='56' height='56' transform='rotate(45 56 56)'/%3E%3Ccircle cx='56' cy='56' r='8'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 112px 112px;
+}
+
+@utility pattern-khatam-light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='112' viewBox='0 0 112 112'%3E%3Cg fill='none' stroke='%23F8F5EF' stroke-opacity='0.06' stroke-width='1'%3E%3Crect x='28' y='28' width='56' height='56'/%3E%3Crect x='28' y='28' width='56' height='56' transform='rotate(45 56 56)'/%3E%3Ccircle cx='56' cy='56' r='8'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 112px 112px;
+}
+
+/* Lien éditorial — soulignement animé au survol. */
+@utility link-editorial {
+  position: relative;
+  display: inline-block;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.45s var(--ease-out-soft);
+  padding-bottom: 2px;
+}
+.link-editorial:hover,
+.link-editorial:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* Prose WordPress sanitizée. */
+.wp-prose {
+  @apply text-[0.98rem] leading-[1.85] text-charcoal/80;
+}
+.wp-prose > * + * {
+  margin-top: 1.1em;
+}
+.wp-prose h2 {
+  @apply font-display text-3xl font-medium text-charcoal;
+  margin-top: 2em;
+}
+.wp-prose h3 {
+  @apply font-display text-2xl font-medium text-charcoal;
+  margin-top: 1.6em;
+}
+.wp-prose strong {
+  @apply font-semibold text-charcoal;
+}
+.wp-prose a {
+  @apply underline decoration-taupe underline-offset-4 hover:decoration-charcoal;
+}
+.wp-prose ul {
+  @apply list-none pl-0;
+}
+.wp-prose ul li {
+  position: relative;
+  padding-left: 1.4rem;
+}
+.wp-prose ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 6px;
+  height: 6px;
+  transform: rotate(45deg);
+  background: var(--color-beige);
+}
+.wp-prose ul li + li {
+  margin-top: 0.55em;
+}
+.wp-prose blockquote {
+  @apply border-l pl-6 font-display text-xl italic text-charcoal/75;
+  border-color: var(--color-beige);
+}
+.wp-prose img {
+  @apply my-6 h-auto w-full;
+}
+
+/* Skeleton de chargement discret. */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+@utility skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-sand) 25%,
+    var(--color-cream) 50%,
+    var(--color-sand) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--color-sand);
+  }
+}
