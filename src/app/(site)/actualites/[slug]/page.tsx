@@ -71,7 +71,7 @@ export default async function ArticlePage({
   return (
     <article className="bg-ivory">
       <header className="on-dark relative overflow-hidden bg-ink pt-36 pb-14 text-ivory lg:pt-44 lg:pb-16">
-        <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+        <div aria-hidden className="pattern-zellige absolute inset-0" />
         <Container className="relative">
           <Reveal>
             <Eyebrow onDark>Actualité</Eyebrow>

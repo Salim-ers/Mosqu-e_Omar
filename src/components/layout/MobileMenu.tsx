@@ -61,7 +61,7 @@ export function MobileMenu({
         open ? "visible opacity-100" : "invisible opacity-0",
       )}
     >
-      <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+      <div aria-hidden className="pattern-zellige absolute inset-0" />
 
       <div className="relative flex h-[4.5rem] items-center justify-between px-5 sm:px-8 lg:h-20 lg:px-12">
         <p className="font-display text-lg font-medium tracking-wide">

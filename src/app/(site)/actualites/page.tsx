@@ -170,7 +170,7 @@ export default async function ActualitesPage() {
                         ) : (
                           <div
                             aria-hidden
-                            className="pattern-khatam absolute inset-0"
+                            className="pattern-zellige-soft absolute inset-0"
                           />
                         )}
                       </div>

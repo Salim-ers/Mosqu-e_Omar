@@ -12,7 +12,7 @@ export async function Footer() {
 
   return (
     <footer className="on-dark relative overflow-hidden bg-ink text-ivory">
-      <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+      <div aria-hidden className="pattern-zellige absolute inset-0" />
 
       <Container className="relative">
         {/* Bandeau supérieur — identité */}

@@ -20,7 +20,7 @@ export async function JanazaSection() {
       aria-labelledby="janaza-titre"
       className="on-dark relative overflow-hidden bg-ink py-16 text-ivory lg:py-20"
     >
-      <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+      <div aria-hidden className="pattern-zellige absolute inset-0" />
       <Container className="relative">
         <Reveal>
           <div className="flex flex-wrap items-baseline justify-between gap-4">

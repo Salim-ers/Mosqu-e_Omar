@@ -51,7 +51,7 @@ export async function ServicesSection({ number = "08" }: { number?: string }) {
 
         <Reveal delay={0.1}>
           <div className="on-dark relative mt-12 overflow-hidden rounded-[2px] bg-ink px-7 py-8 text-ivory sm:px-10 sm:py-9">
-            <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+            <div aria-hidden className="pattern-zellige absolute inset-0" />
             <p className="relative flex items-center gap-3 text-[0.62rem] font-semibold tracking-[0.28em] text-ivory/55 uppercase">
               <span aria-hidden className="h-1.5 w-1.5 rotate-45 bg-amber" />
               Une demande particulière

@@ -170,7 +170,7 @@ export default async function ProjetPage() {
         aria-label="Soutenir l’achèvement du projet"
         className="on-dark relative overflow-hidden bg-ink py-24 text-ivory lg:py-32"
       >
-        <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+        <div aria-hidden className="pattern-zellige absolute inset-0" />
         <Container className="relative text-center">
           <Reveal>
             <p

@@ -29,7 +29,7 @@ export default async function LoginPage({
 
   return (
     <div className="on-dark relative flex min-h-screen items-center justify-center overflow-hidden bg-ink px-5 py-16 text-ivory">
-      <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+      <div aria-hidden className="pattern-zellige absolute inset-0" />
 
       <div className="relative w-full max-w-md">
         <div className="flex items-center gap-4">

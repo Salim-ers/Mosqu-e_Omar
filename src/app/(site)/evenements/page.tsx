@@ -247,7 +247,7 @@ function EventCard({
   if (highlighted) {
     return (
       <article className="on-dark relative overflow-hidden bg-ink px-6 py-10 text-ivory sm:px-10 sm:py-12">
-        <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+        <div aria-hidden className="pattern-zellige absolute inset-0" />
         <div className="relative grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
           {body}
           {picture}

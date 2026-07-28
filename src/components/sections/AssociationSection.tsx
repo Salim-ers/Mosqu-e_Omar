@@ -26,7 +26,7 @@ export function AssociationSection({ number = "07" }: { number?: string }) {
       aria-labelledby="association-titre"
       className="on-dark relative overflow-hidden bg-ink py-24 text-ivory lg:py-36"
     >
-      <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+      <div aria-hidden className="pattern-zellige absolute inset-0" />
 
       <Container className="relative">
         <div className="grid gap-16 lg:grid-cols-12">

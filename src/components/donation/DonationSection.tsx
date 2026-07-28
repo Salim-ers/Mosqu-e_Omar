@@ -34,7 +34,7 @@ export async function DonationSection({ number = "09" }: { number?: string }) {
       aria-labelledby="don-titre"
       className="on-dark relative overflow-hidden bg-ink py-24 text-ivory lg:py-36"
     >
-      <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+      <div aria-hidden className="pattern-zellige absolute inset-0" />
       <Container className="relative">
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-6">

@@ -20,7 +20,7 @@ export function PageHeader({
 }) {
   return (
     <header className="on-dark relative overflow-hidden bg-ink pt-36 pb-16 text-ivory lg:pt-44 lg:pb-20">
-      <div aria-hidden className="pattern-khatam-light absolute inset-0" />
+      <div aria-hidden className="pattern-zellige absolute inset-0" />
       {/* Voile chaud très discret — évite le noir plat. */}
       <div
         aria-hidden
