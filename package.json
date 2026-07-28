@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "media:download": "node scripts/download-media.mjs",
-    "db:verifier": "node scripts/verifier-base.mjs"
+    "db:verifier": "node scripts/verifier-base.mjs",
+    "admin:creer": "node scripts/creer-admin.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

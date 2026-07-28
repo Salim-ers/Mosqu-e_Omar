@@ -245,9 +245,25 @@ Puis redéployez.
 
 ### 5. Créer le compte responsable
 
-Ouvrez **`/admin`** : aucun compte n’existant encore, le formulaire propose de
-**créer le compte responsable**. Renseignez nom, email et mot de passe — ce
-compte crée ensuite ceux des autres bénévoles.
+Deux façons, au choix.
+
+**Depuis le site** — ouvrez **`/admin`** : aucun compte n’existant encore, le
+formulaire propose de **créer le compte responsable**. Renseignez nom, email et
+mot de passe.
+
+**Depuis le terminal**, pour préparer le compte avant la mise en ligne :
+
+```bash
+npm run admin:creer -- --email imam@exemple.fr --nom "Prénom Nom"
+```
+
+Le mot de passe est tiré au sort et affiché **une seule fois** ; ajoutez
+`--mdp "…"` pour le choisir vous-même. Le script écrit là où le site lit
+(base de données si `DATABASE_URL` est renseignée, dossier de données sinon),
+et refuse de faire doublon.
+
+Ce compte crée ensuite ceux des autres bénévoles depuis
+**/admin → Comptes bénévoles**.
 
 > Ce compte se crée depuis le site, jamais depuis l’interface Supabase : le
 > mot de passe est haché par scrypt avant d’atteindre la base et n’existe en
