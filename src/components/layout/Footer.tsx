@@ -158,7 +158,7 @@ export async function Footer() {
             © {year} {site.longName} — {site.association.acronym}. Tous droits
             réservés.
           </p>
-          <ul className="flex flex-wrap gap-x-6 gap-y-2">
+          <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
             {site.navigation.legal.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="link-editorial">
@@ -166,6 +166,15 @@ export async function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              {/* Entrée discrète de l'équipe qui met le site à jour. */}
+              <Link
+                href="/admin"
+                className="link-editorial text-ivory/60 hover:text-ivory"
+              >
+                Se connecter (bénévoles)
+              </Link>
+            </li>
           </ul>
         </div>
       </Container>

@@ -4,8 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import {
-  canonicalEmail,
-  createUser,
   endSession,
   getUsers,
   hashPassword,
@@ -13,7 +11,6 @@ import {
   requireAdmin,
   requireUser,
 } from "@/lib/auth";
-import { logActivity } from "@/lib/admin/journal";
 import { buildRecord, type AdminRecord } from "@/lib/admin/records";
 import { getResource } from "@/lib/admin/resources";
 import { importStaticContent } from "@/lib/admin/seed";
@@ -26,12 +23,7 @@ import {
   writeReglages,
 } from "@/lib/store";
 import { removeMedia } from "@/lib/store/media";
-import type {
-  CollectionName,
-  Collections,
-  Reglages,
-  UserRole,
-} from "@/lib/store/types";
+import type { CollectionName, Collections, Reglages } from "@/lib/store/types";
 
 /**
  * ============================================================================
@@ -65,14 +57,6 @@ async function saveContent(
   await upsertRecord(key, record as unknown as Collections[CollectionName]);
 }
 
-/** Titre lisible d'un enregistrement, pour le journal d'activité. */
-function titreDe(record: AdminRecord, champ: string): string {
-  const valeur = record[champ];
-  return typeof valeur === "string" && valeur.trim().length > 0
-    ? valeur.trim()
-    : "un élément sans titre";
-}
-
 /* ---------------------------------------------------------- contenus --- */
 
 export async function saveResource(
@@ -80,7 +64,7 @@ export async function saveResource(
   id: string,
   formData: FormData,
 ): Promise<void> {
-  const user = await requireUser();
+  await requireUser();
 
   const def = getResource(resourceKey);
   if (!def) redirect("/admin?erreur=rubrique-inconnue");
@@ -102,13 +86,6 @@ export async function saveResource(
   }
 
   await saveContent(contentKey(def.key), result.record);
-  await logActivity({
-    userId: user.id,
-    userName: user.name,
-    action: existing ? "modification" : "creation",
-    scope: def.label,
-    label: titreDe(result.record, def.titleField),
-  });
   refreshPublicSite();
   redirect(`/admin/contenus/${def.key}?ok=enregistre`);
 }
@@ -117,20 +94,12 @@ export async function deleteResource(
   resourceKey: string,
   id: string,
 ): Promise<void> {
-  const user = await requireUser();
+  await requireUser();
 
   const def = getResource(resourceKey);
   if (!def) redirect("/admin?erreur=rubrique-inconnue");
 
-  const record = (await findRecord(contentKey(def.key), id)) as AdminRecord | null;
   await deleteRecord(contentKey(def.key), id);
-  await logActivity({
-    userId: user.id,
-    userName: user.name,
-    action: "suppression",
-    scope: def.label,
-    label: record ? titreDe(record, def.titleField) : "un élément",
-  });
   refreshPublicSite();
   redirect(`/admin/contenus/${def.key}?ok=supprime`);
 }
@@ -140,7 +109,7 @@ export async function toggleResourcePublished(
   resourceKey: string,
   id: string,
 ): Promise<void> {
-  const user = await requireUser();
+  await requireUser();
 
   const def = getResource(resourceKey);
   if (!def) redirect("/admin?erreur=rubrique-inconnue");
@@ -152,29 +121,15 @@ export async function toggleResourcePublished(
       published: !record.published,
       updatedAt: new Date().toISOString(),
     });
-    await logActivity({
-      userId: user.id,
-      userName: user.name,
-      action: record.published ? "depublication" : "publication",
-      scope: def.label,
-      label: titreDe(record, def.titleField),
-    });
     refreshPublicSite();
   }
   redirect(`/admin/contenus/${def.key}?ok=statut`);
 }
 
 export async function importExistingContent(): Promise<void> {
-  const user = await requireAdmin();
+  await requireAdmin();
   const done = await importStaticContent();
   if (done.length > 0) {
-    await logActivity({
-      userId: user.id,
-      userName: user.name,
-      action: "import",
-      scope: "Contenus d’origine",
-      label: done.join(", "),
-    });
   }
   refreshPublicSite();
   redirect(
@@ -187,15 +142,8 @@ export async function importExistingContent(): Promise<void> {
 /* ----------------------------------------------------------- médias --- */
 
 export async function deleteMedia(id: string): Promise<void> {
-  const user = await requireUser();
+  await requireUser();
   await removeMedia(id);
-  await logActivity({
-    userId: user.id,
-    userName: user.name,
-    action: "suppression",
-    scope: "Photothèque",
-    label: "une photo",
-  });
   refreshPublicSite();
   redirect("/admin/medias?ok=supprime");
 }
@@ -212,22 +160,32 @@ export async function toggleMessageRead(id: string): Promise<void> {
 }
 
 export async function deleteMessage(id: string): Promise<void> {
-  const user = await requireUser();
+  await requireUser();
   await deleteRecord("messages", id);
-  await logActivity({
-    userId: user.id,
-    userName: user.name,
-    action: "suppression",
-    scope: "Messages",
-    label: "un message de contact",
-  });
   redirect("/admin/messages?ok=1");
+}
+
+/* --------------------------------------------------------- inscrits --- */
+
+export async function toggleInscritTraite(id: string): Promise<void> {
+  await requireUser();
+  const inscrit = (await readCollection("inscrits")).find((i) => i.id === id);
+  if (inscrit) {
+    await upsertRecord("inscrits", { ...inscrit, traite: !inscrit.traite });
+  }
+  redirect("/admin/contenus/inscriptions?ok=inscrit");
+}
+
+export async function deleteInscrit(id: string): Promise<void> {
+  await requireUser();
+  await deleteRecord("inscrits", id);
+  redirect("/admin/contenus/inscriptions?ok=inscrit-supprime");
 }
 
 /* --------------------------------------------------------- réglages --- */
 
 export async function saveSettings(formData: FormData): Promise<void> {
-  const user = await requireAdmin();
+  await requireAdmin();
 
   const text = (name: string) => String(formData.get(name) ?? "").trim();
   const socials: Reglages["socials"] = text("socials")
@@ -258,143 +216,11 @@ export async function saveSettings(formData: FormData): Promise<void> {
     updatedAt: new Date().toISOString(),
   });
 
-  await logActivity({
-    userId: user.id,
-    userName: user.name,
-    action: "reglages",
-    scope: "Réglages du site",
-    label: "les informations générales",
-  });
   refreshPublicSite();
   redirect("/admin/reglages?ok=enregistre");
 }
 
 /* ---------------------------------------------------------- comptes --- */
-
-export async function createVolunteer(formData: FormData): Promise<void> {
-  const auteur = await requireAdmin();
-
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  const name = String(formData.get("name") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-  const role: UserRole = formData.get("role") === "admin" ? "admin" : "editeur";
-
-  const fail = (message: string) =>
-    redirect(`/admin/utilisateurs?erreur=${encodeURIComponent(message)}`);
-
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) fail("Adresse email invalide.");
-  if (!name) fail("Indiquez le prénom et le nom du bénévole.");
-
-  const problem = passwordProblem(password);
-  if (problem) fail(problem);
-
-  const users = await getUsers();
-  if (users.some((user) => canonicalEmail(user.email) === canonicalEmail(email))) {
-    fail("Un compte utilise déjà cette adresse email.");
-  }
-
-  await createUser({ email, name, password, role });
-  await logActivity({
-    userId: auteur.id,
-    userName: auteur.name,
-    action: "compte",
-    scope: "Comptes bénévoles",
-    label: `création du compte de ${name}`,
-  });
-  redirect("/admin/utilisateurs?ok=compte-cree");
-}
-
-export async function setVolunteerActive(
-  id: string,
-  active: boolean,
-): Promise<void> {
-  const current = await requireAdmin();
-  if (current.id === id) {
-    redirect(
-      "/admin/utilisateurs?erreur=" +
-        encodeURIComponent("Vous ne pouvez pas désactiver votre propre compte."),
-    );
-  }
-
-  const user = (await getUsers()).find((u) => u.id === id);
-  if (user) {
-    await upsertRecord("utilisateurs", { ...user, active });
-    await logActivity({
-      userId: current.id,
-      userName: current.name,
-      action: "compte",
-      scope: "Comptes bénévoles",
-      label: `${active ? "réactivation" : "désactivation"} du compte de ${user.name}`,
-    });
-  }
-  redirect("/admin/utilisateurs?ok=statut");
-}
-
-export async function setVolunteerRole(
-  id: string,
-  role: UserRole,
-): Promise<void> {
-  const current = await requireAdmin();
-  const users = await getUsers();
-  const user = users.find((u) => u.id === id);
-  if (!user) redirect("/admin/utilisateurs?erreur=Compte%20introuvable.");
-
-  const remainingAdmins = users.filter(
-    (u) => u.role === "admin" && u.active && u.id !== id,
-  ).length;
-  if (role !== "admin" && remainingAdmins === 0) {
-    redirect(
-      "/admin/utilisateurs?erreur=" +
-        encodeURIComponent("Il doit rester au moins un responsable."),
-    );
-  }
-  if (current.id === id && role !== "admin") {
-    redirect(
-      "/admin/utilisateurs?erreur=" +
-        encodeURIComponent("Vous ne pouvez pas retirer votre propre rôle."),
-    );
-  }
-
-  await upsertRecord("utilisateurs", { ...user, role });
-  await logActivity({
-    userId: current.id,
-    userName: current.name,
-    action: "compte",
-    scope: "Comptes bénévoles",
-    label: `${user.name} passe ${role === "admin" ? "responsable" : "éditeur"}`,
-  });
-  redirect("/admin/utilisateurs?ok=role");
-}
-
-/** Réinitialisation d'un mot de passe par un responsable. */
-export async function resetVolunteerPassword(
-  id: string,
-  formData: FormData,
-): Promise<void> {
-  const auteur = await requireAdmin();
-
-  const password = String(formData.get("password") ?? "");
-  const problem = passwordProblem(password);
-  if (problem) {
-    redirect(`/admin/utilisateurs?erreur=${encodeURIComponent(problem)}`);
-  }
-
-  const user = (await getUsers()).find((u) => u.id === id);
-  if (user) {
-    await upsertRecord("utilisateurs", {
-      ...user,
-      passwordHash: await hashPassword(password),
-    });
-    await logActivity({
-      userId: auteur.id,
-      userName: auteur.name,
-      action: "compte",
-      scope: "Comptes bénévoles",
-      label: `mot de passe réinitialisé pour ${user.name}`,
-    });
-  }
-  redirect("/admin/utilisateurs?ok=mot-de-passe");
-}
 
 /** Changement de son propre mot de passe. */
 export async function changeOwnPassword(formData: FormData): Promise<void> {

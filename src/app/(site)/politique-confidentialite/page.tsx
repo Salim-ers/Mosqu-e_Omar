@@ -56,6 +56,22 @@ export default async function PolitiqueConfidentialitePage() {
                 sollicités.
               </p>
 
+              <h2>Le formulaire d’inscription aux cours</h2>
+              <p>
+                Le formulaire de la page Inscriptions recueille le prénom, le
+                nom et l’âge de la personne à inscrire — souvent un enfant —
+                ainsi que le nom et les coordonnées du parent ou du responsable
+                à recontacter. Ces informations servent uniquement à confirmer
+                la place et à organiser les groupes. Elles sont enregistrées sur
+                le site, consultables par les seuls bénévoles habilités, et
+                supprimées à la fin de la session concernée. Elles ne sont ni
+                cédées, ni vendues.
+              </p>
+              <p>
+                Pour demander la suppression d’une inscription avant ce terme,
+                il suffit de nous écrire ou d’appeler la mosquée.
+              </p>
+
               <h2>Données que vous nous transmettez autrement</h2>
               <p>
                 Lorsque vous contactez la mosquée par téléphone (

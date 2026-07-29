@@ -7,12 +7,11 @@ import {
   Notice,
   Panel,
 } from "@/components/admin/ui";
-import { ACTION_LABELS, readJournal } from "@/lib/admin/journal";
 import { rubriquesImportables } from "@/lib/admin/origine";
 import { RESOURCES } from "@/lib/admin/resources";
 import { requireUser } from "@/lib/auth";
 import { getEvents, getJanaza } from "@/lib/content";
-import { formatDate, formatJanazaDate } from "@/lib/dates";
+import { formatDate } from "@/lib/dates";
 import { collectionStats } from "@/lib/store";
 
 import { importExistingContent } from "../actions";
@@ -30,14 +29,14 @@ export default async function AdminDashboard({
   // toutes les rubriques, les messages non lus, et les dernières lignes du
   // journal. Les panneaux janaza et événements réutilisent des contenus déjà
   // lus pour la mise en page — le cache de rendu évite de les redemander.
-  const [compteursRubriques, compteurMessages, journal, janaza, events] =
+  const [compteursRubriques, compteurMessages, compteurInscrits, janaza, events] =
     await Promise.all([
       collectionStats(
         RESOURCES.map((resource) => resource.key),
         "published",
       ),
       collectionStats(["messages"], "read"),
-      readJournal(8),
+      collectionStats(["inscrits"], "traite"),
       getJanaza(),
       getEvents(),
     ]);
@@ -49,6 +48,7 @@ export default async function AdminDashboard({
     drafts: compteursRubriques[resource.key]?.without ?? 0,
   }));
   const nonLus = compteurMessages.messages?.without ?? 0;
+  const inscritsEnAttente = compteurInscrits.inscrits?.without ?? 0;
 
   // L'import reste proposé tant qu'une rubrique n'a pas été reprise en main —
   // et pas seulement quand l'espace est entièrement vide.
@@ -84,6 +84,20 @@ export default async function AdminDashboard({
           en attente de réponse —{" "}
           <Link href="/admin/messages" className="link-editorial">
             ouvrir la boîte de réception
+          </Link>
+          .
+        </Notice>
+      ) : null}
+
+      {inscritsEnAttente > 0 ? (
+        <Notice tone="info">
+          <strong>
+            {inscritsEnAttente} demande{inscritsEnAttente > 1 ? "s" : ""}{" "}
+            d’inscription
+          </strong>{" "}
+          à rappeler —{" "}
+          <Link href="/admin/contenus/inscriptions" className="link-editorial">
+            voir les inscrits
           </Link>
           .
         </Notice>
@@ -137,40 +151,6 @@ export default async function AdminDashboard({
           ))}
         </ul>
       </section>
-
-      <Panel
-        title="Dernières modifications"
-        description="Qui a fait quoi sur le site, et quand."
-      >
-        {journal.length === 0 ? (
-          <p className="text-[0.9rem] text-charcoal/55">
-            Aucune modification pour le moment.
-          </p>
-        ) : (
-          <>
-            <ul className="space-y-2.5">
-              {journal.map((ligne) => (
-                <li key={ligne.id} className="text-[0.9rem] text-charcoal/75">
-                  <span className="font-medium text-charcoal">
-                    {ligne.userName}
-                  </span>{" "}
-                  {ACTION_LABELS[ligne.action]}{" "}
-                  <span className="text-charcoal">{ligne.label}</span>
-                  <span className="text-charcoal/40">
-                    {" "}
-                    · {formatJanazaDate(ligne.at)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-5">
-              <Link href="/admin/journal" className="link-editorial text-[0.8rem] tracking-[0.14em] text-charcoal/60 uppercase">
-                Tout le journal →
-              </Link>
-            </p>
-          </>
-        )}
-      </Panel>
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Panel title="Prochaines janaza">

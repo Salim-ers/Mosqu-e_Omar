@@ -2,7 +2,6 @@
 
 import { redirect } from "next/navigation";
 
-import { logActivity } from "@/lib/admin/journal";
 import { newId, upsertRecord } from "@/lib/store";
 import type { MessageRecord } from "@/lib/store/types";
 
@@ -65,13 +64,6 @@ export async function sendMessage(formData: FormData): Promise<void> {
   };
 
   await upsertRecord("messages", message);
-  await logActivity({
-    userId: "public",
-    userName: message.name,
-    action: "message",
-    scope: "Messages",
-    label: message.subject,
-  });
 
   redirect("/contact?ok=1");
 }

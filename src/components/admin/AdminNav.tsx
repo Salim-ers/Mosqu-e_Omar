@@ -13,6 +13,9 @@ export type NavGroup = { title: string; items: NavItem[] };
  * Navigation de l'espace bénévoles : colonne d'encre à gauche sur grand
  * écran, panneau dépliant sur téléphone — beaucoup de mises à jour se font
  * depuis la mosquée, un téléphone à la main.
+ *
+ * Les rubriques sont préchargées : la page suivante est déjà en mémoire quand
+ * le clic arrive, et l'affichage devient immédiat.
  */
 export function AdminNav({
   groups,
@@ -62,6 +65,7 @@ export function AdminNav({
                   <li key={item.href}>
                     <Link
                       href={item.href}
+                      prefetch
                       onClick={() => setOpen(false)}
                       aria-current={current ? "page" : undefined}
                       className={cn(

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 
+import { InscriptionForm } from "@/components/inscriptions/InscriptionForm";
 import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { Eyebrow } from "@/components/ui/Eyebrow";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { REGISTRATION_LABELS } from "@/config/registrations";
 import { getInscriptions, getSettings } from "@/lib/content";
@@ -16,11 +18,19 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600;
 
-export default async function InscriptionsPage() {
-  const [entries, settings] = await Promise.all([
+export default async function InscriptionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ ok?: string; erreur?: string }>;
+}) {
+  const [entries, settings, { ok, erreur }] = await Promise.all([
     getInscriptions(),
     getSettings(),
+    searchParams,
   ]);
+  const ouverts = entries
+    .filter((entry) => entry.status === "OPEN")
+    .map((entry) => entry.label);
 
   return (
     <>
@@ -80,7 +90,7 @@ export default async function InscriptionsPage() {
           <Reveal delay={0.12}>
             <div className="mt-16 border hairline bg-cream p-8 sm:p-12">
               <h2 className="font-display text-3xl font-medium text-charcoal sm:text-4xl">
-                Comment s’inscrire
+                Par téléphone ou sur place
               </h2>
               <p className="mt-4 max-w-2xl text-[0.95rem] leading-[1.85] text-charcoal/70">
                 Contactez la mosquée pour connaître les créneaux, les niveaux
@@ -106,6 +116,63 @@ export default async function InscriptionsPage() {
           </Reveal>
         </Container>
       </section>
+
+      {ouverts.length > 0 ? (
+        <section
+          aria-labelledby="formulaire-titre"
+          className="border-t hairline bg-cream py-16 lg:py-24"
+        >
+          <Container>
+            <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+              <div className="lg:col-span-4">
+                <Reveal>
+                  <Eyebrow number="02">S’inscrire en ligne</Eyebrow>
+                  <h2
+                    id="formulaire-titre"
+                    className="mt-6 font-display text-4xl leading-tight font-medium text-charcoal sm:text-5xl"
+                  >
+                    Demander
+                    <br />
+                    <em className="font-light italic">une place</em>
+                  </h2>
+                  <p className="mt-5 max-w-md text-[0.98rem] leading-[1.85] text-charcoal/70">
+                    Remplissez ce formulaire et un bénévole vous rappellera pour
+                    confirmer l’inscription et vous indiquer les créneaux.
+                  </p>
+                </Reveal>
+              </div>
+
+              <div className="lg:col-span-8">
+                <Reveal delay={0.08}>
+                  {ok ? (
+                    <div className="border hairline bg-ivory p-8 sm:p-10">
+                      <p className="font-display text-3xl font-medium text-charcoal">
+                        Votre demande est enregistrée.
+                      </p>
+                      <p className="mt-4 max-w-xl text-[0.98rem] leading-[1.85] text-charcoal/70">
+                        Un bénévole de la mosquée vous recontactera pour
+                        confirmer la place. Qu’Allah vous récompense.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      {erreur ? (
+                        <p
+                          role="alert"
+                          className="mb-6 rounded-[2px] border border-[#8a2a20]/25 bg-[#8a2a20]/6 px-4 py-3 text-[0.9rem] text-[#8a2a20]"
+                        >
+                          {erreur}
+                        </p>
+                      ) : null}
+                      <InscriptionForm cours={ouverts} />
+                    </>
+                  )}
+                </Reveal>
+              </div>
+            </div>
+          </Container>
+        </section>
+      ) : null}
     </>
   );
 }

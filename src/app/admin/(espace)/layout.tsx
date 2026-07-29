@@ -54,12 +54,7 @@ export default async function EspaceLayout({
           label: "Messages",
           hint: nonLus > 0 ? `${nonLus} nouveau${nonLus > 1 ? "x" : ""}` : undefined,
         },
-        { href: "/admin/journal", label: "Journal d’activité" },
-        { href: "/admin/medias", label: "Photothèque" },
         { href: "/admin/reglages", label: "Réglages du site" },
-        ...(user.role === "admin"
-          ? [{ href: "/admin/utilisateurs", label: "Comptes bénévoles" }]
-          : []),
         { href: "/admin/compte", label: "Mon mot de passe" },
       ],
     },

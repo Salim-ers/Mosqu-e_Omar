@@ -184,31 +184,30 @@ export type MessageRecord = {
   read: boolean;
 };
 
-/* ----------------------------------------------------------- journal --- */
+/* ----------------------------------------------------------- inscrits --- */
 
-export type JournalAction =
-  | "creation"
-  | "modification"
-  | "suppression"
-  | "publication"
-  | "depublication"
-  | "reglages"
-  | "compte"
-  | "import"
-  | "connexion"
-  | "message";
-
-/** Une ligne du journal : qui a fait quoi, sur quoi, et quand. */
-export type JournalRecord = {
+/**
+ * Une demande d'inscription déposée depuis le site. Ce sont des données
+ * personnelles, parfois celles d'un enfant : elles ne servent qu'à recontacter
+ * la famille et s'effacent à la fin de la session.
+ */
+export type InscritRecord = {
   id: string;
-  at: string;
-  userId: string;
-  userName: string;
-  action: JournalAction;
-  /** Rubrique concernée, en toutes lettres. */
-  scope: string;
-  /** Élément concerné, en toutes lettres. */
-  label: string;
+  createdAt: string;
+  /** Intitulé du cours choisi, tel qu'il figure dans la rubrique Inscriptions. */
+  cours: string;
+  /** Nom de la personne à inscrire (souvent un enfant). */
+  nom: string;
+  prenom: string;
+  /** Âge ou niveau, en toutes lettres — « 9 ans », « CM2 », « adulte ». */
+  age: string;
+  /** Coordonnées du responsable à recontacter. */
+  contactNom: string;
+  telephone: string;
+  email: string;
+  message: string;
+  /** Passe à vrai quand la mosquée a traité la demande. */
+  traite: boolean;
 };
 
 /* --------------------------------------------------------- comptes --- */
@@ -240,7 +239,7 @@ export type Collections = {
   inscriptions: InscriptionRecord;
   medias: MediaRecord;
   messages: MessageRecord;
-  journal: JournalRecord;
+  inscrits: InscritRecord;
   utilisateurs: UserRecord;
 };
 

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ConfirmButton, SubmitButton } from "@/components/admin/FormButtons";
+import { Inscrits } from "@/components/admin/Inscrits";
+import { Phototheque } from "@/components/admin/Phototheque";
 import {
   AdminLink,
   AdminPageTitle,
@@ -43,6 +45,8 @@ const MESSAGES: Record<string, string> = {
   enregistre: "Modification enregistrée — le site est à jour.",
   supprime: "Élément supprimé.",
   statut: "Statut modifié.",
+  inscrit: "Demande d’inscription mise à jour.",
+  "inscrit-supprime": "Demande d’inscription supprimée.",
 };
 
 export default async function ResourceListPage({
@@ -173,6 +177,9 @@ export default async function ResourceListPage({
           ))}
         </ul>
       )}
+
+      {def.key === "inscriptions" ? <Inscrits /> : null}
+      {def.key === "albums" ? <Phototheque /> : null}
     </div>
   );
 }
