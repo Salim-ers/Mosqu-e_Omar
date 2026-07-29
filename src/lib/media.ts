@@ -97,6 +97,48 @@ export const PHOTOS = {
     1200,
     "La salle de prière de la mosquée Omar Ibn al Khattab à Creil",
   ),
+  /* --- Illustrations des activités ---------------------------------------
+     Œuvres du domaine public (CC0) issues de collections de musées : folio
+     coranique koufique et page enluminée, panneau de calligraphie en
+     céramique de Damas, lampe de mosquée. Aucune photographie d'une autre
+     mosquée, aucune personne représentée. Libres de tout droit et de toute
+     attribution. */
+  activiteCoran: shippedPhoto(
+    "activite-coran",
+    "activite-coran.jpg",
+    1200,
+    1600,
+    "Folio d’un Coran manuscrit en écriture koufique, IXe siècle",
+  ),
+  activiteDourous: shippedPhoto(
+    "activite-dourous",
+    "activite-dourous.jpg",
+    1200,
+    1600,
+    "Page d’ouverture enluminée d’un recueil de hadiths",
+  ),
+  activiteArabe: shippedPhoto(
+    "activite-arabe",
+    "activite-arabe.jpg",
+    1200,
+    1600,
+    "Panneau de calligraphie arabe en céramique, Damas, XVIe siècle",
+  ),
+  activiteSoutien: shippedPhoto(
+    "activite-soutien",
+    "activite-soutien.jpg",
+    1200,
+    1600,
+    "Un cahier ouvert et un crayon posés sur une table",
+  ),
+  activiteCommunaute: shippedPhoto(
+    "activite-communaute",
+    "activite-communaute.jpg",
+    1200,
+    1600,
+    "Lampe de mosquée en verre émaillé, décor de calligraphie bleue et or",
+  ),
+
   chantier: photo(
     "chantier",
     "2026/02/IMG_1069.jpeg",

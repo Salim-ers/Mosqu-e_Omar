@@ -29,7 +29,7 @@ export function PageHeader({
       <Container className="relative">
         <Reveal>
           <Eyebrow onDark>{eyebrow}</Eyebrow>
-          <h1 className="mt-7 max-w-4xl font-display text-[3rem] leading-[1.02] font-medium tracking-[-0.015em] text-ivory sm:text-6xl lg:text-7xl">
+          <h1 className="mt-7 max-w-5xl font-display text-[3.4rem] leading-[0.98] font-medium tracking-[-0.02em] text-ivory sm:text-7xl lg:text-8xl">
             {title}
           </h1>
           {lead ? (

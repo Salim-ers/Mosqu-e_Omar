@@ -1,10 +1,11 @@
 import { Reveal } from "@/components/motion/Reveal";
-import { ArchImage } from "@/components/ui/ArchImage";
+import Image from "next/image";
+
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { site } from "@/config/site";
-import { PHOTOS, src } from "@/lib/media";
+import { LOGO, logoSrc } from "@/lib/media";
 
 /**
  * 07 — L'ASSOCIATION ACCMPR. Respiration sombre au milieu de la page :
@@ -55,12 +56,15 @@ export function AssociationSection({ number = "07" }: { number?: string }) {
                 </ButtonLink>
               </div>
             </Reveal>
+            {/* Le sceau de l'association plutôt qu'une photographie : à cet
+                endroit, c'est d'elle qu'il est question, pas du bâtiment. */}
             <Reveal delay={0.18} className="mt-14 hidden lg:block">
-              <ArchImage
-                src={src(PHOTOS.galerie3)}
-                alt={PHOTOS.galerie3.alt}
-                className="aspect-[3/4] w-60"
-                sizes="15rem"
+              <Image
+                src={logoSrc()}
+                alt={LOGO.alt}
+                width={LOGO.width}
+                height={LOGO.height}
+                className="h-40 w-40 rounded-full object-cover ring-1 ring-ivory/20"
               />
             </Reveal>
           </div>

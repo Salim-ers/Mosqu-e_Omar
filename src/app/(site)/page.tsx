@@ -7,6 +7,7 @@ import { LocationSection } from "@/components/location/LocationSection";
 import { PrayerSection } from "@/components/prayer/PrayerSection";
 import { AssociationSection } from "@/components/sections/AssociationSection";
 import { HomeHero } from "@/components/sections/HomeHero";
+import { EventsSection } from "@/components/sections/EventsSection";
 import { NewMosqueSection } from "@/components/sections/NewMosqueSection";
 import { ServicesSection } from "@/components/sections/ServicesSection";
 
@@ -25,6 +26,7 @@ export default function HomePage() {
       <PrayerSection number="02" />
       <AnnouncementsSection number="03" />
       <JanazaSection />
+      <EventsSection />
       <NewMosqueSection number="04" />
       <ActivitiesSection number="05" />
       <GalleryPreviewSection number="06" />

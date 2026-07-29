@@ -44,7 +44,7 @@ export async function DonationSection({ number = "09" }: { number?: string }) {
               </Eyebrow>
               <h2
                 id="don-titre"
-                className="mt-6 font-display text-[2.6rem] leading-[1.04] font-medium tracking-[-0.01em] text-ivory sm:text-5xl lg:text-6xl"
+                className="mt-6 font-display text-[3rem] leading-[1.02] font-medium tracking-[-0.015em] text-ivory sm:text-6xl lg:text-7xl"
               >
                 Votre don fait vivre
                 <br />

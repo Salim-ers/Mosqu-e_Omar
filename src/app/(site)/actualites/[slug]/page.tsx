@@ -75,7 +75,7 @@ export default async function ArticlePage({
         <Container className="relative">
           <Reveal>
             <Eyebrow onDark>Actualité</Eyebrow>
-            <h1 className="mt-7 max-w-4xl font-display text-4xl leading-[1.05] font-medium tracking-[-0.01em] text-ivory sm:text-5xl lg:text-6xl">
+            <h1 className="mt-7 max-w-5xl font-display text-[2.9rem] leading-[1.02] font-medium tracking-[-0.015em] text-ivory sm:text-6xl lg:text-7xl">
               {post.title}
             </h1>
             <time

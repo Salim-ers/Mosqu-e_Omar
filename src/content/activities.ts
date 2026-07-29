@@ -35,7 +35,7 @@ export const ACTIVITIES: Activity[] = [
     detail:
       "L’objectif est de permettre à chacun de se rapprocher du Livre d’Allah et de renforcer sa pratique religieuse dans un cadre pédagogique et bienveillant.",
     audience: "Enfants · Adolescents · Adultes",
-    photo: "galerie2",
+    photo: "activiteCoran",
     registrationKey: "coran",
   },
   {
@@ -53,7 +53,7 @@ export const ACTIVITIES: Activity[] = [
     detail:
       "Ces enseignements sont ouverts à tous et visent à renforcer la compréhension et la pratique de la religion au quotidien.",
     audience: "Ouvert à toutes et à tous",
-    photo: "galerie1",
+    photo: "activiteDourous",
   },
   {
     slug: "cours-de-langue-arabe",
@@ -69,7 +69,7 @@ export const ACTIVITIES: Activity[] = [
     detail:
       "Ces cours facilitent notamment l’apprentissage du Coran et l’accès aux textes religieux.",
     audience: "Tous niveaux",
-    photo: "galerie4",
+    photo: "activiteArabe",
     registrationKey: "arabe",
   },
   {
@@ -86,7 +86,7 @@ export const ACTIVITIES: Activity[] = [
     detail:
       "Ce dispositif vise à accompagner les jeunes dans leur parcours et à favoriser leur réussite scolaire.",
     audience: "Primaire · Collège",
-    photo: "galerie5",
+    photo: "activiteSoutien",
     registrationKey: "soutien",
   },
   {
@@ -103,7 +103,7 @@ export const ACTIVITIES: Activity[] = [
     detail:
       "Ces moments renforcent le lien social, la solidarité et le vivre-ensemble que porte l’association ACCMPR depuis 2013.",
     audience: "Toute la communauté",
-    photo: "facade",
+    photo: "activiteCommunaute",
   },
 ];
 
