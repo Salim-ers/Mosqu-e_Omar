@@ -13,9 +13,12 @@ import { PHOTOS, src } from "@/lib/media";
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /**
- * HERO — presque 100vh, photographie réelle de la mosquée, révélation très
+ * HERO — plein écran, photographie réelle de la mosquée, révélation très
  * lente : l'image se dévoile, puis les lignes du titre montent l'une après
  * l'autre, puis la signature et les actions. Parallax ≤ 6 % au scroll.
+ *
+ * `min-h-svh` et non 92 % : à hauteur partielle, la section ivoire suivante
+ * apparaissait en bas de l'écran comme une bande blanche sous la photographie.
  */
 export function HomeHero() {
   const scope = useRef<HTMLElement>(null);
@@ -68,7 +71,7 @@ export function HomeHero() {
   return (
     <section
       ref={scope}
-      className="on-dark relative flex min-h-[92svh] flex-col justify-end overflow-hidden bg-ink text-ivory"
+      className="on-dark relative flex min-h-svh flex-col justify-end overflow-hidden bg-ink text-ivory"
       aria-label="La mosquée Omar Ibn al Khattab de Creil"
     >
       {/* Photographie réelle de la mosquée */}
