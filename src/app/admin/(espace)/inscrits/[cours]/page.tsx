@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { AjoutInscrits } from "@/components/admin/AjoutInscrits";
 import { ConfirmButton, SubmitButton } from "@/components/admin/FormButtons";
 import {
   AdminLink,
@@ -35,11 +36,14 @@ export default async function InscritsDunCoursPage({
   searchParams,
 }: {
   params: Promise<Params>;
-  searchParams: Promise<{ ok?: string }>;
+  searchParams: Promise<{ ok?: string; erreur?: string }>;
 }) {
   await requireUser();
 
-  const [{ cours: brut }, { ok }] = await Promise.all([params, searchParams]);
+  const [{ cours: brut }, { ok, erreur }] = await Promise.all([
+    params,
+    searchParams,
+  ]);
   const cours = decodeURIComponent(brut);
 
   const inscrits = (await readCollection("inscrits"))
@@ -72,7 +76,18 @@ export default async function InscritsDunCoursPage({
         }
       />
 
-      {ok ? <Notice tone="success">Demande mise à jour.</Notice> : null}
+      {ok ? (
+        <Notice tone="success">
+          {ok === "1"
+            ? "Demande mise à jour."
+            : ok === "ajoute"
+              ? "Inscrit ajouté à la liste."
+              : ok}
+        </Notice>
+      ) : null}
+      {erreur ? <Notice tone="error">{erreur}</Notice> : null}
+
+      <AjoutInscrits cours={cours} />
 
       {inscrits.length === 0 ? (
         <EmptyState

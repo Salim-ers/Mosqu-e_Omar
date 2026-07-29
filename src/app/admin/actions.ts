@@ -11,19 +11,31 @@ import {
   requireAdmin,
   requireUser,
 } from "@/lib/auth";
+import {
+  decodeCsv,
+  lireEnTete,
+  ORDRE_PAR_DEFAUT,
+  parseCsv,
+} from "@/lib/admin/csv";
 import { buildRecord, type AdminRecord } from "@/lib/admin/records";
 import { getResource } from "@/lib/admin/resources";
 import { importStaticContent } from "@/lib/admin/seed";
 import {
   deleteRecord,
   findRecord,
+  newId,
   readCollection,
   readReglages,
   upsertRecord,
   writeReglages,
 } from "@/lib/store";
 import { removeMedia } from "@/lib/store/media";
-import type { CollectionName, Collections, Reglages } from "@/lib/store/types";
+import type {
+  CollectionName,
+  Collections,
+  InscritRecord,
+  Reglages,
+} from "@/lib/store/types";
 
 /**
  * ============================================================================
@@ -186,6 +198,139 @@ export async function deleteInscrit(id: string): Promise<void> {
       ? `/admin/inscrits/${encodeURIComponent(inscrit.cours)}?ok=1`
       : "/admin/contenus/inscriptions",
   );
+}
+
+/** Fabrique un inscrit à partir de valeurs déjà nettoyées. */
+function nouvelInscrit(
+  cours: string,
+  valeurs: Partial<Record<string, string>>,
+): InscritRecord {
+  const propre = (cle: string, max: number) =>
+    (valeurs[cle] ?? "").trim().slice(0, max);
+
+  return {
+    id: newId(),
+    createdAt: new Date().toISOString(),
+    cours,
+    prenom: propre("prenom", 80),
+    nom: propre("nom", 80),
+    age: propre("age", 40),
+    contactNom: propre("contactNom", 120),
+    telephone: propre("telephone", 40),
+    email: propre("email", 160),
+    message: propre("message", 1000),
+    traite: false,
+  };
+}
+
+/** Ajout d'un inscrit à la main, depuis la page du cours. */
+export async function ajouterInscrit(
+  cours: string,
+  formData: FormData,
+): Promise<void> {
+  await requireUser();
+
+  const valeur = (nom: string) => String(formData.get(nom) ?? "").trim();
+  const retour = `/admin/inscrits/${encodeURIComponent(cours)}`;
+
+  if (valeur("prenom").length < 2 && valeur("nom").length < 2) {
+    redirect(
+      `${retour}?erreur=${encodeURIComponent("Indiquez au moins un prénom et un nom.")}`,
+    );
+  }
+
+  await upsertRecord(
+    "inscrits",
+    nouvelInscrit(cours, {
+      prenom: valeur("prenom"),
+      nom: valeur("nom"),
+      age: valeur("age"),
+      contactNom: valeur("contactNom"),
+      telephone: valeur("telephone"),
+      email: valeur("email"),
+      message: valeur("message"),
+    }),
+  );
+
+  redirect(`${retour}?ok=ajoute`);
+}
+
+/**
+ * Import d'une liste depuis un tableur. Les colonnes sont reconnues par leur
+ * intitulé (prénom, nom, âge, responsable, téléphone, email, remarque) quel
+ * que soit leur ordre ; sans en-tête, l'ordre par défaut s'applique.
+ */
+export async function importerInscrits(
+  cours: string,
+  formData: FormData,
+): Promise<void> {
+  await requireUser();
+
+  const retour = `/admin/inscrits/${encodeURIComponent(cours)}`;
+  const echec = (message: string) =>
+    redirect(`${retour}?erreur=${encodeURIComponent(message)}`);
+
+  const fichier = formData.get("fichier");
+  if (!(fichier instanceof File) || fichier.size === 0) {
+    echec("Choisissez un fichier CSV.");
+    return;
+  }
+  if (fichier.size > 2 * 1024 * 1024) {
+    echec("Fichier trop lourd — 2 Mo maximum.");
+  }
+
+  const lignes = parseCsv(decodeCsv(Buffer.from(await fichier.arrayBuffer())));
+  if (lignes.length === 0) echec("Le fichier est vide.");
+
+  const enTete = lireEnTete(lignes[0]);
+  const corps = enTete ? lignes.slice(1) : lignes;
+
+  const position = (champ: string) =>
+    enTete ? enTete[champ] : ORDRE_PAR_DEFAUT.indexOf(champ);
+
+  let ajoutes = 0;
+  let ignorees = 0;
+
+  for (const ligne of corps) {
+    const lire = (champ: string) => {
+      const index = position(champ);
+      return index === undefined || index < 0 ? "" : (ligne[index] ?? "");
+    };
+
+    const prenom = lire("prenom");
+    const nom = lire("nom");
+    // Une ligne sans nom du tout n'est pas une inscription.
+    if (prenom.trim().length + nom.trim().length < 2) {
+      ignorees += 1;
+      continue;
+    }
+
+    await upsertRecord(
+      "inscrits",
+      nouvelInscrit(cours, {
+        prenom,
+        nom,
+        age: lire("age"),
+        contactNom: lire("contactNom"),
+        telephone: lire("telephone"),
+        email: lire("email"),
+        message: lire("message"),
+      }),
+    );
+    ajoutes += 1;
+  }
+
+  if (ajoutes === 0) {
+    echec(
+      "Aucune inscription lisible dans ce fichier — vérifiez qu’il contient au moins une colonne prénom ou nom.",
+    );
+  }
+
+  const resume =
+    `${ajoutes} inscription${ajoutes > 1 ? "s" : ""} importée${ajoutes > 1 ? "s" : ""}` +
+    (ignorees > 0 ? ` — ${ignorees} ligne${ignorees > 1 ? "s" : ""} vide${ignorees > 1 ? "s" : ""} ignorée${ignorees > 1 ? "s" : ""}` : "") +
+    ".";
+  redirect(`${retour}?ok=${encodeURIComponent(resume)}`);
 }
 
 /* --------------------------------------------------------- réglages --- */
