@@ -60,12 +60,60 @@ export default async function MentionsLegalesPage() {
 
               <h2>Propriété intellectuelle</h2>
               <p>
-                L’ensemble des contenus du site (textes, photographies, logo,
-                identité visuelle) appartient à l’association{" "}
-                {site.association.acronym} ou fait l’objet d’une autorisation
-                d’utilisation. Toute reproduction sans accord préalable est
-                interdite.
+                Les textes, le logo, l’identité visuelle et les photographies
+                de la mosquée appartiennent à l’association{" "}
+                {site.association.acronym}. Toute reproduction sans accord
+                préalable est interdite.
               </p>
+
+              <h2>Crédits photographiques</h2>
+              <p>
+                Les photographies de la mosquée, de son chantier et de ses
+                aménagements ont été réalisées par l’association. Les
+                illustrations des activités proviennent de fonds libres :
+              </p>
+              <ul>
+                <li>
+                  <strong>Cours de Coran</strong> — « Open Quran on Blue
+                  Embroidered Prayer Rug with Tasbih », par Rokshana Akter,
+                  sous licence{" "}
+                  <a
+                    href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    CC BY-SA 4.0
+                  </a>{" "}
+                  via Wikimedia Commons. Recadrée pour le site ; le recadrage
+                  est diffusé sous la même licence.
+                </li>
+                <li>
+                  <strong>Cours de langue arabe</strong> — « Silver Ornamental
+                  Calligraphy Set », par le Civic Responsibility project, sous
+                  licence{" "}
+                  <a
+                    href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    CC BY-SA 4.0
+                  </a>{" "}
+                  via Wikimedia Commons. Recadrée pour le site ; le recadrage
+                  est diffusé sous la même licence.
+                </li>
+                <li>
+                  <strong>Vie communautaire</strong> — « Masjid al-Haram 2022 »,
+                  par مريم محمد الغلبان, versée au domaine public (CC0).
+                </li>
+                <li>
+                  <strong>Dourous</strong> et <strong>soutien scolaire</strong>{" "}
+                  — photographies en domaine public (CC0).
+                </li>
+                <li>
+                  <strong>Motif de mosaïque</strong> — zellige dessiné
+                  spécialement pour ce site, aucun droit de tiers.
+                </li>
+              </ul>
 
               <h2>Horaires de prière</h2>
               <p>

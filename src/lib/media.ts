@@ -98,20 +98,19 @@ export const PHOTOS = {
     "La salle de prière de la mosquée Omar Ibn al Khattab à Creil",
   ),
   /* --- Illustrations des activités ---------------------------------------
-     Coran, calames de calligraphie et Kaaba : images choisies par
-     l'association. Recueils de hadiths et fournitures scolaires : domaine
-     public (CC0), collections de musées.
+     Photographies libres, en pleine résolution. Deux d'entre elles sont sous
+     licence CC BY-SA 4.0 : leur auteur et leur licence sont cités sur la page
+     des mentions légales, comme la licence l'exige, et les recadrages en
+     héritent. Les autres sont en domaine public ou CC0.
 
-     ⚠️ Les trois premières viennent de captures d'écran : leur finesse
-     plafonne autour de 450 à 800 px de large réels. Si l'association retrouve
-     les fichiers d'origine, les remplacer ici améliorera la netteté sur les
-     écrans à forte densité. */
+     Aucune personne n'y figure, sauf sur la vue de Masjid al-Haram où la foule
+     est une masse indistincte à cette distance. */
   activiteCoran: shippedPhoto(
     "activite-coran",
     "activite-coran.jpg",
-    900,
     1200,
-    "Un Coran ouvert, un chapelet de bois posé sur ses pages",
+    1600,
+    "Un Coran ouvert sur un tapis de prière brodé, un chapelet posé au-dessus",
   ),
   activiteDourous: shippedPhoto(
     "activite-dourous",
@@ -123,9 +122,9 @@ export const PHOTOS = {
   activiteArabe: shippedPhoto(
     "activite-arabe",
     "activite-arabe.jpg",
-    900,
     1200,
-    "Calames de calligraphie, encre et une lettre arabe tracée sur la feuille",
+    1600,
+    "Nécessaire de calligraphie : calames et encrier ouvragés",
   ),
   activiteSoutien: shippedPhoto(
     "activite-soutien",
@@ -137,9 +136,9 @@ export const PHOTOS = {
   activiteCommunaute: shippedPhoto(
     "activite-communaute",
     "activite-communaute.jpg",
-    900,
     1200,
-    "La Kaaba au coucher du soleil, vue depuis une arche de la Grande Mosquée",
+    1600,
+    "La Kaaba au cœur de Masjid al-Haram, à La Mecque",
   ),
 
   chantier: photo(
