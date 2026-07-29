@@ -18,7 +18,7 @@ export async function JanazaSection() {
   return (
     <section
       aria-labelledby="janaza-titre"
-      className="on-dark relative overflow-hidden bg-ink py-16 text-ivory lg:py-20"
+      className="on-dark relative overflow-hidden border-t border-ivory/12 bg-ink py-16 text-ivory lg:py-20"
     >
       <div aria-hidden className="pattern-zellige absolute inset-0" />
       <Container className="relative">
