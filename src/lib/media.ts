@@ -98,17 +98,20 @@ export const PHOTOS = {
     "La salle de prière de la mosquée Omar Ibn al Khattab à Creil",
   ),
   /* --- Illustrations des activités ---------------------------------------
-     Œuvres du domaine public (CC0) issues de collections de musées : folio
-     coranique koufique et page enluminée, panneau de calligraphie en
-     céramique de Damas, lampe de mosquée. Aucune photographie d'une autre
-     mosquée, aucune personne représentée. Libres de tout droit et de toute
-     attribution. */
+     Coran, calames de calligraphie et Kaaba : images choisies par
+     l'association. Recueils de hadiths et fournitures scolaires : domaine
+     public (CC0), collections de musées.
+
+     ⚠️ Les trois premières viennent de captures d'écran : leur finesse
+     plafonne autour de 450 à 800 px de large réels. Si l'association retrouve
+     les fichiers d'origine, les remplacer ici améliorera la netteté sur les
+     écrans à forte densité. */
   activiteCoran: shippedPhoto(
     "activite-coran",
     "activite-coran.jpg",
+    900,
     1200,
-    1600,
-    "Folio d’ouverture enluminé d’un Coran, or et pigments, 1306",
+    "Un Coran ouvert, un chapelet de bois posé sur ses pages",
   ),
   activiteDourous: shippedPhoto(
     "activite-dourous",
@@ -120,9 +123,9 @@ export const PHOTOS = {
   activiteArabe: shippedPhoto(
     "activite-arabe",
     "activite-arabe.jpg",
+    900,
     1200,
-    1600,
-    "Feuillet de calligraphie arabe en écriture ijazah, cartouches enluminés à l’or",
+    "Calames de calligraphie, encre et une lettre arabe tracée sur la feuille",
   ),
   activiteSoutien: shippedPhoto(
     "activite-soutien",
@@ -134,9 +137,9 @@ export const PHOTOS = {
   activiteCommunaute: shippedPhoto(
     "activite-communaute",
     "activite-communaute.jpg",
+    900,
     1200,
-    1600,
-    "Lampe de mosquée en verre émaillé, décor de calligraphie bleue et or",
+    "La Kaaba au coucher du soleil, vue depuis une arche de la Grande Mosquée",
   ),
 
   chantier: photo(

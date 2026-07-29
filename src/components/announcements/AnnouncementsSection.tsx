@@ -7,9 +7,12 @@ import { getActiveAnnouncements } from "@/lib/announcements";
 import { formatDate } from "@/lib/dates";
 
 /**
- * MESSAGE / ACTUALITÉ IMPORTANTE, sur fond de mosaïque. Seules les annonces
- * actives (fenêtre publishedAt / startsAt / endsAt) apparaissent : rien
- * d'obsolète ne peut rester affiché en page d'accueil.
+ * MESSAGE / ACTUALITÉ IMPORTANTE, sur fond clair — la mosaïque est réservée au
+ * bloc des prochains rendez-vous, juste en dessous : deux blocs sombres à la
+ * suite se seraient confondus.
+ *
+ * Seules les annonces actives (fenêtre publishedAt / startsAt / endsAt)
+ * apparaissent : rien d'obsolète ne peut rester affiché en page d'accueil.
  */
 export async function AnnouncementsSection({
   number = "03",
@@ -22,18 +25,15 @@ export async function AnnouncementsSection({
   return (
     <section
       aria-labelledby="annonces-titre"
-      className="on-dark relative overflow-hidden bg-ink py-16 text-ivory lg:py-20"
+      className="border-y hairline bg-cream py-16 lg:py-20"
     >
-      <div aria-hidden className="pattern-zellige absolute inset-0" />
-      <Container className="relative">
+      <Container>
         <Reveal>
           <div className="flex flex-wrap items-baseline justify-between gap-4">
-            <Eyebrow number={number} onDark>
-              Annonces de la mosquée
-            </Eyebrow>
+            <Eyebrow number={number}>Annonces de la mosquée</Eyebrow>
             <Link
               href="/actualites"
-              className="link-editorial text-[0.75rem] font-semibold tracking-[0.2em] text-ivory/85 uppercase hover:text-ivory"
+              className="link-editorial text-[0.75rem] font-semibold tracking-[0.2em] text-charcoal/65 uppercase hover:text-charcoal"
             >
               Toutes les actualités
             </Link>
@@ -46,11 +46,11 @@ export async function AnnouncementsSection({
         <div className="mt-10 space-y-0">
           {announcements.slice(0, 3).map((a, index) => (
             <Reveal key={a.id} delay={index * 0.06}>
-              <article className="zellige-hover-dark grid gap-4 border-t border-ivory/20 py-8 first:border-t-0 sm:grid-cols-12 sm:gap-8">
+              <article className="zellige-hover grid gap-4 border-t hairline py-8 first:border-t-0 sm:grid-cols-12 sm:gap-8">
                 <div className="sm:col-span-3">
                   <time
                     dateTime={a.publishedAt}
-                    className="text-[0.82rem] font-semibold tracking-[0.18em] text-ivory/85 uppercase"
+                    className="text-[0.82rem] font-semibold tracking-[0.18em] text-taupe uppercase"
                   >
                     {formatDate(a.publishedAt)}
                   </time>
@@ -62,18 +62,18 @@ export async function AnnouncementsSection({
                   ) : null}
                 </div>
                 <div className="sm:col-span-9">
-                  <h3 className="font-display text-3xl leading-snug font-medium text-ivory sm:text-4xl">
+                  <h3 className="font-display text-3xl leading-snug font-medium text-charcoal sm:text-4xl">
                     {a.title}
                   </h3>
                   {a.body ? (
-                    <p className="mt-3 max-w-2xl text-[1rem] leading-[1.8] text-ivory/90">
+                    <p className="mt-3 max-w-2xl text-[1rem] leading-[1.8] text-charcoal/75">
                       {a.body}
                     </p>
                   ) : null}
                   {a.href ? (
                     <Link
                       href={a.href}
-                      className="link-editorial mt-5 inline-block text-[0.76rem] font-semibold tracking-[0.2em] text-ivory uppercase"
+                      className="link-editorial mt-5 inline-block text-[0.76rem] font-semibold tracking-[0.2em] text-charcoal uppercase"
                     >
                       {a.hrefLabel ?? "En savoir plus"}
                     </Link>
