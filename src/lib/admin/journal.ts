@@ -1,6 +1,12 @@
 import "server-only";
 
-import { deleteRecord, newId, readCollection, upsertRecord } from "@/lib/store";
+import {
+  deleteRecord,
+  newId,
+  readCollection,
+  readRecent,
+  upsertRecord,
+} from "@/lib/store";
 import type { JournalAction, JournalRecord } from "@/lib/store/types";
 
 /**
@@ -55,10 +61,7 @@ export async function logActivity(entry: {
 }
 
 export async function readJournal(limite = 100): Promise<JournalRecord[]> {
-  const lignes = await readCollection("journal");
-  return [...lignes]
-    .sort((a, b) => b.at.localeCompare(a.at))
-    .slice(0, limite);
+  return readRecent("journal", "at", limite);
 }
 
 async function trim(): Promise<void> {

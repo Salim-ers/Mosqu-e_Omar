@@ -81,18 +81,43 @@ export async function createPostgresDriver(): Promise<StoreDriver> {
       return rows.map((row) => row.data);
     },
 
-    async countCollections(collections) {
-      const { rows } = await pool.query<{ collection: string; total: string }>(
-        `SELECT collection, count(*) AS total
+    async collectionStats(collections, flag) {
+      const { rows } = await pool.query<{
+        collection: string;
+        total: string;
+        without: string;
+      }>(
+        `SELECT collection,
+                count(*) AS total,
+                count(*) FILTER (
+                  WHERE coalesce((data ->> $2)::boolean, false) IS NOT TRUE
+                ) AS without
            FROM site_records
           WHERE collection = ANY($1)
           GROUP BY collection`,
-        [collections],
+        [collections, flag],
       );
-      const compteurs: Record<string, number> = {};
-      for (const nom of collections) compteurs[nom] = 0;
-      for (const row of rows) compteurs[row.collection] = Number(row.total);
-      return compteurs;
+
+      const stats: Record<string, { total: number; without: number }> = {};
+      for (const nom of collections) stats[nom] = { total: 0, without: 0 };
+      for (const row of rows) {
+        stats[row.collection] = {
+          total: Number(row.total),
+          without: Number(row.without),
+        };
+      }
+      return stats;
+    },
+
+    async readRecent(collection, dateKey, limit) {
+      const { rows } = await pool.query<{ data: unknown }>(
+        `SELECT data FROM site_records
+          WHERE collection = $1
+          ORDER BY data ->> $2 DESC
+          LIMIT $3`,
+        [collection, dateKey, limit],
+      );
+      return rows.map((row) => row.data);
     },
 
     async writeCollection(collection, records) {

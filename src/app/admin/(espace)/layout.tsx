@@ -6,7 +6,7 @@ import { SubmitButton } from "@/components/admin/FormButtons";
 import { RESOURCES } from "@/lib/admin/resources";
 import { requireUser } from "@/lib/auth";
 import { logoSrc } from "@/lib/media";
-import { countCollections, readCollection, storageLabel } from "@/lib/store";
+import { collectionStats, storageLabel } from "@/lib/store";
 
 import { logout } from "../actions";
 
@@ -20,15 +20,18 @@ export default async function EspaceLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const user = await requireUser();
 
-  // Un seul comptage pour toute la colonne de gauche : la naviguer ne doit pas
+  // Deux requêtes pour toute la colonne de gauche : la naviguer ne doit pas
   // coûter une interrogation par rubrique.
   const [compteurs, messages, stockage] = await Promise.all([
-    countCollections(RESOURCES.map((resource) => resource.key)),
-    readCollection("messages"),
+    collectionStats(
+      RESOURCES.map((resource) => resource.key),
+      "published",
+    ),
+    collectionStats(["messages"], "read"),
     storageLabel(),
   ]);
-  const countOf = (key: string) => compteurs[key] ?? 0;
-  const nonLus = messages.filter((message) => !message.read).length;
+  const countOf = (key: string) => compteurs[key]?.total ?? 0;
+  const nonLus = messages.messages?.without ?? 0;
 
   const groups: NavGroup[] = [
     {

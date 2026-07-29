@@ -79,14 +79,34 @@ export function createFsDriver(): StoreDriver {
       return Array.isArray(list) ? list : [];
     },
 
-    async countCollections(collections) {
+    async collectionStats(collections, flag) {
       const entrees = await Promise.all(
         collections.map(async (nom) => {
-          const liste = await readJson<unknown[]>(fileOf(nom), []);
-          return [nom, Array.isArray(liste) ? liste.length : 0] as const;
+          const liste = await readJson<Record<string, unknown>[]>(fileOf(nom), []);
+          const items = Array.isArray(liste) ? liste : [];
+          return [
+            nom,
+            {
+              total: items.length,
+              without: items.filter((item) => item?.[flag] !== true).length,
+            },
+          ] as const;
         }),
       );
       return Object.fromEntries(entrees);
+    },
+
+    async readRecent(collection, dateKey, limit) {
+      const liste = await readJson<Record<string, unknown>[]>(
+        fileOf(collection),
+        [],
+      );
+      const items = Array.isArray(liste) ? liste : [];
+      return [...items]
+        .sort((a, b) =>
+          String(b?.[dateKey] ?? "").localeCompare(String(a?.[dateKey] ?? "")),
+        )
+        .slice(0, limit);
     },
 
     async writeCollection(collection, records) {

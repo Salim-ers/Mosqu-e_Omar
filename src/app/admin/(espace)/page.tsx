@@ -13,7 +13,7 @@ import { RESOURCES } from "@/lib/admin/resources";
 import { requireUser } from "@/lib/auth";
 import { getEvents, getJanaza } from "@/lib/content";
 import { formatDate, formatJanazaDate } from "@/lib/dates";
-import { readCollection } from "@/lib/store";
+import { collectionStats } from "@/lib/store";
 
 import { importExistingContent } from "../actions";
 
@@ -26,27 +26,29 @@ export default async function AdminDashboard({
   const user = await requireUser();
   const { ok, erreur } = await searchParams;
 
-  const stats = await Promise.all(
-    RESOURCES.map(async (resource) => {
-      const list = (await readCollection(resource.key)) as {
-        published: boolean;
-      }[];
-      return {
-        key: resource.key,
-        label: resource.label,
-        total: list.length,
-        drafts: list.filter((item) => !item.published).length,
-      };
-    }),
-  );
+  // Trois interrogations pour tout le tableau de bord : les compteurs de
+  // toutes les rubriques, les messages non lus, et les dernières lignes du
+  // journal. Les panneaux janaza et événements réutilisent des contenus déjà
+  // lus pour la mise en page — le cache de rendu évite de les redemander.
+  const [compteursRubriques, compteurMessages, journal, janaza, events] =
+    await Promise.all([
+      collectionStats(
+        RESOURCES.map((resource) => resource.key),
+        "published",
+      ),
+      collectionStats(["messages"], "read"),
+      readJournal(8),
+      getJanaza(),
+      getEvents(),
+    ]);
 
-  const [janaza, events, messages, journal] = await Promise.all([
-    getJanaza(),
-    getEvents(),
-    readCollection("messages"),
-    readJournal(8),
-  ]);
-  const nonLus = messages.filter((message) => !message.read).length;
+  const stats = RESOURCES.map((resource) => ({
+    key: resource.key,
+    label: resource.label,
+    total: compteursRubriques[resource.key]?.total ?? 0,
+    drafts: compteursRubriques[resource.key]?.without ?? 0,
+  }));
+  const nonLus = compteurMessages.messages?.without ?? 0;
 
   // L'import reste proposé tant qu'une rubrique n'a pas été reprise en main —
   // et pas seulement quand l'espace est entièrement vide.

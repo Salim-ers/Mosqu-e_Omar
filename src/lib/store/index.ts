@@ -43,10 +43,27 @@ export async function readCollection<K extends CollectionName>(
   return (await readCollectionOnce(name)) as Collections[K][];
 }
 
-/** Compteurs de plusieurs collections, en une seule interrogation. */
-export const countCollections = cache(
-  async (names: readonly CollectionName[]): Promise<Record<string, number>> =>
-    (await driver()).countCollections([...names]),
+/**
+ * Compteurs de plusieurs collections, en une seule interrogation : total et
+ * nombre d'enregistrements dont le drapeau n'est pas levé (brouillons pour
+ * « published », messages non lus pour « read »).
+ */
+export const collectionStats = cache(
+  async (
+    names: readonly CollectionName[],
+    flag: string,
+  ): Promise<Record<string, { total: number; without: number }>> =>
+    (await driver()).collectionStats([...names], flag),
+);
+
+/** Les `limit` enregistrements les plus récents, triés sur une date. */
+export const readRecent = cache(
+  async <K extends CollectionName>(
+    name: K,
+    dateKey: string,
+    limit: number,
+  ): Promise<Collections[K][]> =>
+    (await (await driver()).readRecent(name, dateKey, limit)) as Collections[K][],
 );
 
 export async function writeCollection<K extends CollectionName>(
