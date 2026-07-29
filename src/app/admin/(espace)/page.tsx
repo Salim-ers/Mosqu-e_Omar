@@ -22,7 +22,7 @@ export default async function AdminDashboard({
 }: {
   searchParams: Promise<{ ok?: string; erreur?: string }>;
 }) {
-  const user = await requireUser();
+  await requireUser();
   const { ok, erreur } = await searchParams;
 
   // Trois interrogations pour tout le tableau de bord : les compteurs de
@@ -62,7 +62,7 @@ export default async function AdminDashboard({
     <div className="space-y-10">
       <AdminPageTitle
         eyebrow="Espace bénévoles"
-        title={`Bonjour ${user.name.split(" ")[0]}`}
+        title="As-salâmu ʿalaykum"
         lead="Tout ce qui est modifiable sur le site se trouve dans la colonne de gauche. Chaque enregistrement met le site à jour immédiatement."
         actions={
           <>

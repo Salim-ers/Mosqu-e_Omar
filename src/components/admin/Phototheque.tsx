@@ -1,3 +1,4 @@
+import { AjoutPhotos } from "@/components/admin/AjoutPhotos";
 import { ConfirmButton } from "@/components/admin/FormButtons";
 import { EmptyState } from "@/components/admin/ui";
 import { formatDate } from "@/lib/dates";
@@ -26,6 +27,8 @@ export async function Phototheque() {
           Supprimer une photo la retire aussi des pages où elle est encore
           utilisée — vérifiez avant.
         </p>
+
+        <AjoutPhotos />
 
         {medias.length === 0 ? (
           <div className="mt-6">

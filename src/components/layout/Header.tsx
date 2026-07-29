@@ -63,19 +63,22 @@ export function Header({
             : "border-b border-ivory/10 bg-ink/95 shadow-[0_1px_0_0_rgba(248,245,239,0.06)] backdrop-blur-md",
         )}
       >
+        {/* Bandeau d'information : or franc sur texte d'encre. Il sert aux
+            annonces exceptionnelles — il doit se voir du premier coup d'œil,
+            y compris par-dessus la photographie de l'accueil. */}
         {banner ? (
-          <div className="border-b border-ivory/10 bg-ink">
-            <div className="mx-auto flex w-full max-w-[100rem] items-center justify-center gap-3 px-5 py-2.5 text-center sm:px-8 lg:px-12">
-              <span aria-hidden className="h-1.5 w-1.5 shrink-0 rotate-45 bg-amber" />
+          <div className="bg-gold text-ink">
+            <div className="mx-auto flex w-full max-w-[100rem] items-center justify-center gap-3 px-5 py-3 text-center sm:px-8 lg:px-12">
+              <span aria-hidden className="h-1.5 w-1.5 shrink-0 rotate-45 bg-ink" />
               {banner.href ? (
                 <Link
                   href={banner.href}
-                  className="link-editorial text-[0.72rem] font-semibold tracking-[0.14em] text-ivory/85 uppercase hover:text-ivory"
+                  className="link-editorial text-[0.74rem] font-semibold tracking-[0.16em] text-ink uppercase"
                 >
                   {banner.text}
                 </Link>
               ) : (
-                <span className="text-[0.72rem] font-semibold tracking-[0.14em] text-ivory/85 uppercase">
+                <span className="text-[0.74rem] font-semibold tracking-[0.16em] text-ink uppercase">
                   {banner.text}
                 </span>
               )}

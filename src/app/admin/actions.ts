@@ -170,16 +170,22 @@ export async function deleteMessage(id: string): Promise<void> {
 export async function toggleInscritTraite(id: string): Promise<void> {
   await requireUser();
   const inscrit = (await readCollection("inscrits")).find((i) => i.id === id);
-  if (inscrit) {
-    await upsertRecord("inscrits", { ...inscrit, traite: !inscrit.traite });
-  }
-  redirect("/admin/contenus/inscriptions?ok=inscrit");
+  if (!inscrit) redirect("/admin/contenus/inscriptions");
+
+  await upsertRecord("inscrits", { ...inscrit, traite: !inscrit.traite });
+  // On revient sur la liste du cours, là où le bénévole travaillait.
+  redirect(`/admin/inscrits/${encodeURIComponent(inscrit.cours)}?ok=1`);
 }
 
 export async function deleteInscrit(id: string): Promise<void> {
   await requireUser();
+  const inscrit = (await readCollection("inscrits")).find((i) => i.id === id);
   await deleteRecord("inscrits", id);
-  redirect("/admin/contenus/inscriptions?ok=inscrit-supprime");
+  redirect(
+    inscrit
+      ? `/admin/inscrits/${encodeURIComponent(inscrit.cours)}?ok=1`
+      : "/admin/contenus/inscriptions",
+  );
 }
 
 /* --------------------------------------------------------- réglages --- */

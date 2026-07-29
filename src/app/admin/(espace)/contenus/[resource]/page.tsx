@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ConfirmButton, SubmitButton } from "@/components/admin/FormButtons";
-import { Inscrits } from "@/components/admin/Inscrits";
 import { Phototheque } from "@/components/admin/Phototheque";
 import {
   AdminLink,
@@ -65,6 +64,21 @@ export default async function ResourceListPage({
   const { ok, erreur } = await searchParams;
   const rows = sortRows(def, (await readCollection(def.key)) as Row[]);
   const origine = contenuDOrigine(def.key);
+
+  // Pour la rubrique Inscriptions, chaque ligne porte le nombre de demandes
+  // reçues et mène directement à la liste des inscrits de ce cours.
+  const inscritsParCours = new Map<string, { total: number; aRappeler: number }>();
+  if (def.key === "inscriptions") {
+    for (const inscrit of await readCollection("inscrits")) {
+      const compte = inscritsParCours.get(inscrit.cours) ?? {
+        total: 0,
+        aRappeler: 0,
+      };
+      compte.total += 1;
+      if (!inscrit.traite) compte.aRappeler += 1;
+      inscritsParCours.set(inscrit.cours, compte);
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -148,6 +162,23 @@ export default async function ResourceListPage({
                     {text(row[def.subtitleField])}
                   </p>
                 ) : null}
+
+                {def.key === "inscriptions" ? (
+                  <p className="mt-2.5">
+                    <Link
+                      href={`/admin/inscrits/${encodeURIComponent(text(row[def.titleField]))}`}
+                      className="link-editorial text-[0.78rem] font-semibold tracking-[0.14em] text-charcoal uppercase"
+                    >
+                      {(() => {
+                        const c = inscritsParCours.get(text(row[def.titleField]));
+                        if (!c) return "Voir les inscrits — aucun pour l’instant →";
+                        return `Voir les ${c.total} inscrit${c.total > 1 ? "s" : ""}${
+                          c.aRappeler > 0 ? ` · ${c.aRappeler} à rappeler` : ""
+                        } →`;
+                      })()}
+                    </Link>
+                  </p>
+                ) : null}
               </div>
 
               <div className="flex shrink-0 flex-wrap items-center gap-2">
@@ -178,7 +209,6 @@ export default async function ResourceListPage({
         </ul>
       )}
 
-      {def.key === "inscriptions" ? <Inscrits /> : null}
       {def.key === "albums" ? <Phototheque /> : null}
     </div>
   );

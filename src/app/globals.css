@@ -24,6 +24,8 @@
   --color-ink: #06101f;
   --color-olive: #46503c;
   --color-amber: #a2702d;
+  /** Or du bandeau d'information — doit se voir sans discussion. */
+  --color-gold: #d8ab4a;
   /* Bleu de la mosaïque — sert aussi de couleur de survol dans tout le site. */
   --color-zellige: #12275a;
 
