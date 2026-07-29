@@ -108,7 +108,7 @@ export const PHOTOS = {
     "activite-coran.jpg",
     1200,
     1600,
-    "Un Coran ouvert, pages du mushaf en écriture naskh coloriée (tajwid)",
+    "Folio d’ouverture enluminé d’un Coran, or et pigments, 1306",
   ),
   activiteDourous: shippedPhoto(
     "activite-dourous",
@@ -122,7 +122,7 @@ export const PHOTOS = {
     "activite-arabe.jpg",
     1200,
     1600,
-    "Calligraphie arabe en écriture thuluth, tracée à l’ivoire sur bleu de nuit",
+    "Feuillet de calligraphie arabe en écriture ijazah, cartouches enluminés à l’or",
   ),
   activiteSoutien: shippedPhoto(
     "activite-soutien",
