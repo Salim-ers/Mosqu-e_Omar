@@ -12,8 +12,8 @@ const BUTTON_BASE =
   "inline-flex items-center justify-center gap-2 rounded-[2px] border px-5 py-2.5 text-[0.7rem] font-semibold tracking-[0.16em] uppercase transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50";
 
 export const BUTTON_STYLES = {
-  primary: `${BUTTON_BASE} border-ink bg-ink text-ivory hover:bg-charcoal`,
-  ghost: `${BUTTON_BASE} border-charcoal/20 bg-transparent text-charcoal hover:border-charcoal hover:bg-charcoal hover:text-ivory`,
+  primary: `${BUTTON_BASE} border-ink bg-ink text-ivory hover:border-zellige hover:bg-zellige`,
+  ghost: `${BUTTON_BASE} border-charcoal/20 bg-transparent text-charcoal hover:border-ink hover:bg-ink hover:text-ivory`,
   /** Sur fond sombre (page de connexion). */
   light: `${BUTTON_BASE} border-ivory bg-ivory text-ink hover:bg-transparent hover:text-ivory`,
   danger: `${BUTTON_BASE} border-transparent bg-transparent text-charcoal/50 hover:text-[#8a2a20]`,

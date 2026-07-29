@@ -14,7 +14,12 @@
   --color-beige: #d5c7b7;
   --color-taupe: #9a8d7e;
   --color-charcoal: #181816;
-  --color-ink: #0d0d0c;
+  /**
+   * Surfaces sombres du site — bandeau, pieds de page, en-têtes, blocs
+   * éditoriaux. Bleu de nuit et non plus noir : c'est le lit de la mosaïque,
+   * de sorte que le zellige posé par-dessus se fonde dans son propre fond.
+   */
+  --color-ink: #0c1b38;
   --color-olive: #46503c;
   --color-amber: #a2702d;
   /* Bleu de la mosaïque — sert aussi de couleur de survol dans tout le site. */

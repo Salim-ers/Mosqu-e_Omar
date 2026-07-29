@@ -14,9 +14,9 @@ const BASE =
 
 const VARIANTS: Record<Variant, string> = {
   primary:
-    "border-charcoal bg-charcoal text-ivory hover:bg-ink hover:border-ink",
+    "border-ink bg-ink text-ivory hover:border-zellige hover:bg-zellige",
   outline:
-    "border-charcoal/25 bg-transparent text-charcoal hover:border-charcoal hover:bg-charcoal hover:text-ivory",
+    "border-charcoal/25 bg-transparent text-charcoal hover:border-ink hover:bg-ink hover:text-ivory",
   onImage:
     "on-dark border-ivory/40 bg-transparent text-ivory hover:bg-ivory hover:text-charcoal hover:border-ivory",
   onDark:

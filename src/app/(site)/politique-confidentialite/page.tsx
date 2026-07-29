@@ -73,9 +73,11 @@ export default async function PolitiqueConfidentialitePage() {
                   chargé depuis les serveurs de MAWAQIT.
                 </li>
                 <li>
-                  <strong>Google Maps</strong> — le plan d’accès n’est chargé
-                  qu’après votre clic sur « Afficher la carte » : aucune
-                  requête n’est envoyée à Google avant votre action.
+                  <strong>Google Maps</strong> — le plan d’accès est affiché
+                  sur les pages Accueil et Contact. La carte n’est demandée à
+                  Google qu’au moment où elle entre dans votre écran ; ce
+                  chargement transmet alors votre adresse IP à Google, comme
+                  toute image ou carte venant d’un autre site.
                 </li>
                 <li>
                   <strong>Formulaires de don</strong> — les dons en ligne sont

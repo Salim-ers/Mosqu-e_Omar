@@ -114,7 +114,7 @@ function Envoyer() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center justify-center rounded-[2px] border border-charcoal bg-charcoal px-7 py-3.5 text-[0.72rem] font-semibold tracking-[0.2em] text-ivory uppercase transition-colors duration-300 hover:bg-ink disabled:opacity-50 motion-reduce:transition-none"
+      className="inline-flex items-center justify-center rounded-[2px] border border-ink bg-ink px-7 py-3.5 text-[0.72rem] font-semibold tracking-[0.2em] text-ivory uppercase transition-colors duration-300 hover:bg-zellige disabled:opacity-50 motion-reduce:transition-none"
     >
       {pending ? "Envoi…" : "Envoyer le message"}
     </button>

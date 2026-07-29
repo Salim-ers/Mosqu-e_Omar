@@ -73,7 +73,7 @@ export default async function DonsPage() {
                 <article
                   className={
                     way.primary
-                      ? "flex h-full flex-col justify-between border border-charcoal bg-charcoal p-8 text-ivory sm:p-10"
+                      ? "flex h-full flex-col justify-between border border-ink bg-ink p-8 text-ivory sm:p-10"
                       : "flex h-full flex-col justify-between border hairline bg-cream p-8 sm:p-10"
                   }
                 >

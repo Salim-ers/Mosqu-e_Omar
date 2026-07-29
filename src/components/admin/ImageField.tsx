@@ -204,7 +204,7 @@ export function ImageField({
         />
         <label
           htmlFor={inputId}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-[2px] border border-charcoal/25 px-5 py-2.5 text-[0.7rem] font-semibold tracking-[0.16em] text-charcoal uppercase transition-colors hover:border-charcoal hover:bg-charcoal hover:text-ivory"
+          className="inline-flex cursor-pointer items-center gap-2 rounded-[2px] border border-charcoal/25 px-5 py-2.5 text-[0.7rem] font-semibold tracking-[0.16em] text-charcoal uppercase transition-colors hover:border-ink hover:bg-ink hover:text-ivory"
         >
           {busy
             ? "Envoi en cours…"
