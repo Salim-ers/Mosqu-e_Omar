@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import {
+  canonicalEmail,
   createUser,
   endSession,
   getUsers,
@@ -288,7 +289,7 @@ export async function createVolunteer(formData: FormData): Promise<void> {
   if (problem) fail(problem);
 
   const users = await getUsers();
-  if (users.some((user) => user.email === email)) {
+  if (users.some((user) => canonicalEmail(user.email) === canonicalEmail(email))) {
     fail("Un compte utilise déjà cette adresse email.");
   }
 

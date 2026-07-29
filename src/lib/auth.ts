@@ -2,6 +2,7 @@ import "server-only";
 
 import { createHmac, randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
+import { domainToASCII } from "node:url";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -33,6 +34,30 @@ const scryptAsync = promisify(scrypt) as (
   salt: string,
   keylen: number,
 ) => Promise<Buffer>;
+
+/* ------------------------------------------------------------ adresses --- */
+
+/**
+ * Forme canonique d'une adresse email, pour la comparaison uniquement.
+ *
+ * Les navigateurs convertissent le domaine d'un champ `type="email"` en ASCII
+ * avant de l'envoyer : « admin@mosquéeomar.fr » part en
+ * « admin@xn--mosqueomar-f7a.fr ». Sans cette conversion des deux côtés, un
+ * compte à domaine accentué serait impossible à utiliser — l'adresse saisie
+ * et l'adresse stockée ne se ressembleraient plus.
+ *
+ * L'adresse reste affichée telle qu'elle a été saisie ; seule la comparaison
+ * passe par ici.
+ */
+export function canonicalEmail(email: string): string {
+  const propre = email.trim().toLowerCase().normalize("NFC");
+  const arobase = propre.lastIndexOf("@");
+  if (arobase < 0) return propre;
+
+  const partieLocale = propre.slice(0, arobase);
+  const domaine = propre.slice(arobase + 1);
+  return `${partieLocale}@${domainToASCII(domaine) || domaine}`;
+}
 
 /* ------------------------------------------------------ mots de passe --- */
 
@@ -182,9 +207,9 @@ export async function authenticate(
   email: string,
   password: string,
 ): Promise<SessionUser | null> {
-  const normalized = email.trim().toLowerCase();
+  const recherche = canonicalEmail(email);
   const user = (await getUsers()).find(
-    (u) => u.email.toLowerCase() === normalized && u.active,
+    (u) => canonicalEmail(u.email) === recherche && u.active,
   );
   if (!user) {
     // Coût constant : on hache quand même pour ne pas révéler l'existence
@@ -209,7 +234,7 @@ export async function createUser(input: {
 }): Promise<UserRecord> {
   const user: UserRecord = {
     id: newId(),
-    email: input.email.trim().toLowerCase(),
+    email: input.email.trim().toLowerCase().normalize("NFC"),
     name: input.name.trim(),
     role: input.role,
     passwordHash: await hashPassword(input.password),

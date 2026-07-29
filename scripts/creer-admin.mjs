@@ -20,6 +20,7 @@
  */
 
 import { randomBytes, randomUUID, scrypt } from "node:crypto";
+import { domainToASCII } from "node:url";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -34,7 +35,16 @@ const option = (nom) => {
   return i >= 0 ? args[i + 1] : undefined;
 };
 
-const email = (option("email") ?? "").trim().toLowerCase();
+const email = (option("email") ?? "").trim().toLowerCase().normalize("NFC");
+
+/** Même canonisation que src/lib/auth.ts (domaine en ASCII pour comparer). */
+function canonique(adresse) {
+  const propre = adresse.trim().toLowerCase().normalize("NFC");
+  const arobase = propre.lastIndexOf("@");
+  if (arobase < 0) return propre;
+  const domaine = propre.slice(arobase + 1);
+  return `${propre.slice(0, arobase)}@${domainToASCII(domaine) || domaine}`;
+}
 const nom = (option("nom") ?? "").trim();
 const force = args.includes("--force");
 const role = args.includes("--editeur") ? "editeur" : "admin";
@@ -153,7 +163,7 @@ try {
 
   const existants = await comptesExistants();
 
-  if (existants.some((c) => (c.email ?? "").toLowerCase() === email)) {
+  if (existants.some((c) => canonique(c.email ?? "") === canonique(email))) {
     throw new Error(`Un compte utilise déjà l’adresse ${email}.`);
   }
   if (existants.length > 0 && !force) {
