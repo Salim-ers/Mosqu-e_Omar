@@ -1,82 +1,62 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
 
 import { ButtonLink } from "@/components/ui/Button";
 import { site } from "@/config/site";
 import { PHOTOS, src } from "@/lib/media";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
-
 /**
  * HERO — plein écran, photographie réelle de la mosquée, révélation très
  * lente : l'image se dévoile, puis les lignes du titre montent l'une après
- * l'autre, puis la signature et les actions. Parallax ≤ 6 % au scroll.
+ * l'autre, puis la signature et les actions.
+ *
+ * Toute l'entrée en scène est faite d'animations CSS déclarées dans
+ * globals.css : elles sont jouées par le compositeur, sans une ligne de
+ * JavaScript. Seul le léger parallax garde un écouteur — un seul, passif, et
+ * la position n'est appliquée qu'une fois par image d'écran.
  *
  * `min-h-svh` et non 92 % : à hauteur partielle, la section ivoire suivante
  * apparaissait en bas de l'écran comme une bande blanche sous la photographie.
  */
 export function HomeHero() {
-  const scope = useRef<HTMLElement>(null);
+  const parallax = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
+  useEffect(() => {
+    const el = parallax.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const tl = gsap.timeline({
-          defaults: { ease: "power3.out" },
-          delay: 0.15,
-        });
+    let attendu = false;
 
-        tl.fromTo(
-          "[data-hero-image]",
-          { autoAlpha: 0, scale: 1.07 },
-          { autoAlpha: 1, scale: 1, duration: 2.2, ease: "power2.out" },
-        )
-          .fromTo(
-            "[data-hero-line]",
-            { yPercent: 112 },
-            { yPercent: 0, duration: 1.35, stagger: 0.14 },
-            "-=1.7",
-          )
-          .fromTo(
-            "[data-hero-fade]",
-            { autoAlpha: 0, y: 18 },
-            { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.12 },
-            "-=0.8",
-          );
+    const applique = () => {
+      attendu = false;
+      // 8 % de la hauteur de l'écran au plus : le débordement de la
+      // photographie (inset -8%) couvre exactement ce déplacement.
+      const avancee = Math.min(window.scrollY / window.innerHeight, 1);
+      el.style.transform = `translate3d(0, ${(avancee * 8).toFixed(2)}%, 0)`;
+    };
 
-        gsap.to("[data-hero-parallax]", {
-          yPercent: 8,
-          ease: "none",
-          scrollTrigger: {
-            trigger: scope.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.6,
-          },
-        });
-      });
+    const auDefilement = () => {
+      if (attendu) return;
+      attendu = true;
+      requestAnimationFrame(applique);
+    };
 
-      return () => mm.revert();
-    },
-    { scope },
-  );
+    applique();
+    window.addEventListener("scroll", auDefilement, { passive: true });
+    return () => window.removeEventListener("scroll", auDefilement);
+  }, []);
 
   return (
     <section
-      ref={scope}
       className="on-dark relative flex min-h-svh flex-col justify-end overflow-hidden bg-ink text-ivory"
       aria-label="La mosquée Omar Ibn al Khattab de Creil"
     >
       {/* Photographie réelle de la mosquée */}
-      <div data-hero-image className="absolute inset-0 will-change-transform">
-        <div data-hero-parallax className="absolute inset-[-8%]">
+      <div className="hero-image absolute inset-0">
+        <div ref={parallax} className="absolute inset-[-8%] will-change-transform">
           <Image
             src={src(PHOTOS.facade)}
             alt={PHOTOS.facade.alt}
@@ -95,8 +75,8 @@ export function HomeHero() {
 
       <div className="relative mx-auto w-full max-w-[100rem] px-5 pt-40 pb-14 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20">
         <p
-          data-hero-fade
-          className="font-arabic text-lg text-ivory/75 sm:text-xl"
+          className="hero-fade font-arabic text-lg text-ivory/75 sm:text-xl"
+          style={{ animationDelay: "1.15s" }}
           lang="ar"
           dir="rtl"
         >
@@ -105,12 +85,12 @@ export function HomeHero() {
 
         <h1 className="mt-5 font-display text-[14vw] leading-[0.92] font-medium tracking-[-0.015em] sm:text-[11vw] lg:text-[8.2rem] xl:text-[9.5rem]">
           <span className="block overflow-hidden pb-[0.06em]">
-            <span data-hero-line className="block will-change-transform">
+            <span className="hero-line block" style={{ animationDelay: "0.5s" }}>
               Mosquée Omar
             </span>
           </span>
           <span className="block overflow-hidden pb-[0.06em]">
-            <span data-hero-line className="block will-change-transform">
+            <span className="hero-line block" style={{ animationDelay: "0.64s" }}>
               Ibn al Khattab
             </span>
           </span>
@@ -118,14 +98,17 @@ export function HomeHero() {
 
         <div className="mt-8 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
           <p
-            data-hero-fade
-            className="max-w-md text-[1rem] leading-[1.8] text-ivory/85 sm:text-[1.05rem]"
+            className="hero-fade max-w-md text-[1rem] leading-[1.8] text-ivory/85 sm:text-[1.05rem]"
+            style={{ animationDelay: "1.27s" }}
           >
             Un lieu de foi, de transmission et de fraternité,
             <br className="hidden sm:block" /> au cœur de Creil.
           </p>
 
-          <div data-hero-fade className="flex flex-wrap items-center gap-4">
+          <div
+            className="hero-fade flex flex-wrap items-center gap-4"
+            style={{ animationDelay: "1.39s" }}
+          >
             <ButtonLink href="/projet" variant="onImage">
               Découvrir la mosquée
             </ButtonLink>
@@ -136,8 +119,8 @@ export function HomeHero() {
         </div>
 
         <div
-          data-hero-fade
-          className="mt-12 flex items-center gap-5 border-t border-ivory/15 pt-6"
+          className="hero-fade mt-12 flex items-center gap-5 border-t border-ivory/15 pt-6"
+          style={{ animationDelay: "1.51s" }}
         >
           <p className="text-[0.64rem] font-semibold tracking-[0.34em] text-ivory/60 uppercase">
             Creil — Oise

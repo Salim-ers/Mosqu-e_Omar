@@ -6,13 +6,22 @@ import { notFound } from "next/navigation";
 import { Reveal } from "@/components/motion/Reveal";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { getSiteArticle, type PublicArticle } from "@/lib/content";
+import { getSiteArticle, getSiteArticles, type PublicArticle } from "@/lib/content";
 import { formatDate } from "@/lib/dates";
 import { getPostBySlug } from "@/lib/wordpress/queries";
 
 export const revalidate = 3600;
 
 type Params = { slug: string };
+
+/**
+ * Les articles publiés depuis l'espace bénévoles sont pré-rendus : ils sont
+ * alors servis depuis le cache, sans interroger la base. Ceux du WordPress,
+ * dont on ne connaît pas la liste à l'avance, restent rendus à la demande.
+ */
+export async function generateStaticParams(): Promise<Params[]> {
+  return (await getSiteArticles()).map((article) => ({ slug: article.slug }));
+}
 
 /**
  * Un article peut venir de l'espace bénévoles ou du WordPress ; les articles

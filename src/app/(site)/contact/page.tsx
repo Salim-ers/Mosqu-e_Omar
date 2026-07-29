@@ -6,6 +6,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
+import { FormFeedback } from "@/components/ui/FormFeedback";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { site } from "@/config/site";
 import { getSettings } from "@/lib/content";
@@ -19,15 +20,8 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600;
 
-export default async function ContactPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ ok?: string; erreur?: string }>;
-}) {
-  const [settings, { ok, erreur }] = await Promise.all([
-    getSettings(),
-    searchParams,
-  ]);
+export default async function ContactPage() {
+  const settings = await getSettings();
 
   return (
     <>
@@ -145,29 +139,15 @@ export default async function ContactPage({
 
             <div className="lg:col-span-8">
               <Reveal delay={0.08}>
-                {ok ? (
-                  <div className="border hairline bg-ivory p-8 sm:p-10">
-                    <p className="font-display text-3xl font-medium text-charcoal">
-                      Votre message est bien arrivé.
-                    </p>
-                    <p className="mt-4 max-w-xl text-[0.98rem] leading-[1.85] text-charcoal/70">
-                      L’équipe de la mosquée en prend connaissance et vous
-                      répondra dès que possible. Qu’Allah vous récompense.
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    {erreur ? (
-                      <p
-                        role="alert"
-                        className="mb-6 rounded-[2px] border border-[#8a2a20]/25 bg-[#8a2a20]/6 px-4 py-3 text-[0.9rem] text-[#8a2a20]"
-                      >
-                        {erreur}
-                      </p>
-                    ) : null}
-                    <ContactForm />
-                  </>
-                )}
+                <FormFeedback
+                  succes={{
+                    titre: "Votre message est bien arrivé.",
+                    texte:
+                      "L’équipe de la mosquée en prend connaissance et vous répondra dès que possible. Qu’Allah vous récompense.",
+                  }}
+                >
+                  <ContactForm />
+                </FormFeedback>
               </Reveal>
             </div>
           </div>

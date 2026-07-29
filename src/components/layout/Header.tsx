@@ -60,7 +60,7 @@ export function Header({
           "on-dark fixed inset-x-0 top-0 z-50 text-ivory transition-[background-color,border-color,box-shadow] duration-500 motion-reduce:transition-none",
           overlay
             ? "border-b border-transparent bg-transparent"
-            : "border-b border-ivory/10 bg-ink/95 shadow-[0_1px_0_0_rgba(248,245,239,0.06)] backdrop-blur-md",
+            : "border-b border-ivory/10 bg-ink shadow-[0_1px_0_0_rgba(248,245,239,0.06)]",
         )}
       >
         {/* Bandeau d'information : or franc sur texte d'encre. Il sert aux

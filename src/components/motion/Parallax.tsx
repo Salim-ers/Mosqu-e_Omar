@@ -1,17 +1,17 @@
 "use client";
 
-import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
+import { useEffect, useRef } from "react";
 
 import { cn } from "@/lib/utils";
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /**
  * Parallax extrêmement léger sur les grandes images (déplacement ≤ 6 %).
  * L'enfant est légèrement suréchantillonné pour éviter tout bord visible.
+ *
+ * Écrit sans bibliothèque d'animation : un observateur d'intersection dit si le
+ * cadre est à l'écran, et l'écouteur de défilement — passif, borné à une
+ * exécution par image — ne travaille que pendant ce temps. Hors écran, plus
+ * rien ne tourne.
  */
 export function Parallax({
   children,
@@ -22,38 +22,56 @@ export function Parallax({
   className?: string;
   strength?: number;
 }) {
-  const frame = useRef<HTMLDivElement>(null);
-  const inner = useRef<HTMLDivElement>(null);
+  const cadre = useRef<HTMLDivElement>(null);
+  const interieur = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      if (!frame.current || !inner.current) return;
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.fromTo(
-          inner.current,
-          { yPercent: -strength },
-          {
-            yPercent: strength,
-            ease: "none",
-            scrollTrigger: {
-              trigger: frame.current,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.6,
-            },
-          },
-        );
-      });
-      return () => mm.revert();
-    },
-    { scope: frame },
-  );
+  useEffect(() => {
+    const frame = cadre.current;
+    const inner = interieur.current;
+    if (!frame || !inner) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let visible = false;
+    let attendu = false;
+
+    const applique = () => {
+      attendu = false;
+      const r = frame.getBoundingClientRect();
+      // 0 quand le cadre entre par le bas de l'écran, 1 quand il en sort par
+      // le haut : le déplacement va de -strength à +strength.
+      const avancee = 1 - (r.top + r.height) / (window.innerHeight + r.height);
+      const borne = Math.min(Math.max(avancee, 0), 1);
+      const y = (borne * 2 - 1) * strength;
+      inner.style.transform = `translate3d(0, ${y.toFixed(2)}%, 0) scale(1.12)`;
+    };
+
+    const auDefilement = () => {
+      if (attendu || !visible) return;
+      attendu = true;
+      requestAnimationFrame(applique);
+    };
+
+    const observateur = new IntersectionObserver(
+      (entrees) => {
+        visible = entrees.some((e) => e.isIntersecting);
+        if (visible) applique();
+      },
+      { rootMargin: "10% 0px" },
+    );
+
+    observateur.observe(frame);
+    window.addEventListener("scroll", auDefilement, { passive: true });
+
+    return () => {
+      observateur.disconnect();
+      window.removeEventListener("scroll", auDefilement);
+    };
+  }, [strength]);
 
   return (
-    <div ref={frame} className={cn("overflow-hidden", className)}>
+    <div ref={cadre} className={cn("overflow-hidden", className)}>
       <div
-        ref={inner}
+        ref={interieur}
         className="relative h-full w-full scale-[1.12] will-change-transform"
       >
         {children}

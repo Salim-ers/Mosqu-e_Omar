@@ -13,6 +13,11 @@ export default async function SiteLayout({
 
   return (
     <>
+      {/* Sans JavaScript, les blocs en attente de révélation resteraient
+          invisibles : cette règle les rétablit. */}
+      <noscript>
+        <style>{`.reveal{opacity:1 !important;transform:none !important}`}</style>
+      </noscript>
       <a
         href="#contenu"
         className="sr-only z-[130] rounded-[2px] bg-ink px-5 py-3 text-sm text-ivory focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
