@@ -80,7 +80,7 @@ if (motDePasse.length < 10 || !/[a-zA-Z]/.test(motDePasse) || !/[0-9]/.test(motD
 /** Même format que src/lib/auth.ts : scrypt, sel aléatoire, clé de 64 octets. */
 async function empreinte(mot) {
   const sel = randomBytes(16).toString("hex");
-  const cle = await scryptAsync(mot.normalize("NFKC"), sel, 64);
+  const cle = await scryptAsync(mot.trim().normalize("NFKC"), sel, 64);
   return `scrypt$${sel}$${cle.toString("hex")}`;
 }
 

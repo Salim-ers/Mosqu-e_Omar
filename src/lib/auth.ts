@@ -61,9 +61,20 @@ export function canonicalEmail(email: string): string {
 
 /* ------------------------------------------------------ mots de passe --- */
 
+/**
+ * Prépare un mot de passe avant dérivation. Les espaces de début et de fin
+ * sont retirés : un mot de passe transmis par message est presque toujours
+ * copié-collé, et un espace ou un retour à la ligne invisible en fin de
+ * sélection suffirait à faire échouer la connexion sans rien laisser voir.
+ * La même préparation est appliquée à l'enregistrement et à la vérification.
+ */
+function preparePassword(password: string): string {
+  return password.trim().normalize("NFKC");
+}
+
 export async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(16).toString("hex");
-  const derived = await scryptAsync(password.normalize("NFKC"), salt, SCRYPT_KEYLEN);
+  const derived = await scryptAsync(preparePassword(password), salt, SCRYPT_KEYLEN);
   return `scrypt$${salt}$${derived.toString("hex")}`;
 }
 
@@ -73,14 +84,15 @@ export async function verifyPassword(
 ): Promise<boolean> {
   const [scheme, salt, hash] = stored.split("$");
   if (scheme !== "scrypt" || !salt || !hash) return false;
-  const derived = await scryptAsync(password.normalize("NFKC"), salt, SCRYPT_KEYLEN);
+  const derived = await scryptAsync(preparePassword(password), salt, SCRYPT_KEYLEN);
   const expected = Buffer.from(hash, "hex");
   if (expected.length !== derived.length) return false;
   return timingSafeEqual(expected, derived);
 }
 
 /** Règle de robustesse minimale, affichée telle quelle dans le formulaire. */
-export function passwordProblem(password: string): string | null {
+export function passwordProblem(input: string): string | null {
+  const password = preparePassword(input);
   if (password.length < 10)
     return "Le mot de passe doit contenir au moins 10 caractères.";
   if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password))
