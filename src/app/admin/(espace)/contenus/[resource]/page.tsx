@@ -10,12 +10,17 @@ import {
   Notice,
   StatusPill,
 } from "@/components/admin/ui";
+import { contenuDOrigine } from "@/lib/admin/origine";
 import { getResource, type ResourceDef } from "@/lib/admin/resources";
 import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/dates";
 import { readCollection } from "@/lib/store";
 
-import { deleteResource, toggleResourcePublished } from "../../../actions";
+import {
+  deleteResource,
+  importExistingContent,
+  toggleResourcePublished,
+} from "../../../actions";
 
 type Params = { resource: string };
 type Row = Record<string, unknown> & {
@@ -55,6 +60,7 @@ export default async function ResourceListPage({
 
   const { ok, erreur } = await searchParams;
   const rows = sortRows(def, (await readCollection(def.key)) as Row[]);
+  const origine = contenuDOrigine(def.key);
 
   return (
     <div className="space-y-8">
@@ -74,18 +80,40 @@ export default async function ResourceListPage({
 
       {ok ? <Notice tone="success">{MESSAGES[ok] ?? ok}</Notice> : null}
       {erreur ? <Notice tone="error">{erreur}</Notice> : null}
+      {rows.length > 0 && origine && origine.total > 0 && origine.importable ? (
+        <Notice>
+          Attention : ces contenus remplacent ceux d’origine. {origine.description}
+        </Notice>
+      ) : null}
 
       {rows.length === 0 ? (
         <EmptyState
-          title="Rien à afficher pour l’instant"
-          description={`Aucun contenu dans « ${def.label} ». Créez le premier — il apparaîtra sur le site dès son enregistrement.`}
+          title={
+            origine && origine.total > 0
+              ? "Rien ici — mais le site n’est pas vide"
+              : "Rien à afficher pour l’instant"
+          }
+          description={
+            origine
+              ? origine.description
+              : `Aucun contenu dans « ${def.label} ». Créez le premier — il apparaîtra sur le site dès son enregistrement.`
+          }
           action={
-            <AdminLink
-              href={`/admin/contenus/${def.key}/nouveau`}
-              variant="primary"
-            >
-              {def.newLabel}
-            </AdminLink>
+            <div className="flex flex-wrap justify-center gap-3">
+              {origine?.importable ? (
+                <form action={importExistingContent}>
+                  <SubmitButton pendingLabel="Import en cours…">
+                    Reprendre ces contenus
+                  </SubmitButton>
+                </form>
+              ) : null}
+              <AdminLink
+                href={`/admin/contenus/${def.key}/nouveau`}
+                variant={origine?.importable ? "ghost" : "primary"}
+              >
+                {def.newLabel}
+              </AdminLink>
+            </div>
           }
         />
       ) : (

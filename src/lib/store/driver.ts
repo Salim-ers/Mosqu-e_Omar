@@ -26,6 +26,12 @@ export type StoreDriver = {
 
   /** Tous les enregistrements d'une collection, dans l'ordre d'insertion. */
   readCollection(collection: string): Promise<unknown[]>;
+  /**
+   * Nombre d'enregistrements par collection, en une seule interrogation.
+   * La navigation de l'espace bénévoles affiche ces compteurs à chaque page :
+   * les obtenir un par un multiplierait les allers-retours avec la base.
+   */
+  countCollections(collections: string[]): Promise<Record<string, number>>;
   /** Crée ou remplace un enregistrement. */
   upsertRecord(collection: string, id: string, record: unknown): Promise<void>;
   deleteRecord(collection: string, id: string): Promise<void>;

@@ -79,6 +79,16 @@ export function createFsDriver(): StoreDriver {
       return Array.isArray(list) ? list : [];
     },
 
+    async countCollections(collections) {
+      const entrees = await Promise.all(
+        collections.map(async (nom) => {
+          const liste = await readJson<unknown[]>(fileOf(nom), []);
+          return [nom, Array.isArray(liste) ? liste.length : 0] as const;
+        }),
+      );
+      return Object.fromEntries(entrees);
+    },
+
     async writeCollection(collection, records) {
       await serialize(collection, () => writeJson(fileOf(collection), records));
     },

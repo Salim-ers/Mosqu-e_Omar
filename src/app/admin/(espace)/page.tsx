@@ -8,6 +8,7 @@ import {
   Panel,
 } from "@/components/admin/ui";
 import { ACTION_LABELS, readJournal } from "@/lib/admin/journal";
+import { rubriquesImportables } from "@/lib/admin/origine";
 import { RESOURCES } from "@/lib/admin/resources";
 import { requireUser } from "@/lib/auth";
 import { getEvents, getJanaza } from "@/lib/content";
@@ -46,7 +47,14 @@ export default async function AdminDashboard({
     readJournal(8),
   ]);
   const nonLus = messages.filter((message) => !message.read).length;
-  const isEmpty = stats.every((stat) => stat.total === 0);
+
+  // L'import reste proposé tant qu'une rubrique n'a pas été reprise en main —
+  // et pas seulement quand l'espace est entièrement vide.
+  const compteurs = Object.fromEntries(stats.map((s) => [s.key, s.total]));
+  const aReprendre = rubriquesImportables(compteurs);
+  const libelles = RESOURCES.filter((r) => aReprendre.includes(r.key)).map(
+    (r) => r.label,
+  );
 
   return (
     <div className="space-y-10">
@@ -86,10 +94,10 @@ export default async function AdminDashboard({
       ) : null}
       {ok ? <Notice tone="success">{ok}</Notice> : null}
 
-      {isEmpty ? (
+      {aReprendre.length > 0 ? (
         <Panel
           title="Reprendre les contenus déjà en ligne"
-          description="Les activités, services, inscriptions et annonces actuellement affichés sur le site ont été écrits dans le code. Importez-les une fois pour pouvoir les modifier ici — rien ne change pour les visiteurs."
+          description={`Le site affiche des contenus écrits dans le code, que vous ne pouvez pas encore modifier : ${libelles.join(", ")}. Importez-les une fois pour en prendre la main — rien ne change pour les visiteurs.`}
         >
           <form action={importExistingContent}>
             <SubmitButton pendingLabel="Import en cours…">

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
+import { cache } from "react";
 
 import { databaseUrl, driver } from "@/lib/store/driver";
 import type { CollectionName, Collections, Reglages } from "@/lib/store/types";
@@ -27,12 +28,26 @@ export function usesDatabase(): boolean {
 
 /* ------------------------------------------------------- collections --- */
 
+/**
+ * Lecture d'une collection, mise en cache pour la durée d'un rendu : la mise
+ * en page de l'espace bénévoles et la page qu'elle contient demandent souvent
+ * les mêmes contenus, et sans cela chacune interrogerait la base de son côté.
+ */
+const readCollectionOnce = cache(
+  async (name: string): Promise<unknown[]> => (await driver()).readCollection(name),
+);
+
 export async function readCollection<K extends CollectionName>(
   name: K,
 ): Promise<Collections[K][]> {
-  const list = await (await driver()).readCollection(name);
-  return list as Collections[K][];
+  return (await readCollectionOnce(name)) as Collections[K][];
 }
+
+/** Compteurs de plusieurs collections, en une seule interrogation. */
+export const countCollections = cache(
+  async (names: readonly CollectionName[]): Promise<Record<string, number>> =>
+    (await driver()).countCollections([...names]),
+);
 
 export async function writeCollection<K extends CollectionName>(
   name: K,

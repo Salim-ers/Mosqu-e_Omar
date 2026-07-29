@@ -81,6 +81,20 @@ export async function createPostgresDriver(): Promise<StoreDriver> {
       return rows.map((row) => row.data);
     },
 
+    async countCollections(collections) {
+      const { rows } = await pool.query<{ collection: string; total: string }>(
+        `SELECT collection, count(*) AS total
+           FROM site_records
+          WHERE collection = ANY($1)
+          GROUP BY collection`,
+        [collections],
+      );
+      const compteurs: Record<string, number> = {};
+      for (const nom of collections) compteurs[nom] = 0;
+      for (const row of rows) compteurs[row.collection] = Number(row.total);
+      return compteurs;
+    },
+
     async writeCollection(collection, records) {
       const client = await pool.connect();
       try {
