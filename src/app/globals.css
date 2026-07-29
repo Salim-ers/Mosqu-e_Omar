@@ -18,8 +18,10 @@
    * Surfaces sombres du site — bandeau, pieds de page, en-têtes, blocs
    * éditoriaux. Bleu de nuit et non plus noir : c'est le lit de la mosaïque,
    * de sorte que le zellige posé par-dessus se fonde dans son propre fond.
+   * Volontairement très sombre : le motif doit rester lisible sans jamais
+   * disputer la place au texte posé dessus.
    */
-  --color-ink: #0c1b38;
+  --color-ink: #06101f;
   --color-olive: #46503c;
   --color-amber: #a2702d;
   /* Bleu de la mosaïque — sert aussi de couleur de survol dans tout le site. */
@@ -112,7 +114,7 @@ p {
 @utility pattern-zellige {
   background-image: url("/media/zellige.svg");
   background-size: 280px 280px;
-  opacity: 0.18;
+  opacity: 0.11;
 }
 
 /* Sur fond clair (ivoire, crème) — vignettes sans photographie. */
