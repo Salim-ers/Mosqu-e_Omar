@@ -73,14 +73,14 @@ export function AssociationSection({ number = "07" }: { number?: string }) {
                     <div className="grid gap-2 py-7 sm:grid-cols-12 sm:items-baseline sm:gap-6">
                       <span
                         aria-hidden
-                        className="hidden font-display text-lg italic text-ivory/30 sm:col-span-2 sm:block"
+                        className="hidden font-display text-lg italic text-ivory/70 sm:col-span-2 sm:block"
                       >
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       <span className="font-display text-3xl font-medium sm:col-span-4">
                         {value.label}
                       </span>
-                      <span className="text-[0.9rem] leading-relaxed text-ivory/55 sm:col-span-6">
+                      <span className="text-[0.9rem] leading-relaxed text-ivory/80 sm:col-span-6">
                         {value.note}
                       </span>
                     </div>

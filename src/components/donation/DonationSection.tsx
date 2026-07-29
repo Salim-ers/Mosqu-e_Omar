@@ -52,7 +52,7 @@ export async function DonationSection({ number = "09" }: { number?: string }) {
               </h2>
             </Reveal>
             <Reveal delay={0.1}>
-              <p className="mt-7 max-w-xl text-[0.98rem] leading-[1.85] text-ivory/75">
+              <p className="mt-7 max-w-xl text-[0.98rem] leading-[1.85] text-ivory/92">
                 La mosquée Omar a été construite grâce aux dons des fidèles.
                 Aujourd’hui encore, elle ne vit que par eux : chaque
                 contribution, ponctuelle ou mensuelle, l’aide à accomplir sa
@@ -74,7 +74,7 @@ export async function DonationSection({ number = "09" }: { number?: string }) {
               </div>
             </Reveal>
             <Reveal delay={0.2}>
-              <p className="mt-7 max-w-xl text-[0.82rem] leading-relaxed text-ivory/45">
+              <p className="mt-7 max-w-xl text-[0.82rem] leading-relaxed text-ivory/75">
                 Don déductible de vos impôts à hauteur de{" "}
                 {site.donation.taxDeductionPercent} % (association loi 1901 —
                 un reçu fiscal peut être demandé à l’association). Vous pouvez
@@ -100,7 +100,7 @@ export async function DonationSection({ number = "09" }: { number?: string }) {
                         <h3 className="font-display text-2xl font-medium text-ivory sm:text-3xl">
                           {purpose.label}
                         </h3>
-                        <p className="mt-2 max-w-md text-[0.9rem] leading-[1.75] text-ivory/60">
+                        <p className="mt-2 max-w-md text-[0.9rem] leading-[1.75] text-ivory/85">
                           {purpose.note}
                         </p>
                       </div>

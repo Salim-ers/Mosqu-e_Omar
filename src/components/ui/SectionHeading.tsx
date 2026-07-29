@@ -45,7 +45,7 @@ export function SectionHeading({
         <p
           className={cn(
             "mt-6 text-[1.02rem] leading-[1.85]",
-            onDark ? "text-ivory/70" : "text-charcoal/70",
+            onDark ? "text-ivory/90" : "text-charcoal/70",
           )}
         >
           {lead}

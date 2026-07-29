@@ -80,7 +80,7 @@ export default async function ArticlePage({
             </h1>
             <time
               dateTime={post.dateISO}
-              className="mt-6 block text-[0.72rem] font-semibold tracking-[0.26em] text-ivory/50 uppercase"
+              className="mt-6 block text-[0.72rem] font-semibold tracking-[0.26em] text-ivory/80 uppercase"
             >
               Publié le {formatDate(post.dateISO)}
             </time>

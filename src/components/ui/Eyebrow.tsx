@@ -22,7 +22,7 @@ export function Eyebrow({
     <p
       className={cn(
         "flex items-center gap-4 text-[0.68rem] font-semibold tracking-[0.28em] uppercase",
-        onDark ? "text-ivory/60" : "text-charcoal/70",
+        onDark ? "text-ivory/85" : "text-charcoal/70",
         className,
       )}
     >
@@ -31,7 +31,7 @@ export function Eyebrow({
           className={cn(
             "inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-[2px] font-display text-[0.8rem] italic tracking-normal",
             onDark
-              ? "border border-ivory/25 text-ivory/75"
+              ? "border border-ivory/25 text-ivory/92"
               : "bg-ink text-ivory",
           )}
         >

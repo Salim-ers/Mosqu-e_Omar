@@ -88,7 +88,7 @@ export default async function EspaceLayout({
 
         <AdminNav groups={groups} user={{ name: user.name, role: user.role }} />
 
-        <p className="px-5 pb-4 text-[0.7rem] leading-relaxed text-ivory/30 lg:px-8">
+        <p className="px-5 pb-4 text-[0.72rem] leading-relaxed text-ivory/45 lg:px-8">
           Contenus enregistrés — {stockage}
         </p>
 

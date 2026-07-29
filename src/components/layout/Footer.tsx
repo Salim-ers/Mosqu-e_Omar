@@ -19,7 +19,7 @@ export async function Footer() {
         <div className="flex flex-col gap-10 border-b border-ivory/10 py-16 lg:flex-row lg:items-end lg:justify-between lg:py-20">
           <div className="max-w-2xl">
             <p
-              className="font-arabic text-2xl leading-relaxed text-ivory/70"
+              className="font-arabic text-2xl leading-relaxed text-ivory/90"
               lang="ar"
               dir="rtl"
             >
@@ -30,7 +30,7 @@ export async function Footer() {
               <br />
               Ibn al Khattab
             </p>
-            <p className="mt-4 text-[0.68rem] font-semibold tracking-[0.32em] text-ivory/50 uppercase">
+            <p className="mt-4 text-[0.68rem] font-semibold tracking-[0.32em] text-ivory/80 uppercase">
               Creil — Oise · {site.association.acronym} · Depuis{" "}
               {site.association.foundedYear}
             </p>
@@ -43,7 +43,7 @@ export async function Footer() {
               height={64}
               className="h-16 w-16 rounded-full object-cover ring-1 ring-ivory/20"
             />
-            <p className="max-w-[16rem] text-[0.85rem] leading-relaxed text-ivory/60">
+            <p className="max-w-[16rem] text-[0.85rem] leading-relaxed text-ivory/85">
               Un lieu de foi, de transmission et de fraternité, porté par
               l’association {site.association.acronym}.
             </p>
@@ -53,7 +53,7 @@ export async function Footer() {
         {/* Colonnes */}
         <div className="grid gap-12 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:py-16">
           <nav aria-label="Pied de page — la mosquée">
-            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/40 uppercase">
+            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/75 uppercase">
               La mosquée
             </p>
             <ul className="mt-5 space-y-3 text-[0.9rem]">
@@ -61,7 +61,7 @@ export async function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="link-editorial text-ivory/75 hover:text-ivory"
+                    className="link-editorial text-ivory/92 hover:text-ivory"
                   >
                     {link.label}
                   </Link>
@@ -71,7 +71,7 @@ export async function Footer() {
           </nav>
 
           <nav aria-label="Pied de page — participer">
-            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/40 uppercase">
+            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/75 uppercase">
               Participer
             </p>
             <ul className="mt-5 space-y-3 text-[0.9rem]">
@@ -79,7 +79,7 @@ export async function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="link-editorial text-ivory/75 hover:text-ivory"
+                    className="link-editorial text-ivory/92 hover:text-ivory"
                   >
                     {link.label}
                   </Link>
@@ -90,7 +90,7 @@ export async function Footer() {
                   href={site.mawaqit.pageUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="link-editorial text-ivory/75 hover:text-ivory"
+                  className="link-editorial text-ivory/92 hover:text-ivory"
                 >
                   Horaires sur MAWAQIT ↗
                 </a>
@@ -99,10 +99,10 @@ export async function Footer() {
           </nav>
 
           <div>
-            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/40 uppercase">
+            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/75 uppercase">
               Nous trouver
             </p>
-            <address className="mt-5 space-y-3 text-[0.9rem] not-italic text-ivory/75">
+            <address className="mt-5 space-y-3 text-[0.9rem] not-italic text-ivory/92">
               <p>
                 {settings.address.street}, {settings.address.postalCode}{" "}
                 {settings.address.city}
@@ -124,10 +124,10 @@ export async function Footer() {
           </div>
 
           <div>
-            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/40 uppercase">
+            <p className="text-[0.65rem] font-semibold tracking-[0.3em] text-ivory/75 uppercase">
               L’association
             </p>
-            <div className="mt-5 space-y-3 text-[0.9rem] text-ivory/60">
+            <div className="mt-5 space-y-3 text-[0.9rem] text-ivory/85">
               <p>
                 {site.association.acronym} — {site.association.description}
               </p>
@@ -140,7 +140,7 @@ export async function Footer() {
                         href={s.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="link-editorial text-ivory/75"
+                        className="link-editorial text-ivory/92"
                       >
                         {s.label} ↗
                       </a>
@@ -153,7 +153,7 @@ export async function Footer() {
         </div>
 
         {/* Bas de page */}
-        <div className="flex flex-col gap-4 border-t border-ivory/10 py-8 text-[0.75rem] text-ivory/45 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 border-t border-ivory/10 py-8 text-[0.75rem] text-ivory/75 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {site.longName} — {site.association.acronym}. Tous droits
             réservés.

@@ -78,7 +78,7 @@ export default async function ProjetPage() {
               <br />
               <em className="font-light italic">une communauté</em>
             </h1>
-            <p className="mt-7 max-w-2xl text-[1rem] leading-[1.85] text-ivory/85">
+            <p className="mt-7 max-w-2xl text-[1rem] leading-[1.85] text-ivory/95">
               De la fondation de l’association en {site.association.foundedYear}{" "}
               à l’ouverture au Ramadan 2026, la mosquée Omar Ibn al Khattab est
               née de la constance et de la générosité des fidèles de Creil.
@@ -174,7 +174,7 @@ export default async function ProjetPage() {
         <Container className="relative text-center">
           <Reveal>
             <p
-              className="font-arabic text-xl text-ivory/70"
+              className="font-arabic text-xl text-ivory/90"
               lang="ar"
               dir="rtl"
             >
@@ -185,7 +185,7 @@ export default async function ProjetPage() {
               <br />
               <em className="font-light italic">et les espaces verts</em>
             </h2>
-            <p className="mx-auto mt-6 max-w-xl text-[0.98rem] leading-[1.85] text-ivory/70">
+            <p className="mx-auto mt-6 max-w-xl text-[0.98rem] leading-[1.85] text-ivory/90">
               La mosquée est ouverte, mais le projet n’est pas terminé. Votre
               soutien permet d’achever ce que la communauté a commencé ensemble.
             </p>

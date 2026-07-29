@@ -33,7 +33,7 @@ export function PageHeader({
             {title}
           </h1>
           {lead ? (
-            <p className="mt-7 max-w-2xl text-[1.02rem] leading-[1.85] text-ivory/70">
+            <p className="mt-7 max-w-2xl text-[1.02rem] leading-[1.85] text-ivory/90">
               {lead}
             </p>
           ) : null}

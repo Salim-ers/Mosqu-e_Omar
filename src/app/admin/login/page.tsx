@@ -44,7 +44,7 @@ export default async function LoginPage({
             <p className="font-display text-xl leading-tight font-medium">
               {site.name}
             </p>
-            <p className="text-[0.6rem] font-semibold tracking-[0.3em] text-ivory/50 uppercase">
+            <p className="text-[0.6rem] font-semibold tracking-[0.3em] text-ivory/80 uppercase">
               Espace bénévoles
             </p>
           </div>
@@ -53,7 +53,7 @@ export default async function LoginPage({
         <h1 className="mt-10 font-display text-4xl leading-tight font-medium">
           {first ? "Créer le compte responsable" : "Connexion"}
         </h1>
-        <p className="mt-3 text-[0.9rem] leading-relaxed text-ivory/60">
+        <p className="mt-3 text-[0.9rem] leading-relaxed text-ivory/85">
           {first
             ? "Aucun compte n’existe encore. Ce premier compte pourra ensuite créer ceux des autres bénévoles."
             : "Réservé aux bénévoles de l’association chargés de mettre le site à jour."}
@@ -74,7 +74,7 @@ export default async function LoginPage({
         >
           {first ? (
             <div>
-              <label htmlFor="name" className={`${LABEL_CLASS} text-ivory/55`}>
+              <label htmlFor="name" className={`${LABEL_CLASS} text-ivory/80`}>
                 Prénom et nom
               </label>
               <input
@@ -83,13 +83,13 @@ export default async function LoginPage({
                 type="text"
                 required
                 autoComplete="name"
-                className={`${INPUT_CLASS} mt-2 border-ivory/20 bg-ivory/5 text-ivory placeholder:text-ivory/30 focus:border-ivory`}
+                className={`${INPUT_CLASS} mt-2 border-ivory/20 bg-ivory/5 text-ivory placeholder:text-ivory/70 focus:border-ivory`}
               />
             </div>
           ) : null}
 
           <div>
-            <label htmlFor="email" className={`${LABEL_CLASS} text-ivory/55`}>
+            <label htmlFor="email" className={`${LABEL_CLASS} text-ivory/80`}>
               Adresse email
             </label>
             <input
@@ -98,12 +98,12 @@ export default async function LoginPage({
               type="email"
               required
               autoComplete="email"
-              className={`${INPUT_CLASS} mt-2 border-ivory/20 bg-ivory/5 text-ivory placeholder:text-ivory/30 focus:border-ivory`}
+              className={`${INPUT_CLASS} mt-2 border-ivory/20 bg-ivory/5 text-ivory placeholder:text-ivory/70 focus:border-ivory`}
             />
           </div>
 
           <div>
-            <label htmlFor="password" className={`${LABEL_CLASS} text-ivory/55`}>
+            <label htmlFor="password" className={`${LABEL_CLASS} text-ivory/80`}>
               Mot de passe
             </label>
             <input
@@ -112,10 +112,10 @@ export default async function LoginPage({
               type="password"
               required
               autoComplete={first ? "new-password" : "current-password"}
-              className={`${INPUT_CLASS} mt-2 border-ivory/20 bg-ivory/5 text-ivory placeholder:text-ivory/30 focus:border-ivory`}
+              className={`${INPUT_CLASS} mt-2 border-ivory/20 bg-ivory/5 text-ivory placeholder:text-ivory/70 focus:border-ivory`}
             />
             {first ? (
-              <p className={`${HELP_CLASS} text-ivory/45`}>
+              <p className={`${HELP_CLASS} text-ivory/75`}>
                 Au moins 10 caractères, avec des lettres et des chiffres.
               </p>
             ) : null}
@@ -131,7 +131,7 @@ export default async function LoginPage({
           </div>
         </form>
 
-        <p className="mt-10 text-[0.8rem] text-ivory/40">
+        <p className="mt-10 text-[0.8rem] text-ivory/75">
           <Link href="/" className="link-editorial">
             ← Retour au site
           </Link>

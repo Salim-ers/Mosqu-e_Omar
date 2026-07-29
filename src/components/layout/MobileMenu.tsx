@@ -107,7 +107,7 @@ export function MobileMenu({
                 </span>
                 <span
                   aria-hidden
-                  className="text-[0.65rem] tracking-[0.3em] text-ivory/35 uppercase transition-colors group-hover:text-ivory/80"
+                  className="text-[0.65rem] tracking-[0.3em] text-ivory/70 uppercase transition-colors group-hover:text-ivory/95"
                 >
                   →
                 </span>
@@ -117,8 +117,8 @@ export function MobileMenu({
         </ul>
       </nav>
 
-      <div className="relative border-t border-ivory/10 px-5 py-6 text-[0.8rem] leading-relaxed text-ivory/60 sm:px-8 lg:px-12">
-        <p className="font-arabic text-lg text-ivory/70" lang="ar" dir="rtl">
+      <div className="relative border-t border-ivory/10 px-5 py-6 text-[0.8rem] leading-relaxed text-ivory/85 sm:px-8 lg:px-12">
+        <p className="font-arabic text-lg text-ivory/90" lang="ar" dir="rtl">
           {site.arabicName}
         </p>
         <p className="mt-2">{contact.address}</p>

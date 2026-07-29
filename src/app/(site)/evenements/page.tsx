@@ -185,7 +185,7 @@ function EventCard({
     <div className={highlighted ? "lg:col-span-7" : "sm:col-span-8"}>
       <p
         className={`flex items-center gap-3 text-[0.62rem] font-semibold tracking-[0.24em] uppercase ${
-          highlighted ? "text-ivory/60" : "text-taupe"
+          highlighted ? "text-ivory/85" : "text-taupe"
         }`}
       >
         <span aria-hidden className="h-1.5 w-1.5 rotate-45 bg-amber" />
@@ -200,7 +200,7 @@ function EventCard({
       </h3>
       <p
         className={`mt-4 text-[0.95rem] ${
-          highlighted ? "text-ivory/75" : "text-charcoal/70"
+          highlighted ? "text-ivory/92" : "text-charcoal/70"
         }`}
       >
         <time dateTime={event.startsAt}>{formatDate(event.startsAt)}</time>
@@ -210,7 +210,7 @@ function EventCard({
       {event.description ? (
         <p
           className={`mt-4 max-w-xl text-[0.95rem] leading-[1.8] ${
-            highlighted ? "text-ivory/70" : "text-charcoal/68"
+            highlighted ? "text-ivory/90" : "text-charcoal/68"
           }`}
         >
           {event.description}

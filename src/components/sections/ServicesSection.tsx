@@ -52,11 +52,11 @@ export async function ServicesSection({ number = "08" }: { number?: string }) {
         <Reveal delay={0.1}>
           <div className="on-dark relative mt-12 overflow-hidden rounded-[2px] bg-ink px-7 py-8 text-ivory sm:px-10 sm:py-9">
             <div aria-hidden className="pattern-zellige absolute inset-0" />
-            <p className="relative flex items-center gap-3 text-[0.62rem] font-semibold tracking-[0.28em] text-ivory/55 uppercase">
+            <p className="relative flex items-center gap-3 text-[0.62rem] font-semibold tracking-[0.28em] text-ivory/80 uppercase">
               <span aria-hidden className="h-1.5 w-1.5 rotate-45 bg-amber" />
               Une demande particulière
             </p>
-            <p className="relative mt-4 max-w-2xl text-[0.95rem] leading-[1.8] text-ivory/80">
+            <p className="relative mt-4 max-w-2xl text-[0.95rem] leading-[1.8] text-ivory/95">
               Pour la prière funéraire (Salat Janaza) ou toute autre demande,
               contactez directement la mosquée — l’équipe vous accompagnera.
             </p>

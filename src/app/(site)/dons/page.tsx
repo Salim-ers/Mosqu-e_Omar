@@ -79,7 +79,7 @@ export default async function DonsPage() {
                 >
                   <div className={way.primary ? "on-dark" : undefined}>
                     <p
-                      className={`flex items-center gap-3 text-[0.64rem] font-semibold tracking-[0.28em] uppercase ${way.primary ? "text-ivory/55" : "text-taupe"}`}
+                      className={`flex items-center gap-3 text-[0.64rem] font-semibold tracking-[0.28em] uppercase ${way.primary ? "text-ivory/80" : "text-taupe"}`}
                     >
                       <span
                         aria-hidden
@@ -93,7 +93,7 @@ export default async function DonsPage() {
                       {way.title}
                     </h2>
                     <p
-                      className={`mt-4 text-[0.92rem] leading-[1.8] ${way.primary ? "text-ivory/70" : "text-charcoal/68"}`}
+                      className={`mt-4 text-[0.92rem] leading-[1.8] ${way.primary ? "text-ivory/90" : "text-charcoal/68"}`}
                     >
                       {way.note}
                     </p>
