@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { site } from "@/config/site";
+import { site, surDomaineDefinitif } from "@/config/site";
 import { cormorant, manrope, naskh } from "@/lib/fonts";
 import { PHOTOS } from "@/lib/media";
 
@@ -45,7 +45,10 @@ export const metadata: Metadata = {
       "Un lieu de foi, de transmission et de fraternité au cœur de Creil.",
     images: [PHOTOS.facade.remote],
   },
-  robots: { index: true, follow: true },
+  // Voir `surDomaineDefinitif` : pas d'indexation d'une adresse provisoire.
+  robots: surDomaineDefinitif
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
 };
 
 export default function RootLayout({

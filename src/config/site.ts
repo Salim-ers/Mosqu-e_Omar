@@ -142,6 +142,20 @@ export const site = {
 
 export type Site = typeof site;
 
+/**
+ * Le site tourne-t-il sur son domaine définitif ?
+ *
+ * Tant qu'il est publié à une adresse provisoire (…vercel.app) pendant que
+ * l'ancien site occupe encore mosqueeomarcreil.fr, il ne doit pas être
+ * indexé : deux fois le même contenu se feraient concurrence, et l'adresse
+ * provisoire resterait dans l'index longtemps après la bascule — un visiteur
+ * pourrait atterrir des mois plus tard sur une adresse technique.
+ *
+ * Rien à défaire le jour de la bascule : passer NEXT_PUBLIC_SITE_URL au
+ * domaine rétablit l'indexation de lui-même.
+ */
+export const surDomaineDefinitif = site.url.includes("mosqueeomarcreil.fr");
+
 export function fullAddress(): string {
   return `${site.address.street}, ${site.address.postalCode} ${site.address.city}`;
 }
