@@ -25,8 +25,10 @@ import {
   findRecord,
   newId,
   readCollection,
+  readPhotosSite,
   readReglages,
   upsertRecord,
+  writePhotosSite,
   writeReglages,
 } from "@/lib/store";
 import { removeMedia } from "@/lib/store/media";
@@ -333,6 +335,89 @@ export async function importerInscrits(
     (ignorees > 0 ? ` — ${ignorees} ligne${ignorees > 1 ? "s" : ""} vide${ignorees > 1 ? "s" : ""} ignorée${ignorees > 1 ? "s" : ""}` : "") +
     ".";
   redirect(`${retour}?ok=${encodeURIComponent(resume)}`);
+}
+
+/* --------------------------------------------------- photos livrées --- */
+
+const RETOUR_PHOTOS = "/admin/contenus/albums";
+
+/**
+ * Remplace une photographie livrée avec le site par une photo de
+ * l'association. Le fichier d'origine reste dans le dépôt : le remplacement
+ * est un réglage, pas une suppression, et se défait d'un clic.
+ */
+export async function remplacerPhotoSite(
+  cle: string,
+  formData: FormData,
+): Promise<void> {
+  await requireUser();
+
+  const brut = String(formData.get("image") ?? "").trim();
+  if (!brut) {
+    redirect(
+      `${RETOUR_PHOTOS}?erreur=${encodeURIComponent("Choisissez d’abord une photo.")}`,
+    );
+  }
+
+  let remplacement: { url: string; alt: string; width?: number; height?: number };
+  try {
+    const parsed = JSON.parse(brut);
+    if (typeof parsed?.url !== "string" || !parsed.url.startsWith("/uploads/")) {
+      throw new Error("url inattendue");
+    }
+    remplacement = {
+      url: parsed.url,
+      alt: typeof parsed.alt === "string" ? parsed.alt.trim() : "",
+      width: typeof parsed.width === "number" ? parsed.width : undefined,
+      height: typeof parsed.height === "number" ? parsed.height : undefined,
+    };
+  } catch {
+    redirect(
+      `${RETOUR_PHOTOS}?erreur=${encodeURIComponent("Photo non reconnue — réessayez.")}`,
+    );
+    return;
+  }
+
+  const reglages = await readPhotosSite();
+  await writePhotosSite({
+    ...reglages,
+    [cle]: { ...(reglages[cle] ?? {}), remplacement },
+  });
+
+  refreshPublicSite();
+  redirect(`${RETOUR_PHOTOS}?ok=photo-remplacee`);
+}
+
+/** Retire une photographie livrée de la galerie, ou la remet. */
+export async function masquerPhotoSite(
+  cle: string,
+  masquee: boolean,
+): Promise<void> {
+  await requireUser();
+
+  const reglages = await readPhotosSite();
+  await writePhotosSite({
+    ...reglages,
+    [cle]: { ...(reglages[cle] ?? {}), masquee },
+  });
+
+  refreshPublicSite();
+  redirect(`${RETOUR_PHOTOS}?ok=${masquee ? "photo-retiree" : "photo-remise"}`);
+}
+
+/** Revient à la photographie d'origine, telle qu'elle est livrée. */
+export async function reinitialiserPhotoSite(cle: string): Promise<void> {
+  await requireUser();
+
+  const reglages = await readPhotosSite();
+  // Effacer le réglage suffit : la photographie d'origine reprend sa place.
+  const reste = Object.fromEntries(
+    Object.entries(reglages).filter(([nom]) => nom !== cle),
+  );
+  await writePhotosSite(reste);
+
+  refreshPublicSite();
+  redirect(`${RETOUR_PHOTOS}?ok=photo-restauree`);
 }
 
 /* --------------------------------------------------------- réglages --- */

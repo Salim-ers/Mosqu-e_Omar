@@ -1,20 +1,31 @@
 import { AjoutPhotos } from "@/components/admin/AjoutPhotos";
-import { ConfirmButton } from "@/components/admin/FormButtons";
-import { EmptyState } from "@/components/admin/ui";
+import { ConfirmButton, SubmitButton } from "@/components/admin/FormButtons";
+import { EmptyState, StatusPill } from "@/components/admin/ui";
+import { RemplacerPhotoLivree } from "@/components/admin/PhotoLivreeActions";
 import { formatDate } from "@/lib/dates";
-import { GALLERY, LOGO, logoSrc, src } from "@/lib/media";
+import { getPhotosLivrees } from "@/lib/content";
 import { listMedias } from "@/lib/store/media";
 
-import { deleteMedia } from "@/app/admin/actions";
+import {
+  deleteMedia,
+  masquerPhotoSite,
+  reinitialiserPhotoSite,
+} from "@/app/admin/actions";
 
 /**
  * Toutes les images du site, à la suite des albums : celles envoyées par
  * l'équipe, puis celles livrées avec le site. Placée ici plutôt que dans une
  * rubrique à part, parce que c'est en travaillant ses albums qu'on a besoin de
  * voir et de faire le ménage dans ses photos.
+ *
+ * Les photographies livrées vivent dans le code : un navigateur ne peut pas
+ * effacer un fichier du dépôt. Chacune peut en revanche être remplacée par une
+ * photo de la mosquée, et celles de la galerie peuvent en être retirées. Le
+ * fichier d'origine reste en place, si bien qu'un retour en arrière ne coûte
+ * qu'un clic.
  */
 export async function Phototheque() {
-  const medias = await listMedias();
+  const [medias, livrees] = await Promise.all([listMedias(), getPhotosLivrees()]);
 
   return (
     <div className="space-y-10 border-t border-charcoal/12 pt-10">
@@ -73,30 +84,80 @@ export async function Phototheque() {
 
       <section>
         <h2 className="font-display text-2xl font-medium text-charcoal">
-          Photos livrées avec le site — {PHOTOS_DU_SITE.length}
+          Photos livrées avec le site — {livrees.length}
         </h2>
         <p className="mt-2 max-w-2xl text-[0.88rem] leading-relaxed text-charcoal/60">
-          La façade en page d’accueil, la salle de prière, le chantier, le logo.
-          Elles font partie du site lui-même et ne se suppriment pas d’ici — pour
-          montrer l’avancée des travaux, créez plutôt un album avec vos propres
-          photos : il s’affichera avant celles-ci dans la galerie.
+          La façade de l’accueil, la salle de prière, le chantier, le logo. Elles
+          font partie du site lui-même, donc elles ne s’effacent pas — mais vous
+          pouvez <strong>remplacer</strong> chacune par une photo de la mosquée,
+          et <strong>retirer</strong> de la galerie celles qui n’ont plus lieu
+          d’y être. L’originale reste conservée : « Remettre l’originale » annule
+          tout.
         </p>
 
         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {PHOTOS_DU_SITE.map((photo) => (
+          {livrees.map((photo) => (
             <li
-              key={photo.url}
-              className="overflow-hidden rounded-[3px] border border-charcoal/12"
+              key={photo.cle}
+              className={`overflow-hidden rounded-[3px] border ${
+                photo.masquee
+                  ? "border-charcoal/12 bg-transparent"
+                  : "border-charcoal/12 bg-cream"
+              }`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photo.url}
-                alt={photo.alt}
-                className="h-44 w-full bg-sand object-cover"
-              />
-              <p className="px-4 py-3 text-[0.78rem] leading-snug text-charcoal/55">
-                {photo.alt}
-              </p>
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photo.url}
+                  alt={photo.alt}
+                  className={`h-44 w-full bg-sand object-cover ${
+                    photo.masquee ? "opacity-35 grayscale" : ""
+                  }`}
+                />
+              </div>
+
+              <div className="space-y-3 px-4 py-4">
+                <p className="flex flex-wrap items-center gap-2">
+                  <span className="text-[0.62rem] font-semibold tracking-[0.18em] text-charcoal/45 uppercase">
+                    {photo.usage}
+                  </span>
+                  {photo.remplacee ? (
+                    <StatusPill published labels={["Remplacée", ""]} />
+                  ) : null}
+                  {photo.masquee ? (
+                    <StatusPill published={false} labels={["", "Retirée"]} />
+                  ) : null}
+                </p>
+
+                <p className="text-[0.8rem] leading-snug text-charcoal/60">
+                  {photo.alt}
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <RemplacerPhotoLivree
+                    cle={photo.cle}
+                    libelle={photo.remplacee ? "Changer" : "Remplacer"}
+                  />
+
+                  {photo.masquable ? (
+                    <form
+                      action={masquerPhotoSite.bind(null, photo.cle, !photo.masquee)}
+                    >
+                      <SubmitButton variant="ghost" pendingLabel="…">
+                        {photo.masquee ? "Remettre en galerie" : "Retirer du site"}
+                      </SubmitButton>
+                    </form>
+                  ) : null}
+
+                  {photo.remplacee || photo.masquee ? (
+                    <form action={reinitialiserPhotoSite.bind(null, photo.cle)}>
+                      <SubmitButton variant="danger" pendingLabel="…">
+                        Remettre l’originale
+                      </SubmitButton>
+                    </form>
+                  ) : null}
+                </div>
+              </div>
             </li>
           ))}
         </ul>
@@ -104,9 +165,3 @@ export async function Phototheque() {
     </div>
   );
 }
-
-/** Les images qui font partie du site, hors photothèque. */
-const PHOTOS_DU_SITE = [
-  ...GALLERY.map((photo) => ({ url: src(photo), alt: photo.alt })),
-  { url: logoSrc(), alt: LOGO.alt },
-];

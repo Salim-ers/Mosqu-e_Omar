@@ -4,7 +4,12 @@ import { randomUUID } from "node:crypto";
 import { cache } from "react";
 
 import { databaseUrl, driver } from "@/lib/store/driver";
-import type { CollectionName, Collections, Reglages } from "@/lib/store/types";
+import type {
+  CollectionName,
+  Collections,
+  PhotosSite,
+  Reglages,
+} from "@/lib/store/types";
 
 /**
  * ============================================================================
@@ -123,6 +128,20 @@ export async function readReglages(): Promise<Reglages> {
 
 export async function writeReglages(value: Reglages): Promise<void> {
   await (await driver()).writeDocument("reglages", value);
+}
+
+/* --------------------------------------------------- photos livrées --- */
+
+/** Réglages des photographies livrées avec le site (masquage, remplacement). */
+export const readPhotosSite = cache(async (): Promise<PhotosSite> => {
+  const stored = (await (await driver()).readDocument(
+    "photos-site",
+  )) as PhotosSite | null;
+  return stored ?? {};
+});
+
+export async function writePhotosSite(value: PhotosSite): Promise<void> {
+  await (await driver()).writeDocument("photos-site", value);
 }
 
 /* ------------------------------------------------------------ fichiers --- */

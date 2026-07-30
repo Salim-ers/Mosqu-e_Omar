@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-import { LOGO, logoSrc } from "@/lib/media";
+import type { PublicImage } from "@/lib/content";
 
 /**
  * Écran d'accueil affiché le temps que la page se charge : mosaïque en fond,
@@ -25,7 +25,11 @@ import { LOGO, logoSrc } from "@/lib/media";
 const DUREE_MINIMALE_MS = 700;
 const DUREE_MAXIMALE_MS = 2500;
 
-export function EcranChargement() {
+export function EcranChargement({
+  logo,
+}: {
+  logo: Pick<PublicImage, "url" | "alt">;
+}) {
   const [etat, setEtat] = useState<"visible" | "sortie" | "retire">("visible");
 
   useEffect(() => {
@@ -70,10 +74,10 @@ export function EcranChargement() {
 
       <div className="relative flex flex-col items-center">
         <Image
-          src={logoSrc()}
+          src={logo.url}
           alt=""
-          width={LOGO.width}
-          height={LOGO.height}
+          width={160}
+          height={160}
           priority
           className="splash-logo h-24 w-24 rounded-full object-cover ring-1 ring-ivory/20 sm:h-28 sm:w-28"
         />

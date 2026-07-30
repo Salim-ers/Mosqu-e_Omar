@@ -4,9 +4,14 @@ import { REGISTRATIONS } from "@/config/registrations";
 import { site } from "@/config/site";
 import { ACTIVITIES } from "@/content/activities";
 import { SERVICES } from "@/content/services";
-import { GALLERY, PHOTOS, src } from "@/lib/media";
+import { GALLERY, LOGO, logoSrc, PHOTOS, src } from "@/lib/media";
 import { richTextExcerpt, richTextToHtml } from "@/lib/richtext";
-import { DEFAULT_REGLAGES, readCollection, readReglages } from "@/lib/store";
+import {
+  DEFAULT_REGLAGES,
+  readCollection,
+  readPhotosSite,
+  readReglages,
+} from "@/lib/store";
 import type {
   AlbumRecord,
   EvenementKind,
@@ -306,13 +311,110 @@ export async function getAlbums(): Promise<PublicAlbum[]> {
     .filter((album) => album.photos.length > 0);
 }
 
-/** Les photographies d'origine du site, toujours présentes en fin de galerie. */
-export const HERITAGE_PHOTOS: PublicImage[] = GALLERY.map((photo) => ({
-  url: src(photo),
-  alt: photo.alt,
-  width: photo.width,
-  height: photo.height,
-}));
+/* ----------------------------------------------- photos livrées -------- */
+
+/**
+ * Les photographies livrées avec le site, telles que l'association les a
+ * réglées. Elles vivent dans le code — un navigateur ne peut pas effacer un
+ * fichier du dépôt — mais chacune peut être remplacée par une photo de la
+ * mosquée, ou retirée de la galerie. Le fichier d'origine reste en place, si
+ * bien qu'un retour en arrière ne coûte qu'un clic.
+ */
+export type PhotoLivree = PublicImage & {
+  cle: string;
+  /** Où cette photographie apparaît, en toutes lettres. */
+  usage: string;
+  /** Peut-elle être retirée du site, ou seulement remplacée ? */
+  masquable: boolean;
+  masquee: boolean;
+  remplacee: boolean;
+};
+
+/** Ce que chaque photographie livrée occupe sur le site. */
+const USAGES: Record<string, { usage: string; masquable: boolean }> = {
+  "facade-nuit": {
+    usage: "Fond de la page d’accueil",
+    masquable: false,
+  },
+  logo: { usage: "Logo du site, bandeau et pied de page", masquable: false },
+};
+
+function usageDe(cle: string) {
+  return USAGES[cle] ?? { usage: "Galerie du site", masquable: true };
+}
+
+export async function getPhotosLivrees(): Promise<PhotoLivree[]> {
+  const reglages = await readPhotosSite();
+
+  const base = [
+    ...GALLERY.map((photo) => ({
+      cle: photo.key,
+      url: src(photo),
+      alt: photo.alt,
+      width: photo.width,
+      height: photo.height,
+    })),
+    {
+      cle: "logo",
+      url: logoSrc(),
+      alt: LOGO.alt,
+      width: LOGO.width,
+      height: LOGO.height,
+    },
+  ];
+
+  return base.map((photo) => {
+    const reglage = reglages[photo.cle] ?? {};
+    const remplacement = reglage.remplacement ?? null;
+    const { usage, masquable } = usageDe(photo.cle);
+
+    return {
+      cle: photo.cle,
+      url: remplacement?.url ?? photo.url,
+      alt: remplacement?.alt?.trim() || photo.alt,
+      width: remplacement?.width ?? photo.width,
+      height: remplacement?.height ?? photo.height,
+      usage,
+      masquable,
+      masquee: masquable && reglage.masquee === true,
+      remplacee: remplacement !== null,
+    };
+  });
+}
+
+/** Les photographies du fonds, pour la galerie : masquées exclues, logo exclu. */
+export async function getHeritagePhotos(): Promise<PublicImage[]> {
+  return (await getPhotosLivrees())
+    .filter((photo) => photo.cle !== "logo" && !photo.masquee)
+    .map(({ url, alt, width, height }) => ({ url, alt, width, height }));
+}
+
+/** La photographie de fond de la page d'accueil. */
+export async function getPhotoFacade(): Promise<PublicImage> {
+  const photos = await getPhotosLivrees();
+  const facade = photos.find((p) => p.cle === "facade-nuit");
+  return facade
+    ? {
+        url: facade.url,
+        alt: facade.alt,
+        width: facade.width,
+        height: facade.height,
+      }
+    : {
+        url: src(PHOTOS.facade),
+        alt: PHOTOS.facade.alt,
+        width: PHOTOS.facade.width,
+        height: PHOTOS.facade.height,
+      };
+}
+
+/** Le logo, tel qu'il doit s'afficher sur le site public. */
+export async function getLogoSite(): Promise<{ url: string; alt: string }> {
+  const logo = (await getPhotosLivrees()).find((p) => p.cle === "logo");
+  return logo
+    ? { url: logo.url, alt: logo.alt }
+    : { url: logoSrc(), alt: LOGO.alt };
+}
 
 /* ---------------------------------------------------------- réglages --- */
 

@@ -5,7 +5,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { getAlbums, HERITAGE_PHOTOS, type PublicImage } from "@/lib/content";
+import { getAlbums, getHeritagePhotos, type PublicImage } from "@/lib/content";
 
 /**
  * 06 — GALERIE (aperçu). Composition éditoriale asymétrique en quatre
@@ -49,10 +49,10 @@ export async function GalleryPreviewSection({
 }: {
   number?: string;
 }) {
-  const albums = await getAlbums();
+  const [albums, fonds] = await Promise.all([getAlbums(), getHeritagePhotos()]);
   const recentes = albums.flatMap((album) => album.photos);
   // Quatre visuels : d'abord les albums, puis le fonds d'origine en appoint.
-  const [a, b, c, d] = [...recentes, ...HERITAGE_PHOTOS].slice(0, 4);
+  const [a, b, c, d] = [...recentes, ...fonds].slice(0, 4);
 
   return (
     <section

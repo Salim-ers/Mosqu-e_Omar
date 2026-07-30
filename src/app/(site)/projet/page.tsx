@@ -127,11 +127,15 @@ export default async function ProjetPage() {
         >
           <Container>
             <Reveal>
-              <Eyebrow>Le mot de l’association</Eyebrow>
-              <div
-                className="wp-prose mt-8 max-w-3xl"
-                dangerouslySetInnerHTML={{ __html: wpPage.contentHtml }}
-              />
+              <div className="mx-auto max-w-3xl">
+                <Eyebrow className="justify-center">
+                  Le mot de l’association
+                </Eyebrow>
+                <div
+                  className="wp-prose mt-8"
+                  dangerouslySetInnerHTML={{ __html: wpPage.contentHtml }}
+                />
+              </div>
             </Reveal>
           </Container>
         </section>

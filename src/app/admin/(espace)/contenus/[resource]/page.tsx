@@ -46,6 +46,10 @@ const MESSAGES: Record<string, string> = {
   statut: "Statut modifié.",
   inscrit: "Demande d’inscription mise à jour.",
   "photo-supprimee": "Photo supprimée de la photothèque.",
+  "photo-remplacee": "Photo remplacée — elle est à jour sur le site.",
+  "photo-retiree": "Photo retirée du site.",
+  "photo-remise": "Photo remise en galerie.",
+  "photo-restauree": "Photo d’origine rétablie.",
   "inscrit-supprime": "Demande d’inscription supprimée.",
 };
 

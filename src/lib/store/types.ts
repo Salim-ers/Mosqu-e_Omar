@@ -210,6 +210,25 @@ export type InscritRecord = {
   traite: boolean;
 };
 
+/* ----------------------------------------------- photos livrées ------- */
+
+/**
+ * Réglage d'une photographie livrée avec le site. Ces fichiers vivent dans le
+ * code et ne peuvent pas être effacés depuis un navigateur ; l'association
+ * peut en revanche les remplacer par les siennes, ou les retirer de la
+ * galerie. Le fichier d'origine reste en place, ce qui rend l'opération
+ * réversible d'un clic.
+ */
+export type PhotoSiteReglage = {
+  /** Retirée de la galerie du site. */
+  masquee?: boolean;
+  /** Photographie de l'association qui prend sa place partout. */
+  remplacement?: ImageRef | null;
+};
+
+/** Réglages de toutes les photos livrées, indexés par leur clé. */
+export type PhotosSite = Record<string, PhotoSiteReglage>;
+
 /* --------------------------------------------------------- comptes --- */
 
 export type UserRole = "admin" | "editeur";

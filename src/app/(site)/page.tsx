@@ -10,6 +10,7 @@ import { HomeHero } from "@/components/sections/HomeHero";
 import { EventsSection } from "@/components/sections/EventsSection";
 import { NewMosqueSection } from "@/components/sections/NewMosqueSection";
 import { ServicesSection } from "@/components/sections/ServicesSection";
+import { getPhotoFacade } from "@/lib/content";
 
 /**
  * Page d'accueil — narration en 11 temps :
@@ -19,10 +20,12 @@ import { ServicesSection } from "@/components/sections/ServicesSection";
  */
 export const revalidate = 3600;
 
-export default function HomePage() {
+export default async function HomePage() {
+  const facade = await getPhotoFacade();
+
   return (
     <>
-      <HomeHero />
+      <HomeHero photo={facade} />
       <PrayerSection number="02" />
       <AnnouncementsSection number="03" />
       <JanazaSection />

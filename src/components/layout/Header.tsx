@@ -10,7 +10,6 @@ import {
   type MenuContact,
 } from "@/components/layout/MobileMenu";
 import { site } from "@/config/site";
-import { logoSrc } from "@/lib/media";
 import { cn } from "@/lib/utils";
 
 /** Pages ouvrant sur une photographie plein écran (header clair au sommet). */
@@ -21,12 +20,17 @@ const PRIMARY_LINKS = site.navigation.main.filter((l) => l.href !== "/");
 /** Bandeau d'information réglé depuis l'espace bénévoles. */
 export type HeaderBanner = { text: string; href: string } | null;
 
+/** Logo effectif du site — il peut avoir été remplacé depuis /admin. */
+export type HeaderLogo = { url: string; alt: string };
+
 export function Header({
   banner = null,
   contact,
+  logo,
 }: {
   banner?: HeaderBanner;
   contact: MenuContact;
+  logo: HeaderLogo;
 }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -93,7 +97,7 @@ export function Header({
             aria-label={`${site.longName} — retour à l’accueil`}
           >
             <Image
-              src={logoSrc()}
+              src={logo.url}
               alt=""
               width={44}
               height={44}

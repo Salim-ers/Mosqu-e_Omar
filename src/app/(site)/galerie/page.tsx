@@ -5,7 +5,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { getAlbums, HERITAGE_PHOTOS } from "@/lib/content";
+import { getAlbums, getHeritagePhotos } from "@/lib/content";
 import { formatMonthYear } from "@/lib/dates";
 
 export const revalidate = 3600;
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export default async function GaleriePage() {
-  const albums = await getAlbums();
+  const [albums, fonds] = await Promise.all([getAlbums(), getHeritagePhotos()]);
 
   return (
     <>
@@ -85,7 +85,7 @@ export default async function GaleriePage() {
             </h2>
           )}
           <Reveal delay={0.08} className={albums.length > 0 ? "mt-12" : ""}>
-            <GalleryGrid photos={HERITAGE_PHOTOS} />
+            <GalleryGrid photos={fonds} />
           </Reveal>
         </Container>
       </section>

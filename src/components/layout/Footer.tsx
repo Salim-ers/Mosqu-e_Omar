@@ -4,11 +4,11 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { site } from "@/config/site";
 import { getSettings } from "@/lib/content";
-import { LOGO, logoSrc } from "@/lib/media";
+import { getLogoSite } from "@/lib/content";
 
 export async function Footer() {
   const year = new Date().getFullYear();
-  const settings = await getSettings();
+  const [settings, logo] = await Promise.all([getSettings(), getLogoSite()]);
 
   return (
     <footer className="on-dark relative overflow-hidden bg-ink text-ivory">
@@ -37,8 +37,8 @@ export async function Footer() {
           </div>
           <div className="flex items-center gap-5">
             <Image
-              src={logoSrc()}
-              alt={LOGO.alt}
+              src={logo.url}
+              alt={logo.alt}
               width={64}
               height={64}
               className="h-16 w-16 rounded-full object-cover ring-1 ring-ivory/20"

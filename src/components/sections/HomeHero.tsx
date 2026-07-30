@@ -5,7 +5,7 @@ import Image from "next/image";
 
 import { ButtonLink } from "@/components/ui/Button";
 import { site } from "@/config/site";
-import { PHOTOS, src } from "@/lib/media";
+import type { PublicImage } from "@/lib/content";
 
 /**
  * HERO — plein écran, photographie réelle de la mosquée, révélation très
@@ -20,7 +20,7 @@ import { PHOTOS, src } from "@/lib/media";
  * `min-h-svh` et non 92 % : à hauteur partielle, la section ivoire suivante
  * apparaissait en bas de l'écran comme une bande blanche sous la photographie.
  */
-export function HomeHero() {
+export function HomeHero({ photo }: { photo: PublicImage }) {
   const parallax = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -58,8 +58,8 @@ export function HomeHero() {
       <div className="hero-image absolute inset-0">
         <div ref={parallax} className="absolute inset-[-8%] will-change-transform">
           <Image
-            src={src(PHOTOS.facade)}
-            alt={PHOTOS.facade.alt}
+            src={photo.url}
+            alt={photo.alt}
             fill
             priority
             sizes="100vw"
