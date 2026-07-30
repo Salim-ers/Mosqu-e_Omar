@@ -56,6 +56,24 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
+  /**
+   * Adresses de l'ancien site WordPress, relevées dans son plan du site.
+   * Le jour où le domaine basculera, elles ne doivent pas devenir des pages
+   * introuvables : un lien partagé dans un groupe WhatsApp, un favori, un
+   * résultat de recherche encore en place doivent tous mener quelque part.
+   *
+   * Permanentes : la nouvelle adresse remplace l'ancienne pour de bon.
+   * `/a-propos` et `/projet` existent déjà à l'identique — rien à faire.
+   */
+  async redirects() {
+    return [
+      { source: "/donation", destination: "/dons", permanent: true },
+      { source: "/abonnement", destination: "/dons", permanent: true },
+      { source: "/confirmation-de-don", destination: "/dons", permanent: true },
+      { source: "/le-don-a-echoue", destination: "/dons", permanent: true },
+      { source: "/inscription", destination: "/inscriptions", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;
