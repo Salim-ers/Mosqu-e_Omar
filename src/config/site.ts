@@ -23,7 +23,15 @@ export const site = {
     siret: "798 305 280 00025",
   },
 
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://mosqueeomarcreil.fr",
+  /**
+   * Adresse publique, toujours sans barre oblique finale : elle est concaténée
+   * telle quelle (plan du site, robots.txt, données structurées). Une variable
+   * d'environnement copiée depuis un navigateur se termine presque toujours
+   * par « / », ce qui donnait « …/​/sitemap.xml ».
+   */
+  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://mosqueeomarcreil.fr")
+    .trim()
+    .replace(/\/+$/, ""),
 
   /**
    * ADRESSE — ⚠️ TODO VALIDATION HUMAINE AVANT MISE EN PRODUCTION.
