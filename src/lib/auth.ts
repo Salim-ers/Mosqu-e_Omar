@@ -26,7 +26,12 @@ import type { UserRecord, UserRole } from "@/lib/store/types";
  */
 
 const COOKIE_NAME = "mo_session";
-const SESSION_DAYS = 7;
+/**
+ * Durée de vie du jeton lui-même. Le cookie, lui, n'a pas de date
+ * d'expiration : il disparaît à la fermeture du navigateur. Cette borne sert
+ * de garde-fou côté serveur — un jeton copié ailleurs ne vaut pas au-delà.
+ */
+const SESSION_HOURS = 12;
 const SCRYPT_KEYLEN = 64;
 
 const scryptAsync = promisify(scrypt) as (
@@ -120,7 +125,7 @@ async function sign(payload: string): Promise<string> {
 }
 
 async function createToken(userId: string): Promise<string> {
-  const expiresAt = Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000;
+  const expiresAt = Date.now() + SESSION_HOURS * 60 * 60 * 1000;
   const payload = base64url(JSON.stringify({ sub: userId, exp: expiresAt }));
   return `${payload}.${await sign(payload)}`;
 }
@@ -146,6 +151,12 @@ async function readToken(token: string): Promise<string | null> {
   }
 }
 
+/**
+ * Ouvre la session. Volontairement sans `maxAge` ni `expires` : le cookie est
+ * alors un cookie de session, que le navigateur efface en se fermant. Un
+ * bénévole qui met le site à jour depuis un poste partagé — l'accueil de la
+ * mosquée, un ordinateur familial — n'y laisse pas son accès ouvert.
+ */
 export async function startSession(userId: string): Promise<void> {
   const jar = await cookies();
   jar.set(COOKIE_NAME, await createToken(userId), {
@@ -153,7 +164,6 @@ export async function startSession(userId: string): Promise<void> {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: SESSION_DAYS * 24 * 60 * 60,
   });
 }
 

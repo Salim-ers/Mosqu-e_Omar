@@ -45,6 +45,7 @@ const MESSAGES: Record<string, string> = {
   supprime: "Élément supprimé.",
   statut: "Statut modifié.",
   inscrit: "Demande d’inscription mise à jour.",
+  "photo-supprimee": "Photo supprimée de la photothèque.",
   "inscrit-supprime": "Demande d’inscription supprimée.",
 };
 

@@ -84,8 +84,8 @@ export const PHOTOS = {
   facade: shippedPhoto(
     "facade-nuit",
     "facade-nuit.jpg",
-    3344,
-    1882,
+    3840,
+    2160,
     "La façade de la nouvelle mosquée Omar Ibn al Khattab à Creil, éclairée à la tombée de la nuit",
   ),
   /** Salle de prière — photographie publiée par la mosquée. */

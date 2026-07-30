@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 
-import { Parallax } from "@/components/motion/Parallax";
 import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { site } from "@/config/site";
-import { PHOTOS, src } from "@/lib/media";
 import { getPageBySlug } from "@/lib/wordpress/queries";
 
 export const revalidate = 3600;
@@ -52,37 +49,42 @@ export default async function ProjetPage() {
 
   return (
     <>
-      {/* Ouverture photographique plein cadre */}
-      <section className="on-dark relative flex min-h-[72svh] items-end overflow-hidden bg-ink text-ivory">
-        <div className="absolute inset-0">
-          <Parallax strength={5} className="h-full w-full">
-            <Image
-              src={src(PHOTOS.chantier)}
-              alt={PHOTOS.chantier.alt}
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-          </Parallax>
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-ink/40"
-          />
-        </div>
-        <Container className="relative pt-40 pb-14 lg:pb-20">
+      {/* Ouverture sur la mosaïque, contenu centré */}
+      <section className="on-dark relative flex min-h-[66svh] items-center justify-center overflow-hidden bg-ink py-32 text-ivory lg:py-40">
+        <div aria-hidden className="pattern-zellige absolute inset-0" />
+        <Container className="relative">
           <Reveal>
-            <Eyebrow onDark>La nouvelle mosquée</Eyebrow>
-            <h1 className="mt-6 max-w-4xl font-display text-[3rem] leading-[1.0] font-medium tracking-[-0.015em] sm:text-6xl lg:text-7xl">
-              Un projet de toute
-              <br />
-              <em className="font-light italic">une communauté</em>
-            </h1>
-            <p className="mt-7 max-w-2xl text-[1rem] leading-[1.85] text-ivory/95">
-              De la fondation de l’association en {site.association.foundedYear}{" "}
-              à l’ouverture au Ramadan 2026, la mosquée Omar Ibn al Khattab est
-              née de la constance et de la générosité des fidèles de Creil.
-            </p>
+            <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+              <p
+                className="font-arabic text-xl text-ivory/85 sm:text-2xl"
+                lang="ar"
+                dir="rtl"
+              >
+                {site.arabicName}
+              </p>
+              <Eyebrow onDark className="mt-8 justify-center">
+                La nouvelle mosquée
+              </Eyebrow>
+              <h1 className="mt-7 font-display text-[3.2rem] leading-[0.98] font-medium tracking-[-0.02em] sm:text-7xl lg:text-8xl">
+                Un projet de toute
+                <br />
+                <em className="font-light italic">une communauté</em>
+              </h1>
+              <p className="mt-8 max-w-2xl text-[1.05rem] leading-[1.85] text-ivory/90">
+                De la fondation de l’association en{" "}
+                {site.association.foundedYear} à l’ouverture au Ramadan 2026, la
+                mosquée Omar Ibn al Khattab est née de la constance et de la
+                générosité des fidèles de Creil.
+              </p>
+              <div className="mt-10 flex flex-wrap justify-center gap-4">
+                <ButtonLink href="/galerie" variant="inverse">
+                  La mosquée en images
+                </ButtonLink>
+                <ButtonLink href="/dons" variant="onDark">
+                  Soutenir le projet
+                </ButtonLink>
+              </div>
+            </div>
           </Reveal>
         </Container>
       </section>
@@ -135,35 +137,8 @@ export default async function ProjetPage() {
         </section>
       ) : null}
 
-      {/* Diptyque photographique */}
-      <section aria-label="Le chantier en images" className="bg-ivory py-20 lg:py-28">
-        <Container>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Reveal>
-              <figure className="relative aspect-[4/3] overflow-hidden bg-sand">
-                <Image
-                  src={src(PHOTOS.galerie6)}
-                  alt={PHOTOS.galerie6.alt}
-                  fill
-                  sizes="(min-width: 640px) 46vw, 92vw"
-                  className="object-cover"
-                />
-              </figure>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <figure className="relative aspect-[4/3] overflow-hidden bg-sand">
-                <Image
-                  src={src(PHOTOS.galerie1)}
-                  alt={PHOTOS.galerie1.alt}
-                  fill
-                  sizes="(min-width: 640px) 46vw, 92vw"
-                  className="object-cover"
-                />
-              </figure>
-            </Reveal>
-          </div>
-        </Container>
-      </section>
+      {/* Les photographies du chantier vivent sur /galerie : les répéter ici
+          faisait doublon avec la page qui leur est consacrée. */}
 
       {/* Appel final digne */}
       <section
@@ -173,14 +148,10 @@ export default async function ProjetPage() {
         <div aria-hidden className="pattern-zellige absolute inset-0" />
         <Container className="relative text-center">
           <Reveal>
-            <p
-              className="font-arabic text-xl text-ivory/90"
-              lang="ar"
-              dir="rtl"
-            >
-              {site.arabicName}
-            </p>
-            <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] font-medium sm:text-5xl lg:text-6xl">
+            <Eyebrow onDark className="justify-center">
+              Achever ce qui a été commencé
+            </Eyebrow>
+            <h2 className="mx-auto mt-7 max-w-3xl font-display text-[2.8rem] leading-[1.02] font-medium sm:text-5xl lg:text-6xl">
               Il reste les façades, le parking
               <br />
               <em className="font-light italic">et les espaces verts</em>
@@ -190,11 +161,11 @@ export default async function ProjetPage() {
               soutien permet d’achever ce que la communauté a commencé ensemble.
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <ButtonLink href="/dons" variant="inverse" className="on-dark">
+              <ButtonLink href="/dons" variant="inverse">
                 Faire un don
               </ButtonLink>
-              <ButtonLink href="/galerie" variant="onDark">
-                Voir la mosquée en images
+              <ButtonLink href="/contact" variant="onDark">
+                Contacter la mosquée
               </ButtonLink>
             </div>
           </Reveal>

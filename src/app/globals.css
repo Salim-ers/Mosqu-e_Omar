@@ -260,6 +260,61 @@ p {
   }
 }
 
+/* ------------------------------------------------------ écran d'accueil ---
+   Voile affiché le temps du chargement, effacé ensuite. Le retrait passe par
+   l'opacité seule : rien ne se recompose pendant le défilement puisque le
+   voile a déjà disparu du document.
+------------------------------------------------------------------------- */
+
+.splash {
+  transition: opacity 0.6s var(--ease-out-soft);
+}
+.splash[data-splash="sortie"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes splash-logo-souffle {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.045);
+    opacity: 1;
+  }
+}
+.splash-logo {
+  animation: splash-logo-souffle 2.4s ease-in-out infinite;
+}
+
+@keyframes splash-jauge-course {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+.splash-jauge {
+  overflow: hidden;
+}
+.splash-jauge-trait {
+  width: 45%;
+  animation: splash-jauge-course 1.5s var(--ease-out-soft) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash {
+    transition: none;
+  }
+  .splash-logo,
+  .splash-jauge-trait {
+    animation: none;
+  }
+}
+
 /* Lien éditorial — soulignement animé au survol. */
 @utility link-editorial {
   position: relative;

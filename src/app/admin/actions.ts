@@ -157,7 +157,9 @@ export async function deleteMedia(id: string): Promise<void> {
   await requireUser();
   await removeMedia(id);
   refreshPublicSite();
-  redirect("/admin/medias?ok=supprime");
+  // La photothèque vit désormais sous « Photos & albums » : l'ancienne adresse
+  // /admin/medias n'existe plus et renvoyait une page introuvable.
+  redirect("/admin/contenus/albums?ok=photo-supprimee");
 }
 
 /* --------------------------------------------------------- messages --- */
