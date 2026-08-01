@@ -104,32 +104,6 @@ const nextConfig: NextConfig = {
    * Permanentes : la nouvelle adresse remplace l'ancienne pour de bon.
    * `/a-propos` et `/projet` existent déjà à l'identique — rien à faire.
    */
-  /**
-   * Relais du formulaire de don (voir src/app/don-formulaire/route.ts).
-   * Le formulaire est servi depuis notre domaine pour qu'il accepte de
-   * s'afficher ; ses propres appels doivent donc, eux aussi, passer par notre
-   * domaine, sinon le navigateur les refuse.
-   */
-  async rewrites() {
-    // Volontairement limité à ce dont le formulaire a besoin : la racine, où
-    // vivent les routes du greffon, et les fichiers qu'il charge. Un relais
-    // ouvert sur tout l'ancien site n'aurait aucune raison d'exister.
-    return [
-      { source: "/don-passerelle", destination: "https://mosqueeomarcreil.fr/" },
-      {
-        source: "/don-passerelle/wp-content/:chemin*",
-        destination: "https://mosqueeomarcreil.fr/wp-content/:chemin*",
-      },
-      {
-        source: "/don-passerelle/wp-includes/:chemin*",
-        destination: "https://mosqueeomarcreil.fr/wp-includes/:chemin*",
-      },
-      {
-        source: "/don-passerelle/wp-json/:chemin*",
-        destination: "https://mosqueeomarcreil.fr/wp-json/:chemin*",
-      },
-    ];
-  },
   async redirects() {
     return [
       { source: "/donation", destination: "/dons", permanent: true },

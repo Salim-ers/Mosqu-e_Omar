@@ -23,13 +23,17 @@ import { NextResponse } from "next/server";
 const ANCIEN_SITE = "https://mosqueeomarcreil.fr";
 const FORMULAIRE = `${ANCIEN_SITE}/?givewp-route=donation-form-view&form-id=925&locale=fr_FR`;
 
-/** Le formulaire change quand l'association le modifie : une heure suffit. */
-export const revalidate = 3600;
+/**
+ * Jamais mis en cache. Le formulaire arrive avec une signature d'envoi datée,
+ * délivrée par l'ancien site : servir une copie vieille d'une heure reviendrait
+ * à faire refuser le don au moment de payer.
+ */
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   const reponse = await fetch(FORMULAIRE, {
     headers: { "User-Agent": "mosqueeomarcreil.fr (site officiel)" },
-    next: { revalidate },
+    cache: "no-store",
   });
 
   if (!reponse.ok) {
@@ -47,7 +51,7 @@ export async function GET() {
   return new NextResponse(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "public, max-age=0, s-maxage=3600",
+      "Cache-Control": "no-store",
       // Un formulaire n'a rien à faire dans un moteur de recherche : on n'y
       // arrive que par la page « Faire un don », qui l'encadre.
       "X-Robots-Tag": "noindex, nofollow",
