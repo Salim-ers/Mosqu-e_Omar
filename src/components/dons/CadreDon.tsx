@@ -2,52 +2,40 @@ import { ButtonLink } from "@/components/ui/Button";
 
 /**
  * ============================================================================
- * FORMULAIRE DE DON INTÉGRÉ À LA PAGE
+ * FORMULAIRE DE DON DANS LA PAGE — QUAND C'EST POSSIBLE
  * ----------------------------------------------------------------------------
- * L'association encaisse déjà les dons, avec ses propres formulaires et son
- * propre compte Stripe. Personne ici n'a la main dessus — et il n'y en a pas
- * besoin : ces formulaires sont conçus pour être intégrés ailleurs, et c'est
- * exactement ce que fait l'ancien site lui-même.
+ * L'idéal serait que tous les formulaires de don s'ouvrent dans la page, sans
+ * envoyer le donateur ailleurs. Tous ne l'acceptent pas.
  *
- * Le donateur reste donc sur les pages de la mosquée, dans sa mise en page,
- * avec ses textes. Seul le formulaire, dans son cadre, vient d'ailleurs.
+ * Le formulaire de dons ponctuels de l'association est un formulaire GiveWP :
+ * il ne s'affiche que si le script du greffon pilote lui-même son cadre depuis
+ * la page qui l'accueille. Autrement dit, il faudrait exécuter un script de
+ * l'ancien site à l'intérieur de celui-ci — ce que la politique de sécurité du
+ * site interdit, et pour de bonnes raisons : ce script aurait alors les mêmes
+ * droits que le site lui-même. Sans ce script, le cadre reste blanc ; c'est
+ * exactement ce qui s'était produit.
  *
- * Tant que ce cadre dépend de l'ancien site, il vit et meurt avec lui : le
- * jour où le domaine basculera, il faudra soit garder ce site sur un
- * sous-domaine, soit disposer du compte Stripe. Le repli ci-dessous fait que
- * ce jour-là, personne ne tombera sur un cadre vide.
+ * Ce composant n'intègre donc que ce qui s'intègre vraiment, et donne un
+ * bouton franc pour tout le reste. Un bouton qui marche vaut mieux qu'un cadre
+ * blanc.
  * ============================================================================
  */
 
 /**
- * Le formulaire de don de l'ancien site, dans sa version autonome — sans
- * en-tête ni pied de page, faite pour l'intégration. C'est l'adresse que la
- * page « Projet » du WordPress emploie déjà pour son propre cadre.
- */
-const FORMULAIRE_ANCIEN_SITE =
-  "https://mosqueeomarcreil.fr/?givewp-route=donation-form-view&form-id=925";
-
-/**
- * Adresse intégrable correspondant à une adresse de don.
+ * Adresse intégrable, ou `null` s'il faut un bouton.
  *
- * Seules deux origines sont intégrées : celle de l'association et HelloAsso.
- * Toute autre adresse — une plateforme qui refuserait d'être encadrée, un lien
- * de paiement Stripe — reçoit un bouton franc plutôt qu'un cadre resté blanc.
+ * La liste est délibérément courte et explicite : on n'y met que ce qui a été
+ * vérifié. Une page qu'on croit intégrable et qui ne l'est pas coûte un
+ * donateur.
  */
 export function adresseIntegrable(url: string): string | null {
-  // L'adresse est comparée sans sa barre oblique finale, mais transmise telle
-  // qu'elle a été saisie : sur ces serveurs, « /abonnement » redirige vers
-  // « /abonnement/ », et un aller-retour de plus retarde le formulaire.
   const exacte = url.trim().split("#")[0];
   const propre = exacte.replace(/\/+$/, "");
 
-  // La page « Projet » du WordPress n'est pas le formulaire : elle l'encadre.
-  // On va chercher le formulaire lui-même, sans le décor de l'ancien site.
-  if (/^https:\/\/(www\.)?mosqueeomarcreil\.fr\/projet(\/|$|\?)/i.test(propre))
-    return FORMULAIRE_ANCIEN_SITE;
-
-  // Les autres pages de l'association sont déjà des pages de formulaire.
-  if (/^https:\/\/(www\.)?mosqueeomarcreil\.fr\//i.test(propre)) return exacte;
+  // Page de prélèvement mensuel de l'association : une page autonome, qui
+  // n'attend rien de la page qui l'accueille.
+  if (/^https:\/\/(www\.)?mosqueeomarcreil\.fr\/abonnement(\/|$|\?)/i.test(propre))
+    return exacte;
 
   // HelloAsso publie chaque campagne en version intégrable sous « /widget ».
   if (/^https:\/\/(www\.)?helloasso\.com\/.+\/formulaires\/[^/]+/i.test(propre))
@@ -60,10 +48,12 @@ export function CadreDon({
   url,
   titre,
   libelleBouton,
+  note,
 }: {
   url: string;
   titre: string;
   libelleBouton: string;
+  note?: string;
 }) {
   const integrable = adresseIntegrable(url);
 
@@ -72,13 +62,17 @@ export function CadreDon({
       <div className="border hairline bg-cream p-8 sm:p-10">
         <p className="max-w-md text-[1.02rem] leading-[1.85] text-charcoal/75">
           Vous choisissez votre montant sur la page de paiement sécurisée de
-          l’association.
+          l’association, puis vous revenez ici.
         </p>
         <div className="mt-8">
           <ButtonLink href={url} external className="w-full sm:w-auto">
             {libelleBouton}
           </ButtonLink>
         </div>
+        <p className="mt-5 text-[0.78rem] leading-relaxed text-taupe">
+          {note ??
+            "Paiement par carte bancaire. Votre numéro de carte n’est jamais vu par la mosquée."}
+        </p>
       </div>
     );
   }
