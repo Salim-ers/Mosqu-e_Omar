@@ -29,6 +29,34 @@ export const dynamic = "force-dynamic";
 /** Chemins autorisés : la racine (routes du greffon) et ses fichiers. */
 const CHEMINS_AUTORISES = /^(wp-content|wp-includes|wp-json)(\/|$)/;
 
+/**
+ * Affichée dans le cadre lorsque le paiement n'a pas abouti. Sobre et sans
+ * ressource extérieure : c'est une page d'excuse, elle doit s'afficher même
+ * quand tout le reste a échoué.
+ */
+const PAGE_ECHEC = `<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le paiement n’a pas abouti</title>
+<style>
+  body{margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;
+       background:#faf7f2;color:#2b2b28;font:400 16px/1.7 ui-serif,Georgia,serif;padding:2rem}
+  div{max-width:26rem;text-align:center}
+  h1{font-size:1.5rem;font-weight:500;margin:0 0 1rem}
+  p{margin:0 0 1.5rem;color:#5c574e;font-size:.95rem}
+  a{display:inline-block;padding:.85rem 1.75rem;border:1px solid #1b1b18;color:#1b1b18;
+    text-decoration:none;font:600 .72rem/1 ui-sans-serif,system-ui;letter-spacing:.2em;
+    text-transform:uppercase}
+  a:hover{background:#1b1b18;color:#faf7f2}
+</style></head>
+<body><div>
+  <h1>Le paiement n’a pas abouti</h1>
+  <p>Rien n’a été prélevé. Votre banque a refusé l’opération, ou elle a été
+  interrompue. Vous pouvez recommencer, ou donner par virement ou en main
+  propre à la mosquée.</p>
+  <a href="/don-formulaire">Recommencer</a>
+</div></body></html>`;
+
 const ENTETES_TRANSMIS = [
   "accept",
   "accept-language",
@@ -49,6 +77,21 @@ async function relais(
   }
 
   const recue = new URL(request.url);
+
+  // Carte refusée : le formulaire renvoie le donateur, en GET, sur l'adresse
+  // d'envoi du don. L'ancien site répond « Forbidden » — cette adresse-là
+  // n'accepte qu'un envoi. Plutôt que ce mot sec en plein milieu de la page,
+  // on explique ce qui s'est passé et on propose de recommencer.
+  if (
+    request.method === "GET" &&
+    recue.searchParams.get("givewp-route") === "donate"
+  ) {
+    return new NextResponse(PAGE_ECHEC, {
+      status: 200,
+      headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },
+    });
+  }
+
   const cible = `${ANCIEN_SITE}/${sousChemin}${recue.search}`;
 
   const entetes = new Headers();
