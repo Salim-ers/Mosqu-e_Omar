@@ -7,11 +7,10 @@ import { ButtonLink } from "@/components/ui/Button";
  * L'idéal serait que tous les formulaires de don s'ouvrent dans la page, sans
  * envoyer le donateur ailleurs. Tous ne l'acceptent pas.
  *
- * Le formulaire de dons ponctuels est un formulaire GiveWP. Le fragment que
- * le greffon destine à l'intégration ne s'affiche pas seul : il attend d'être
- * piloté par le script du greffon, lequel réclame tout le socle JavaScript de
- * WordPress. On intègre donc la page complète du formulaire, celle qui tient
- * debout toute seule.
+ * Le formulaire de dons ponctuels de l'association refuse de s'afficher dans
+ * un cadre venu d'un autre domaine : à son démarrage il lit l'adresse de la
+ * page qui l'encadre, le navigateur le lui refuse, et il s'arrête là. On le
+ * sert donc depuis notre propre domaine — voir src/app/don-formulaire.
  *
  * Ce composant n'intègre que ce qui s'intègre vraiment, et donne un bouton
  * franc pour tout le reste. Un bouton qui marche vaut mieux qu'un cadre
@@ -20,19 +19,11 @@ import { ButtonLink } from "@/components/ui/Button";
  */
 
 /**
- * Page autonome du formulaire de dons ponctuels, sur le site de l'association.
- *
- * Ce n'est pas le fragment `givewp-route=donation-form-view` : celui-là ne
- * s'affiche que piloté par le script du greffon, qui réclame à son tour tout
- * le socle JavaScript de WordPress (`wp.i18n`, `wp.element`, `wp.components`).
- * C'est la page complète du formulaire, celle qu'un visiteur peut ouvrir
- * lui-même — donc celle dont on sait qu'elle s'affiche.
- *
- * L'ancre `#content` fait défiler le cadre jusqu'au contenu dès l'ouverture :
- * l'en-tête de l'ancien site reste au-dessus, hors de vue.
+ * Le formulaire de dons ponctuels, servi par nous (src/app/don-formulaire).
+ * Voir cette route : c'est en le servant depuis notre propre domaine qu'il
+ * accepte enfin de s'afficher.
  */
-const FORMULAIRE_PONCTUEL =
-  "https://mosqueeomarcreil.fr/donations/formulaire-ramadan/#content";
+const FORMULAIRE_PONCTUEL = "/don-formulaire";
 
 /**
  * Adresse intégrable, ou `null` s'il faut un bouton.
@@ -103,7 +94,10 @@ export function CadreDon({
           title={titre}
           loading="lazy"
           allow="payment"
-          className="block h-[48rem] w-full border-0 sm:h-[54rem]"
+          // Hauteur fixe, calée sur l'étape la plus haute — celle du paiement.
+          // Un cadre qui grandit en cours de route ferait sauter la page sous
+          // les yeux du donateur.
+          className="block h-[44rem] w-full border-0 sm:h-[48rem]"
         />
       </div>
       <p className="mt-4 text-[0.82rem] leading-relaxed text-taupe">

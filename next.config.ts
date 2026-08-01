@@ -23,10 +23,29 @@ const csp = [
   "font-src 'self'",
   `connect-src 'self' https://${WP_HOST} https://*.mosqueeomarcreil.fr https://mosqueeomarcreil.fr`,
   // Formulaires de don intégrés aux pages /dons (voir CadreDon).
-  `frame-src https://mawaqit.net https://www.google.com https://maps.google.com https://${WP_HOST} https://www.helloasso.com`,
+  `frame-src 'self' https://mawaqit.net https://www.google.com https://maps.google.com https://${WP_HOST} https://www.helloasso.com`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
+  "frame-ancestors 'self'",
+].join("; ");
+
+/**
+ * Le formulaire de don est servi par nous, mais il reste une page de
+ * paiement : il lui faut Stripe, ses cadres et les polices du greffon. Cette
+ * politique ne vaut que pour les deux adresses du relais ; le reste du site
+ * garde la sienne, qui n'autorise rien d'extérieur.
+ */
+const cspPaiement = [
+  "default-src 'self' https://mosqueeomarcreil.fr",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://mosqueeomarcreil.fr https://js.stripe.com",
+  "style-src 'self' 'unsafe-inline' https://mosqueeomarcreil.fr https://fonts.googleapis.com",
+  "img-src 'self' data: blob: https://mosqueeomarcreil.fr https://*.stripe.com https://*.stripecdn.com https://*.hcaptcha.com",
+  "font-src 'self' data: https://mosqueeomarcreil.fr https://fonts.gstatic.com",
+  "connect-src 'self' https://mosqueeomarcreil.fr https://api.stripe.com https://m.stripe.com https://m.stripe.network https://*.hcaptcha.com",
+  "frame-src https://js.stripe.com https://hooks.stripe.com https://m.stripe.network https://*.hcaptcha.com",
+  "object-src 'none'",
+  "base-uri 'self'",
   "frame-ancestors 'self'",
 ].join("; ");
 
@@ -55,7 +74,26 @@ const nextConfig: NextConfig = {
     ],
   },
   async headers() {
-    return [{ source: "/(.*)", headers: securityHeaders }];
+    const communs = securityHeaders.filter(
+      (entete) => entete.key !== "Content-Security-Policy",
+    );
+    const entetesPaiement = [
+      ...communs,
+      ...(process.env.NODE_ENV === "production"
+        ? [{ key: "Content-Security-Policy", value: cspPaiement }]
+        : []),
+    ];
+
+    return [
+      // Tout le site, sauf les deux adresses du relais de don.
+      {
+        source: "/:chemin((?!don-formulaire|don-passerelle).*)",
+        headers: securityHeaders,
+      },
+      { source: "/", headers: securityHeaders },
+      { source: "/don-formulaire", headers: entetesPaiement },
+      { source: "/don-passerelle/:chemin*", headers: entetesPaiement },
+    ];
   },
   /**
    * Adresses de l'ancien site WordPress, relevées dans son plan du site.
@@ -66,6 +104,32 @@ const nextConfig: NextConfig = {
    * Permanentes : la nouvelle adresse remplace l'ancienne pour de bon.
    * `/a-propos` et `/projet` existent déjà à l'identique — rien à faire.
    */
+  /**
+   * Relais du formulaire de don (voir src/app/don-formulaire/route.ts).
+   * Le formulaire est servi depuis notre domaine pour qu'il accepte de
+   * s'afficher ; ses propres appels doivent donc, eux aussi, passer par notre
+   * domaine, sinon le navigateur les refuse.
+   */
+  async rewrites() {
+    // Volontairement limité à ce dont le formulaire a besoin : la racine, où
+    // vivent les routes du greffon, et les fichiers qu'il charge. Un relais
+    // ouvert sur tout l'ancien site n'aurait aucune raison d'exister.
+    return [
+      { source: "/don-passerelle", destination: "https://mosqueeomarcreil.fr/" },
+      {
+        source: "/don-passerelle/wp-content/:chemin*",
+        destination: "https://mosqueeomarcreil.fr/wp-content/:chemin*",
+      },
+      {
+        source: "/don-passerelle/wp-includes/:chemin*",
+        destination: "https://mosqueeomarcreil.fr/wp-includes/:chemin*",
+      },
+      {
+        source: "/don-passerelle/wp-json/:chemin*",
+        destination: "https://mosqueeomarcreil.fr/wp-json/:chemin*",
+      },
+    ];
+  },
   async redirects() {
     return [
       { source: "/donation", destination: "/dons", permanent: true },
