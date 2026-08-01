@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { AppelAuDon } from "@/components/dons/AppelAuDon";
+import { CadreDon } from "@/components/dons/CadreDon";
 import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -65,10 +65,10 @@ export default async function DonMensuelPage() {
 
               <Reveal delay={0.06}>
                 <div className="mt-9">
-                  <AppelAuDon
+                  <CadreDon
                     url={reglages.monthlyDonationUrl}
-                    libelle="Soutenir chaque mois"
-                    note="Prélèvement modifiable ou interrompu à tout moment, depuis le courriel de confirmation."
+                    titre="Formulaire de soutien mensuel à la mosquée Omar Ibn al Khattab"
+                    libelleBouton="Soutenir chaque mois"
                   />
                 </div>
               </Reveal>
