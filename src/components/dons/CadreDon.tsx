@@ -7,19 +7,32 @@ import { ButtonLink } from "@/components/ui/Button";
  * L'idéal serait que tous les formulaires de don s'ouvrent dans la page, sans
  * envoyer le donateur ailleurs. Tous ne l'acceptent pas.
  *
- * Le formulaire de dons ponctuels de l'association est un formulaire GiveWP :
- * il ne s'affiche que si le script du greffon pilote lui-même son cadre depuis
- * la page qui l'accueille. Autrement dit, il faudrait exécuter un script de
- * l'ancien site à l'intérieur de celui-ci — ce que la politique de sécurité du
- * site interdit, et pour de bonnes raisons : ce script aurait alors les mêmes
- * droits que le site lui-même. Sans ce script, le cadre reste blanc ; c'est
- * exactement ce qui s'était produit.
+ * Le formulaire de dons ponctuels est un formulaire GiveWP. Le fragment que
+ * le greffon destine à l'intégration ne s'affiche pas seul : il attend d'être
+ * piloté par le script du greffon, lequel réclame tout le socle JavaScript de
+ * WordPress. On intègre donc la page complète du formulaire, celle qui tient
+ * debout toute seule.
  *
- * Ce composant n'intègre donc que ce qui s'intègre vraiment, et donne un
- * bouton franc pour tout le reste. Un bouton qui marche vaut mieux qu'un cadre
+ * Ce composant n'intègre que ce qui s'intègre vraiment, et donne un bouton
+ * franc pour tout le reste. Un bouton qui marche vaut mieux qu'un cadre
  * blanc.
  * ============================================================================
  */
+
+/**
+ * Page autonome du formulaire de dons ponctuels, sur le site de l'association.
+ *
+ * Ce n'est pas le fragment `givewp-route=donation-form-view` : celui-là ne
+ * s'affiche que piloté par le script du greffon, qui réclame à son tour tout
+ * le socle JavaScript de WordPress (`wp.i18n`, `wp.element`, `wp.components`).
+ * C'est la page complète du formulaire, celle qu'un visiteur peut ouvrir
+ * lui-même — donc celle dont on sait qu'elle s'affiche.
+ *
+ * L'ancre `#content` fait défiler le cadre jusqu'au contenu dès l'ouverture :
+ * l'en-tête de l'ancien site reste au-dessus, hors de vue.
+ */
+const FORMULAIRE_PONCTUEL =
+  "https://mosqueeomarcreil.fr/donations/formulaire-ramadan/#content";
 
 /**
  * Adresse intégrable, ou `null` s'il faut un bouton.
@@ -31,6 +44,11 @@ import { ButtonLink } from "@/components/ui/Button";
 export function adresseIntegrable(url: string): string | null {
   const exacte = url.trim().split("#")[0];
   const propre = exacte.replace(/\/+$/, "");
+
+  // La page « Projet » du WordPress encadre le formulaire au lieu de l'être :
+  // on va chercher la page du formulaire elle-même.
+  if (/^https:\/\/(www\.)?mosqueeomarcreil\.fr\/projet(\/|$|\?)/i.test(propre))
+    return FORMULAIRE_PONCTUEL;
 
   // Page de prélèvement mensuel de l'association : une page autonome, qui
   // n'attend rien de la page qui l'accueille.
