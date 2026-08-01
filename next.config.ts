@@ -68,9 +68,9 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/donation", destination: "/dons", permanent: true },
-      { source: "/abonnement", destination: "/dons", permanent: true },
-      { source: "/confirmation-de-don", destination: "/dons", permanent: true },
-      { source: "/le-don-a-echoue", destination: "/dons", permanent: true },
+      { source: "/abonnement", destination: "/dons/mensuel", permanent: true },
+      { source: "/confirmation-de-don", destination: "/dons/merci", permanent: true },
+      { source: "/le-don-a-echoue", destination: "/dons/echec", permanent: true },
       { source: "/inscription", destination: "/inscriptions", permanent: true },
     ];
   },
