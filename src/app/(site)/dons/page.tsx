@@ -59,20 +59,25 @@ export default async function DonsPage() {
                 </div>
               </Reveal>
 
+              {/* En noir sous le formulaire clair : le soutien mensuel ne se
+                  fond plus dans la page, il s'y détache. */}
               <Reveal delay={0.1}>
-                <div className="mt-10 border hairline bg-cream p-7 sm:p-9">
-                  <h3 className="font-display text-2xl font-medium text-charcoal">
-                    L’aumône continue
-                  </h3>
-                  <p className="mt-4 text-[0.92rem] leading-[1.8] text-charcoal/70">
-                    Vous pouvez aussi soutenir la mosquée chaque mois. C’est
-                    cette régularité, plus que les grands gestes, qui permet de
-                    faire face aux charges du lieu.
-                  </p>
-                  <div className="mt-7">
-                    <ButtonLink href="/dons/mensuel" variant="outline">
-                      Soutenir chaque mois
-                    </ButtonLink>
+                <div className="on-dark relative mt-10 overflow-hidden border border-ink bg-ink p-8 text-ivory sm:p-10">
+                  <div aria-hidden className="pattern-zellige absolute inset-0" />
+                  <div className="relative">
+                    <h3 className="font-display text-2xl font-medium text-ivory">
+                      L’aumône continue
+                    </h3>
+                    <p className="mt-4 max-w-md text-[0.92rem] leading-[1.8] text-ivory/85">
+                      Vous pouvez aussi soutenir la mosquée chaque mois. C’est
+                      cette régularité, plus que les grands gestes, qui permet
+                      de faire face aux charges du lieu.
+                    </p>
+                    <div className="mt-8">
+                      <ButtonLink href="/dons/mensuel" variant="inverse">
+                        Soutenir chaque mois
+                      </ButtonLink>
+                    </div>
                   </div>
                 </div>
               </Reveal>
