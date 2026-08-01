@@ -22,8 +22,7 @@ const csp = [
   `img-src 'self' data: blob: https://${WP_HOST} https://*.mosqueeomarcreil.fr https://mosqueeomarcreil.fr`,
   "font-src 'self'",
   `connect-src 'self' https://${WP_HOST} https://*.mosqueeomarcreil.fr https://mosqueeomarcreil.fr`,
-  // Formulaires de don intégrés aux pages /dons (voir FormulaireDon).
-  "frame-src https://mawaqit.net https://www.google.com https://maps.google.com https://www.helloasso.com https://helloasso.com",
+  "frame-src https://mawaqit.net https://www.google.com https://maps.google.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -69,7 +68,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/donation", destination: "/dons", permanent: true },
-      { source: "/abonnement", destination: "/dons/mensuel", permanent: true },
+      { source: "/abonnement", destination: "/dons", permanent: true },
       { source: "/confirmation-de-don", destination: "/dons", permanent: true },
       { source: "/le-don-a-echoue", destination: "/dons", permanent: true },
       { source: "/inscription", destination: "/inscriptions", permanent: true },

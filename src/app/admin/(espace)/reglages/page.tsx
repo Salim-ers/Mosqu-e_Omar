@@ -129,7 +129,7 @@ export default async function ReglagesPage({
 
         <Panel
           title="Dons"
-          description="Adresses des campagnes de don. Une adresse HelloAsso (…/formulaires/…) est intégrée directement dans la page du site : le donateur ne quitte pas la mosquée. Toute autre adresse affiche un bouton qui y mène."
+          description="Adresses des pages de don utilisées par les boutons du site."
         >
           <div className="grid gap-6 sm:grid-cols-2">
             {field("donationUrl", "Don ponctuel", reglages.donationUrl, {
