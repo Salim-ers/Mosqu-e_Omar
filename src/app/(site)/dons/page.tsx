@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 
+import { FormulaireDon } from "@/components/dons/FormulaireDon";
 import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { site } from "@/config/site";
-import { getSettings, type EffectiveSettings } from "@/lib/content";
+import { getSettings } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Faire un don",
@@ -14,42 +15,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/dons" },
 };
 
-/** Les adresses de don se règlent depuis l'espace bénévoles. */
-function ways(settings: EffectiveSettings) {
-  const address = `${settings.address.street}, ${settings.address.postalCode} ${settings.address.city}`;
-  return [
-    {
-      title: "Don ponctuel",
-      note: "Un don libre, du montant de votre choix, via le formulaire sécurisé de la mosquée.",
-      href: settings.donationUrl,
-      external: true,
-      cta: "Faire un don en ligne",
-      primary: true,
-    },
-    {
-      title: "Soutien mensuel",
-      note: `Un engagement régulier — ${site.donation.monthlySuggestion} suggérés — qui couvre l’eau, l’électricité, l’entretien et les frais de fonctionnement de la mosquée.`,
-      href: settings.monthlyDonationUrl,
-      external: true,
-      cta: "Soutenir chaque mois",
-      primary: false,
-    },
-    {
-      title: "Don en main propre",
-      note: `Vous pouvez remettre votre don directement à la mosquée : ${address}.`,
-      href: "/contact",
-      external: false,
-      cta: "Nous trouver",
-      primary: false,
-    },
-  ];
-}
-
 export const revalidate = 3600;
 
 export default async function DonsPage() {
   const settings = await getSettings();
-  const WAYS = ways(settings);
+  const adresse = `${settings.address.street}, ${settings.address.postalCode} ${settings.address.city}`;
 
   return (
     <>
@@ -65,56 +35,73 @@ export default async function DonsPage() {
         lead="La mosquée Omar a été construite grâce aux dons des fidèles — et c’est encore par eux qu’elle vit chaque jour. Chaque contribution compte, quel qu’en soit le montant."
       />
 
+      {/* Le don se fait ici même : le donateur ne quitte pas la mosquée pour
+          aller donner ailleurs. Le paiement, lui, reste chez la plateforme de
+          l'association — c'est elle qui émet les reçus fiscaux. */}
       <section className="bg-ivory py-16 lg:py-24">
         <Container>
-          <div className="grid gap-6 lg:grid-cols-3">
-            {WAYS.map((way, index) => (
-              <Reveal key={way.title} delay={index * 0.07} className="h-full">
-                <article
-                  className={
-                    way.primary
-                      ? "flex h-full flex-col justify-between border border-ink bg-ink p-8 text-ivory sm:p-10"
-                      : "flex h-full flex-col justify-between border hairline bg-cream p-8 sm:p-10"
-                  }
-                >
-                  <div className={way.primary ? "on-dark" : undefined}>
-                    <p
-                      className={`flex items-center gap-3 text-[0.64rem] font-semibold tracking-[0.28em] uppercase ${way.primary ? "text-ivory/80" : "text-taupe"}`}
-                    >
-                      <span
-                        aria-hidden
-                        className={`h-1.5 w-1.5 rotate-45 ${way.primary ? "bg-amber" : "bg-beige"}`}
-                      />
-                      {String(index + 1).padStart(2, "0")}
-                    </p>
-                    <h2
-                      className={`mt-5 font-display text-3xl font-medium ${way.primary ? "text-ivory" : "text-charcoal"}`}
-                    >
-                      {way.title}
-                    </h2>
-                    <p
-                      className={`mt-4 text-[0.92rem] leading-[1.8] ${way.primary ? "text-ivory/90" : "text-charcoal/68"}`}
-                    >
-                      {way.note}
-                    </p>
-                  </div>
-                  <div className="mt-9">
-                    <ButtonLink
-                      href={way.href}
-                      external={way.external}
-                      variant={way.primary ? "onDark" : "outline"}
-                      className={
-                        way.primary
-                          ? "w-full border-ivory bg-ivory text-charcoal hover:bg-transparent hover:text-ivory"
-                          : "w-full"
-                      }
-                    >
-                      {way.cta}
-                    </ButtonLink>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
+          <Reveal>
+            <div className="mx-auto max-w-3xl">
+              <h2 className="font-display text-4xl font-medium text-charcoal sm:text-5xl">
+                Don ponctuel
+              </h2>
+              <p className="mt-4 text-[0.98rem] leading-[1.85] text-charcoal/70">
+                Un don libre, du montant de votre choix, par carte bancaire.
+                Paiement sécurisé, reçu fiscal envoyé par courriel.
+              </p>
+              <div className="mt-10">
+                <FormulaireDon
+                  url={settings.donationUrl}
+                  titre="Formulaire de don à la mosquée Omar Ibn al Khattab"
+                  libelleBouton="Faire un don en ligne"
+                />
+              </div>
+            </div>
+          </Reveal>
+
+          <div className="mx-auto mt-16 grid max-w-3xl gap-6 sm:grid-cols-2">
+            <Reveal delay={0.06} className="h-full">
+              <article className="flex h-full flex-col justify-between border border-ink bg-ink p-8 text-ivory">
+                <div className="on-dark">
+                  <h2 className="font-display text-2xl font-medium text-ivory">
+                    Soutien mensuel
+                  </h2>
+                  <p className="mt-4 text-[0.9rem] leading-[1.8] text-ivory/90">
+                    Un engagement régulier — {site.donation.monthlySuggestion}{" "}
+                    suggérés — qui couvre l’eau, l’électricité, l’entretien et
+                    les frais de fonctionnement de la mosquée.
+                  </p>
+                </div>
+                <div className="mt-8">
+                  <ButtonLink
+                    href="/dons/mensuel"
+                    variant="onDark"
+                    className="w-full border-ivory bg-ivory text-charcoal hover:bg-transparent hover:text-ivory"
+                  >
+                    Soutenir chaque mois
+                  </ButtonLink>
+                </div>
+              </article>
+            </Reveal>
+
+            <Reveal delay={0.12} className="h-full">
+              <article className="flex h-full flex-col justify-between border hairline bg-cream p-8">
+                <div>
+                  <h2 className="font-display text-2xl font-medium text-charcoal">
+                    Don en main propre
+                  </h2>
+                  <p className="mt-4 text-[0.9rem] leading-[1.8] text-charcoal/68">
+                    Vous pouvez remettre votre don directement à la mosquée :{" "}
+                    {adresse}.
+                  </p>
+                </div>
+                <div className="mt-8">
+                  <ButtonLink href="/contact" variant="outline" className="w-full">
+                    Nous trouver
+                  </ButtonLink>
+                </div>
+              </article>
+            </Reveal>
           </div>
 
           <Reveal delay={0.12}>
