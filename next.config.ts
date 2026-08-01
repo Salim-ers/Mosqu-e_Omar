@@ -22,7 +22,8 @@ const csp = [
   `img-src 'self' data: blob: https://${WP_HOST} https://*.mosqueeomarcreil.fr https://mosqueeomarcreil.fr`,
   "font-src 'self'",
   `connect-src 'self' https://${WP_HOST} https://*.mosqueeomarcreil.fr https://mosqueeomarcreil.fr`,
-  "frame-src https://mawaqit.net https://www.google.com https://maps.google.com",
+  // Formulaires de don intégrés aux pages /dons (voir CadreDon).
+  `frame-src https://mawaqit.net https://www.google.com https://maps.google.com https://${WP_HOST} https://www.helloasso.com`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { CadreDon } from "@/components/dons/CadreDon";
 import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -49,27 +50,12 @@ export default async function DonsPage() {
               </Reveal>
 
               <Reveal delay={0.06}>
-                <div className="mt-9 border hairline bg-cream p-8 sm:p-10">
-                  <p className="text-[0.64rem] font-semibold tracking-[0.28em] text-taupe uppercase">
-                    Don en ligne
-                  </p>
-                  <p className="mt-5 max-w-md text-[1.02rem] leading-[1.85] text-charcoal/75">
-                    Vous choisissez votre montant sur la page de paiement
-                    sécurisée de l’association, puis vous revenez ici.
-                  </p>
-                  <div className="mt-8">
-                    <ButtonLink
-                      href={reglages.donationUrl}
-                      external
-                      className="w-full sm:w-auto"
-                    >
-                      Faire un don
-                    </ButtonLink>
-                  </div>
-                  <p className="mt-5 text-[0.78rem] leading-relaxed text-taupe">
-                    Paiement par carte bancaire. Votre numéro de carte n’est
-                    jamais vu par la mosquée.
-                  </p>
+                <div className="mt-9">
+                  <CadreDon
+                    url={reglages.donationUrl}
+                    titre="Formulaire de don à la mosquée Omar Ibn al Khattab"
+                    libelleBouton="Faire un don"
+                  />
                 </div>
               </Reveal>
 

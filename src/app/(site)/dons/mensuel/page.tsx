@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { CadreDon } from "@/components/dons/CadreDon";
 import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -63,27 +64,12 @@ export default async function DonMensuelPage() {
               </Reveal>
 
               <Reveal delay={0.06}>
-                <div className="mt-9 border hairline bg-cream p-8 sm:p-10">
-                  <p className="text-[0.64rem] font-semibold tracking-[0.28em] text-taupe uppercase">
-                    Soutien mensuel
-                  </p>
-                  <p className="mt-5 max-w-md text-[1.02rem] leading-[1.85] text-charcoal/75">
-                    Vous choisissez le montant de votre prélèvement sur la page
-                    de paiement sécurisée de l’association.
-                  </p>
-                  <div className="mt-8">
-                    <ButtonLink
-                      href={reglages.monthlyDonationUrl}
-                      external
-                      className="w-full sm:w-auto"
-                    >
-                      Soutenir chaque mois
-                    </ButtonLink>
-                  </div>
-                  <p className="mt-5 text-[0.78rem] leading-relaxed text-taupe">
-                    Prélèvement modifiable ou interrompu à tout moment, depuis
-                    le courriel de confirmation.
-                  </p>
+                <div className="mt-9">
+                  <CadreDon
+                    url={reglages.monthlyDonationUrl}
+                    titre="Formulaire de soutien mensuel à la mosquée Omar Ibn al Khattab"
+                    libelleBouton="Soutenir chaque mois"
+                  />
                 </div>
               </Reveal>
 
