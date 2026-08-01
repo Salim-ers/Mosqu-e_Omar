@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { CadreDon } from "@/components/dons/CadreDon";
+import { AppelAuDon } from "@/components/dons/AppelAuDon";
 import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -51,10 +51,10 @@ export default async function DonsPage() {
 
               <Reveal delay={0.06}>
                 <div className="mt-9">
-                  <CadreDon
+                  <AppelAuDon
                     url={reglages.donationUrl}
-                    titre="Formulaire de don à la mosquée Omar Ibn al Khattab"
-                    libelleBouton="Faire un don"
+                    libelle="Faire un don"
+                    note="Paiement par carte bancaire. Votre numéro de carte n’est jamais vu par la mosquée."
                   />
                 </div>
               </Reveal>

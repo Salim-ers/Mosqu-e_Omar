@@ -22,34 +22,10 @@ const csp = [
   `img-src 'self' data: blob: https://${WP_HOST} https://*.mosqueeomarcreil.fr https://mosqueeomarcreil.fr`,
   "font-src 'self'",
   `connect-src 'self' https://${WP_HOST} https://*.mosqueeomarcreil.fr https://mosqueeomarcreil.fr`,
-  // Formulaires de don intégrés aux pages /dons (voir CadreDon).
-  `frame-src 'self' https://mawaqit.net https://www.google.com https://maps.google.com https://${WP_HOST} https://www.helloasso.com`,
+  "frame-src 'self' https://mawaqit.net https://www.google.com https://maps.google.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  "frame-ancestors 'self'",
-].join("; ");
-
-/**
- * Le formulaire de don est servi par nous, mais il reste une page de
- * paiement : il lui faut Stripe, ses cadres et les polices du greffon. Cette
- * politique ne vaut que pour les deux adresses du relais ; le reste du site
- * garde la sienne, qui n'autorise rien d'extérieur.
- */
-const cspPaiement = [
-  "default-src 'self' https://mosqueeomarcreil.fr",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://mosqueeomarcreil.fr https://js.stripe.com",
-  "style-src 'self' 'unsafe-inline' https://mosqueeomarcreil.fr https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://mosqueeomarcreil.fr https://*.stripe.com https://*.stripecdn.com https://*.hcaptcha.com",
-  "font-src 'self' data: https://mosqueeomarcreil.fr https://fonts.gstatic.com",
-  "connect-src 'self' https://mosqueeomarcreil.fr https://api.stripe.com https://m.stripe.com https://m.stripe.network https://*.hcaptcha.com https://errors.stripe.com",
-  // Volontairement ouvert aux sites sécurisés : la validation 3-D Secure
-  // s'affiche dans un cadre servi par la banque du donateur, et il y a autant
-  // de domaines que de banques — impossible d'en dresser la liste. Les
-  // restreindre reviendrait à faire échouer un paiement sur deux.
-  "frame-src https:",
-  "object-src 'none'",
-  "base-uri 'self'",
   "frame-ancestors 'self'",
 ].join("; ");
 
@@ -78,36 +54,8 @@ const nextConfig: NextConfig = {
     ],
   },
   async headers() {
-    const communs = securityHeaders.filter(
-      (entete) => entete.key !== "Content-Security-Policy",
-    );
-    const entetesPaiement = [
-      ...communs,
-      ...(process.env.NODE_ENV === "production"
-        ? [{ key: "Content-Security-Policy", value: cspPaiement }]
-        : []),
-    ];
-
-    return [
-      // Tout le site, sauf les deux adresses du relais de don.
-      {
-        source: "/:chemin((?!don-formulaire|don-passerelle).*)",
-        headers: securityHeaders,
-      },
-      { source: "/", headers: securityHeaders },
-      { source: "/don-formulaire", headers: entetesPaiement },
-      { source: "/don-passerelle/:chemin*", headers: entetesPaiement },
-    ];
+    return [{ source: "/(.*)", headers: securityHeaders }];
   },
-  /**
-   * Adresses de l'ancien site WordPress, relevées dans son plan du site.
-   * Le jour où le domaine basculera, elles ne doivent pas devenir des pages
-   * introuvables : un lien partagé dans un groupe WhatsApp, un favori, un
-   * résultat de recherche encore en place doivent tous mener quelque part.
-   *
-   * Permanentes : la nouvelle adresse remplace l'ancienne pour de bon.
-   * `/a-propos` et `/projet` existent déjà à l'identique — rien à faire.
-   */
   async redirects() {
     return [
       { source: "/donation", destination: "/dons", permanent: true },
