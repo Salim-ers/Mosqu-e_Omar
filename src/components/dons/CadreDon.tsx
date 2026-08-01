@@ -93,7 +93,13 @@ export function CadreDon({
           src={integrable}
           title={titre}
           loading="lazy"
-          allow="payment"
+          // « payment » autorise Apple Pay et Google Pay dans le cadre ;
+          // l'identifiant est celui que le formulaire cherche sur son propre
+          // cadre pour dialoguer avec la page — sans lui, il ne sait pas à qui
+          // annoncer une erreur.
+          allow="payment *; publickey-credentials-get *"
+          id="give-form-shortcode-1"
+          data-givewp-embed-id="give-form-shortcode-1"
           // Hauteur fixe, calée sur l'étape la plus haute — celle du paiement.
           // Un cadre qui grandit en cours de route ferait sauter la page sous
           // les yeux du donateur.

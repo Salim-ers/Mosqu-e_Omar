@@ -42,8 +42,12 @@ const cspPaiement = [
   "style-src 'self' 'unsafe-inline' https://mosqueeomarcreil.fr https://fonts.googleapis.com",
   "img-src 'self' data: blob: https://mosqueeomarcreil.fr https://*.stripe.com https://*.stripecdn.com https://*.hcaptcha.com",
   "font-src 'self' data: https://mosqueeomarcreil.fr https://fonts.gstatic.com",
-  "connect-src 'self' https://mosqueeomarcreil.fr https://api.stripe.com https://m.stripe.com https://m.stripe.network https://*.hcaptcha.com",
-  "frame-src https://js.stripe.com https://hooks.stripe.com https://m.stripe.network https://*.hcaptcha.com",
+  "connect-src 'self' https://mosqueeomarcreil.fr https://api.stripe.com https://m.stripe.com https://m.stripe.network https://*.hcaptcha.com https://errors.stripe.com",
+  // Volontairement ouvert aux sites sécurisés : la validation 3-D Secure
+  // s'affiche dans un cadre servi par la banque du donateur, et il y a autant
+  // de domaines que de banques — impossible d'en dresser la liste. Les
+  // restreindre reviendrait à faire échouer un paiement sur deux.
+  "frame-src https:",
   "object-src 'none'",
   "base-uri 'self'",
   "frame-ancestors 'self'",
