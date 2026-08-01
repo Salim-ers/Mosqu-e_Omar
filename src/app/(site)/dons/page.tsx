@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 
-import { ChoixMontant } from "@/components/dons/ChoixMontant";
 import { Reveal } from "@/components/motion/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { site } from "@/config/site";
 import { getSettings } from "@/lib/content";
-import { MONTANTS_PONCTUELS } from "@/lib/dons";
 
 export const metadata: Metadata = {
   title: "Faire un don",
@@ -51,12 +49,27 @@ export default async function DonsPage() {
               </Reveal>
 
               <Reveal delay={0.06}>
-                <div className="mt-9">
-                  <ChoixMontant
-                    montants={MONTANTS_PONCTUELS}
-                    defaut={50}
-                    libelle="Donner à la mosquée"
-                  />
+                <div className="mt-9 border hairline bg-cream p-8 sm:p-10">
+                  <p className="text-[0.64rem] font-semibold tracking-[0.28em] text-taupe uppercase">
+                    Don en ligne
+                  </p>
+                  <p className="mt-5 max-w-md text-[1.02rem] leading-[1.85] text-charcoal/75">
+                    Vous choisissez votre montant sur la page de paiement
+                    sécurisée de l’association, puis vous revenez ici.
+                  </p>
+                  <div className="mt-8">
+                    <ButtonLink
+                      href={reglages.donationUrl}
+                      external
+                      className="w-full sm:w-auto"
+                    >
+                      Faire un don
+                    </ButtonLink>
+                  </div>
+                  <p className="mt-5 text-[0.78rem] leading-relaxed text-taupe">
+                    Paiement par carte bancaire. Votre numéro de carte n’est
+                    jamais vu par la mosquée.
+                  </p>
                 </div>
               </Reveal>
 
@@ -90,8 +103,8 @@ export default async function DonsPage() {
                       En ligne
                     </dt>
                     <dd className="mt-2 text-[0.9rem] leading-[1.8] text-charcoal/65">
-                      Par carte bancaire, avec le formulaire ci-contre.
-                      Paiement sécurisé.
+                      Par carte bancaire, avec le bouton ci-contre. Paiement
+                      sécurisé, reçu envoyé par courriel.
                     </dd>
                   </div>
                   <div className="zellige-hover border-b hairline py-6">

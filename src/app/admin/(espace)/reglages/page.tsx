@@ -129,17 +129,21 @@ export default async function ReglagesPage({
 
         <Panel
           title="Dons"
-          description="Adresses des pages de don utilisées par les boutons du site."
+          description="Les deux liens de paiement de l’association — un lien Stripe (buy.stripe.com/…), HelloAsso ou tout autre. Ce sont eux qu’ouvrent les boutons des pages « Faire un don » et « Participation mensuelle »."
         >
           <div className="grid gap-6 sm:grid-cols-2">
-            {field("donationUrl", "Don ponctuel", reglages.donationUrl, {
+            {field("donationUrl", "Lien de paiement — don ponctuel", reglages.donationUrl, {
               placeholder: site.donation.onlineUrl,
+              help: "Sur Stripe, réglez la page de confirmation sur https://mosqueeomarcreil.fr/dons/merci pour que le donateur revienne sur le site.",
             })}
             {field(
               "monthlyDonationUrl",
-              "Don mensuel",
+              "Lien de paiement — don mensuel",
               reglages.monthlyDonationUrl,
-              { placeholder: site.donation.monthlyUrl },
+              {
+                placeholder: site.donation.monthlyUrl,
+                help: "Un lien d’abonnement (paiement récurrent mensuel), pas un paiement unique.",
+              },
             )}
           </div>
         </Panel>
